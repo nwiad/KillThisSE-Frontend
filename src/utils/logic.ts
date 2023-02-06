@@ -21,7 +21,7 @@ export const boardToString = (board: Board): string => {
 
 export const stringToBoard = (str: string): Board => {
     if (str.length !== BOARD_LENGTH * BOARD_LENGTH) {
-        return getBlankBoard();
+        throw new Error("Invalid parameter");
     }
 
     const board: Board = [];
