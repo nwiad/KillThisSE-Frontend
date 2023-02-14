@@ -12,13 +12,13 @@ const BoardUI = (props: BoardUIProps) => {
      * @todo [Step 2] 请在下述两处代码缺失部分以正确显示一个灰色边框的 50x50 棋盘
      * @note 这里两处将类型声明为 any[] 是为了在填入缺失代码前也不至于触发 ESLint Error
      */
-    const squareList: any[] = [];
+    const rowList: any[] = [];
 
     for (let i = 0; i < BOARD_LENGTH; ++i) {
-        const squareInnerList: any[] = [];
+        const cellList: any[] = [];
 
         for (let j = 0; j < BOARD_LENGTH; ++j) {
-            squareInnerList.push(
+            cellList.push(
                 <div onClick={() => props.flip(i, j)} key={j}>
                     {/* Step 2 BEGIN */}
 
@@ -27,7 +27,7 @@ const BoardUI = (props: BoardUIProps) => {
             );
         }
 
-        squareList.push(
+        rowList.push(
             // Step 2 BEGIN
 
             // Step 2 END
@@ -36,7 +36,7 @@ const BoardUI = (props: BoardUIProps) => {
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
-            {squareList}
+            {rowList}
         </div>
     );
 };

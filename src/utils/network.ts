@@ -14,7 +14,7 @@ enum NetworkErrorType {
     UNKNOWN_ERROR,
 }
 
-export class NetworkError extends Object {
+export class NetworkError extends Error {
     type: NetworkErrorType;
     message: string;
 
