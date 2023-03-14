@@ -48,8 +48,8 @@ const ListScreen = (props: ListScreenProps) => {
             "DELETE",
         )
             .then(() => {
-                alert(DELETE_SUCCESS),
-                fetchList()
+                alert(DELETE_SUCCESS);
+                fetchList();
             })
             .catch((err) => alert(FAILURE_PREFIX + err));
         // Step 6 END
@@ -61,9 +61,9 @@ const ListScreen = (props: ListScreenProps) => {
             "DELETE",
         )
             .then(() => {
-                alert(DELETE_USER_BOARD_SUCCESS),
-                router.push("/list"),
-                fetchList()
+                alert(DELETE_USER_BOARD_SUCCESS);
+                router.push("/list");
+                fetchList();
             })
             .catch((err) => alert(FAILURE_PREFIX + err));
         // Step 6 END
@@ -95,7 +95,7 @@ const ListScreen = (props: ListScreenProps) => {
                 <div style={{ display: "flex", flexDirection: "column" }}>{
                     // Step 5 BEGIN
                     boardList.map(x => 
-                        <div style={{ padding: 12 }}>
+                        <div style={{ padding: 12 }} key={x.id}>
                             <div> ID: {x.id} </div>
                             <div> Name: {x.name} </div>
                             <div> Created at: {new Date(x.createdAt * 1000).toLocaleString()} </div>

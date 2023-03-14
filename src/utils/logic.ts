@@ -91,7 +91,7 @@ export const flipCell = (board: Board, i: number, j: number): Board => {
         newBoard.push(row);
     }
     newBoard[i][j] = (board[i][j] === 0 ? 1 : 0);
-    return newBoard
+    return newBoard;
     // Step 3 END
 
     /**
