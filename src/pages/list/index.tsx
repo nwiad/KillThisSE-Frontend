@@ -1,3 +1,4 @@
+import { time, timeStamp } from "console";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { DELETE_SUCCESS, DELETE_USER_BOARD_SUCCESS, FAILURE_PREFIX } from "../../constants/string";
@@ -42,12 +43,29 @@ const ListScreen = (props: ListScreenProps) => {
     };
     const deleteBoard = (id: number) => {
         // Step 6 BEGIN
-
+        request(
+            `/api/boards/${id}`,
+            "DELETE",
+        )
+            .then(() => {
+                alert(DELETE_SUCCESS),
+                fetchList()
+            })
+            .catch((err) => alert(FAILURE_PREFIX + err));
         // Step 6 END
     };
     const deleteUserBoard = () => {
         // Step 6 BEGIN
-
+        request(
+            `/api/user/${props.userName}`,
+            "DELETE",
+        )
+            .then(() => {
+                alert(DELETE_USER_BOARD_SUCCESS),
+                router.push("/list"),
+                fetchList()
+            })
+            .catch((err) => alert(FAILURE_PREFIX + err));
         // Step 6 END
     };
 
@@ -76,7 +94,23 @@ const ListScreen = (props: ListScreenProps) => {
             ) : (
                 <div style={{ display: "flex", flexDirection: "column" }}>{
                     // Step 5 BEGIN
-
+                    boardList.map(x => 
+                        <div style={{ padding: 12 }}>
+                            <div> ID: {x.id} </div>
+                            <div> Name: {x.name} </div>
+                            <div> Created at: {new Date(x.createdAt * 1000).toLocaleString()} </div>
+                            <div> Created by: {x.userName} </div>
+                            <button onClick={() => router.push(`/${x.id}`)}>
+                                Play it
+                            </button>
+                            <button onClick={() => deleteBoard(x.id)}>
+                                Delete it
+                            </button>
+                            <button onClick={() => router.push(`/list/${x.userName}`)}>
+                                View this user
+                            </button>
+                        </div>
+                    )
                     // Step 5 END
                 }</div>
             )}

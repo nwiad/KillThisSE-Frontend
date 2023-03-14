@@ -14,14 +14,14 @@ const BoardUI = (props: BoardUIProps) => {
      */
     const rowList: any[] = [];
 
-    for (let i = 0; i < BOARD_LENGTH; ++i) {
+    for (let i = 0; i < 50; ++i) {
         const cellList: any[] = [];
 
         for (let j = 0; j < BOARD_LENGTH; ++j) {
             cellList.push(
                 <div onClick={() => props.flip(i, j)} key={j}>
                     {/* Step 2 BEGIN */}
-
+                    <Square color={props.board[i][j] === 0 ? "white" : "red"} />
                     {/* Step 2 END */}
                 </div>
             );
@@ -29,7 +29,9 @@ const BoardUI = (props: BoardUIProps) => {
 
         rowList.push(
             // Step 2 BEGIN
-
+            <div style={{ display: "flex", flexDirection: "row" }} key={i}>
+                {cellList}
+            </div>
             // Step 2 END
         );
     }

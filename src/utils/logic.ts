@@ -50,7 +50,27 @@ export const stepBoard = (board: Board): Board => {
      * @note 你可以使用命令 yarn test step 来运行我们编写的单元测试与我们提供的参考实现对拍
      */
     // Step 1 BEGIN
-    
+    for (let i = 0; i < BOARD_LENGTH; ++i) {
+        const row: (0 | 1)[] = [];
+        for (let j = 0; j < BOARD_LENGTH; ++j) {
+            let upper = (i === 0) ? BOARD_LENGTH - 1 : i - 1; /* In case of overflow & underflow */
+            let left = (j === 0) ? BOARD_LENGTH - 1 : j - 1;
+            let right = (j === BOARD_LENGTH - 1) ? 0 : j + 1;
+            let lower = (i === BOARD_LENGTH - 1) ? 0 : i + 1;
+            let neighbors: number = board[upper][left] + board[upper][j] + board[upper][right] + 
+                                    board[i][left]  /* The cell itself*/ + board[i][right] + 
+                                    board[lower][left] + board[lower][j] + board[lower][right];  
+            if (board[i][j] === 1) { // The cell is currently alive
+                let new_state : (0 | 1) = (neighbors === 2 || neighbors === 3) ? 1 : 0;
+                row.push(new_state);
+            }
+            else { // The cell is currently dead
+                let new_state : (0 | 1) = (neighbors === 3) ? 1 : 0;
+                row.push(new_state);
+            }
+        }
+        newBoard.push(row);
+    }
     // Step 1 END
 
     return newBoard;
@@ -62,7 +82,16 @@ export const flipCell = (board: Board, i: number, j: number): Board => {
      * @note 你可以使用命令 yarn test flip 来运行我们编写的单元测试以检验自己的实现
      */
     // Step 3 BEGIN
-
+    const newBoard: Board = [];
+    for (let i = 0; i < BOARD_LENGTH; i++) {
+        const row: (0 | 1)[] = [];
+        for (let j = 0; j < BOARD_LENGTH; j++) {
+            row.push(board[i][j]);
+        }
+        newBoard.push(row);
+    }
+    newBoard[i][j] = (board[i][j] === 0 ? 1 : 0);
+    return newBoard
     // Step 3 END
 
     /**

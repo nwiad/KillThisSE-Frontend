@@ -1,3 +1,4 @@
+import { time } from "console";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import BoardUI from "../components/BoardUI";
@@ -35,18 +36,22 @@ const BoardScreen = (props: BoardScreenProps) => {
     };
     const flip = (i: number, j: number) => {
         // Step 3 & 4 BEGIN
-
+        if (autoPlay === false) {
+            setBoard((board) => flipCell(board, i, j));
+        }
         // Step 3 & 4 END
     };
 
     const startAutoPlay = () => {
         // Step 4 BEGIN
-
+        setAutoPlay((autoPlay) => true);
+        timerRef.current = setInterval(step, 300);
         // Step 4 END
     };
     const stopAutoPlay = () => {
         // Step 4 BEGIN
-
+        setAutoPlay((autoPlay) => false);
+        clearInterval(timerRef.current);
         // Step 4 END
     };
 
