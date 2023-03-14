@@ -13,13 +13,15 @@ RUN yarn install
 
 RUN yarn build
 
+RUN yarn export
+
 FROM nginx:1.22
 
 ENV HOME=/opt/app
 
 WORKDIR $HOME
 
-COPY --from=build /opt/frontend/dist dist
+COPY --from=build /opt/frontend/out dist
 
 COPY nginx /etc/nginx/conf.d
 
