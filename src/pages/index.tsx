@@ -32,25 +32,28 @@ const InitPage = () => {
 
     return (
         <div style={{padding: 12}}>
+            <link href="../styles/login.css" rel="stylesheet"/>
             <p>{message}</p>
-            <div style={{ display: "flex", flexDirection: "row" }}>
+            <div style={{ display: "flex", flexDirection: "column", margin: "50px auto" }}>
+                <img src="https://i.hd-r.cn/5608ae1a8a979f155292919ee818f4cc.jpg"></img>
+                <p id="title"> KillthisSE IM </p>
                 <input
                     type="text"
-                    placeholder="Name"
+                    placeholder="用户名"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
                 <input
-                    type="text"
-                    placeholder="Password"
+                    type="password"
+                    placeholder="密码"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 <button onClick={saveUser}>
-                    Create an user
+                    注册新用户
                 </button>
                 <button onClick={() => router.push("user_list")}>
-                    View users
+                    查看当前用户目录
                 </button>
             </div>
         </div>
