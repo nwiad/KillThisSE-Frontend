@@ -43,7 +43,7 @@ export const request = async (
 
             throw new NetworkError(
                 NetworkErrorType.UNKNOWN_ERROR,
-                `[${err.response?.status}] ` + (err.response?.data as any).info,
+                (err.response?.data as any).info,
             );
         });
 

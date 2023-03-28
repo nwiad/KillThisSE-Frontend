@@ -1,20 +1,14 @@
 import { time } from "console";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
-import { CREATE_USER_SUCCESS, FAILURE_PREFIX } from "../constants/string";
+import { CREATE_USER_SUCCESS, FAILURE_PREFIX,CREATE_USER_FAILURE_PERFIX } from "../constants/string";
 import { request } from "../utils/network";
 
 const InitPage = () => {
-    const [message, setMessage] = useState<string>("");
     const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>(""); 
 
     const router = useRouter();
-
-    request("api/startup", "GET")
-        .then((res) => {
-            setMessage(res.message);
-        });
 
     const saveUser = () => {
         request(
@@ -27,28 +21,30 @@ const InitPage = () => {
             }
         )
             .then((res) => alert(CREATE_USER_SUCCESS))
-            .catch((err) => alert(FAILURE_PREFIX + err));
+            .catch((err) => alert(CREATE_USER_FAILURE_PERFIX + err));
     };
 
     return (
         <div style={{padding: 12}}>
             <link href="../styles/login.css" rel="stylesheet"/>
-            <p>{message}</p>
             <div style={{ display: "flex", flexDirection: "column", margin: "50px auto" }}>
-                <img src="https://i.hd-r.cn/5608ae1a8a979f155292919ee818f4cc.jpg"></img>
-                <p id="title"> KillthisSE IM </p>
+                <img src="https://i.hd-r.cn/95c0358239b9d888355844c9dd54d67a.png"></img>
                 <input
+                    id="usernameinput"
                     type="text"
                     placeholder="用户名"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
+                <span id="usernametip">*用户名必须由3-16位字母、数字和下划线组成</span>
                 <input
+                    id="pwdinput"
                     type="password"
                     placeholder="密码"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
+                <span id="pwdtip">*密码必须由6-16位字母、数字和下划线组成</span>
                 <button onClick={saveUser}>
                     注册新用户
                 </button>

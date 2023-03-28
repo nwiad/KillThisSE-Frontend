@@ -6,4 +6,6 @@
 
 export const CREATE_USER_SUCCESS = "成功创建一个新用户";
 
+export const CREATE_USER_FAILURE_PERFIX = "创建新用户失败：";
+
 export const FAILURE_PREFIX = "网络请求失败：";
