@@ -23,7 +23,7 @@ const User_list = () => {
 
     const fetchList = () => {
         setRefreshing(true);
-        request("/api/user_list", "GET")
+        request("/api/users", "GET")
             .then((res) => {
                 setUserList(res.users.map((val: any) => ({ ...val, name: val.name })));
                 setRefreshing(false);
