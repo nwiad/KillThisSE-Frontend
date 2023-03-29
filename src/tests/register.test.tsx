@@ -31,7 +31,7 @@ const naiveValidation = (str: string, type: "name"|"pwd"): boolean => {
         }
     }
     return true;
-}
+};
 
 it("Name and password validation test in registration.", () => {
     for(let test = 0; test < TEST_TIMES; test++) {

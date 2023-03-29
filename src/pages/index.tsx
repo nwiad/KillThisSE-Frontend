@@ -27,7 +27,7 @@ const InitPage = () => {
     };
 
     const checkName = (name_: string) => {
-        setName(name_)
+        setName(name_);
 
         setNameLegal(nameValid(name_));
     };
@@ -36,7 +36,7 @@ const InitPage = () => {
         setPassword(password_);
 
         setPasswordLegal(passwordValid(password_));
-    }
+    };
 
     return (
         <div style={{padding: 12}}>
