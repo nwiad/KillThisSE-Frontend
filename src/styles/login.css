@@ -32,6 +32,7 @@ button {
 
 button:hover {background-color: #001eb1}
 button:active {background-color: #001683}
+button:disabled {background-color: black;}
 
 img {
     height: 300px;
