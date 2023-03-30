@@ -3,10 +3,13 @@ import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import { CREATE_USER_SUCCESS, FAILURE_PREFIX,CREATE_USER_FAILURE_PERFIX } from "../constants/string";
 import { request } from "../utils/network";
+import { nameValid, passwordValid } from "../utils/valid";
 
 const InitPage = () => {
     const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>(""); 
+    const [nameLegal, setNameLegal] = useState<boolean>(false);
+    const [passwordLegal, setPasswordLegal] = useState<boolean>(false);
 
     const router = useRouter();
 
@@ -17,11 +20,22 @@ const InitPage = () => {
             {
                 name: name,
                 password: password,
-                register_time: new Date().toLocaleTimeString(),
             }
         )
             .then((res) => alert(CREATE_USER_SUCCESS))
             .catch((err) => alert(CREATE_USER_FAILURE_PERFIX + err));
+    };
+
+    const checkName = (name_: string) => {
+        setName(name_);
+
+        setNameLegal(nameValid(name_));
+    };
+
+    const checkPassword = (password_: string) => {
+        setPassword(password_);
+
+        setPasswordLegal(passwordValid(password_));
     };
 
     return (
@@ -34,18 +48,18 @@ const InitPage = () => {
                     type="text"
                     placeholder="用户名"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => checkName(e.target.value)}
                 />
-                <span id="usernametip">*用户名必须由3-16位字母、数字和下划线组成</span>
+                <span id={nameLegal? "usernamelegaltip":"usernameillegaltip"}>*用户名必须由3-16位字母、数字和下划线组成</span>
                 <input
                     id="pwdinput"
                     type="password"
                     placeholder="密码"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => checkPassword(e.target.value)}
                 />
-                <span id="pwdtip">*密码必须由6-16位字母、数字和下划线组成</span>
-                <button onClick={saveUser}>
+                <span id={passwordLegal? "pwdlegaltip":"pwdillegaltip"}>*密码必须由6-16位字母、数字和下划线组成</span>
+                <button onClick={saveUser} disabled={!nameLegal || !passwordLegal}>
                     注册新用户
                 </button>
                 <button onClick={() => router.push("user_list")}>

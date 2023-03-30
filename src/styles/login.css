@@ -32,7 +32,7 @@ button {
 
 button:hover {background-color: #001eb1}
 button:active {background-color: #001683}
-button:disabled {background-color: #6374c9;}
+button:disabled {background-color: #589bff;}
 
 img {
     height: 300px;
@@ -40,18 +40,34 @@ img {
     margin: 20px auto;
 }
 
-#usernametip, #pwdtip {
+#usernamelegaltip, #pwdlegaltip {
     display: none;
     margin: auto;
     font-family:Arial, Helvetica, sans-serif;
     font-size:12px;
-    color: rgb(110, 110, 110);
+    color: rgb(0, 154, 39);
 }
-  
-#usernameinput:focus + #usernametip {
+
+#usernameillegaltip, #pwdillegaltip {
+    display: none;
+    margin: auto;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:12px;
+    color: rgb(255, 0, 0);
+}
+
+#usernameinput:focus + #usernamelegaltip{
     display: block;
 }
 
-#pwdinput:focus + #pwdtip {
+#usernameinput:focus + #usernameillegaltip{
+    display: block;
+}
+
+#pwdinput:focus + #pwdlegaltip {
+    display: block;
+}
+
+#pwdinput:focus + #pwdillegaltip {
     display: block;
 }
