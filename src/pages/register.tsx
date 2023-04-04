@@ -5,9 +5,10 @@ import { useRef, useState } from "react";
 import { CREATE_USER_SUCCESS, FAILURE_PREFIX,CREATE_USER_FAILURE_PERFIX } from "../constants/string";
 import { request } from "../utils/network";
 import { nameValid, passwordValid } from "../utils/valid";
+import { title } from "process";
 import { randomInt } from "crypto";
 
-const InitLoginPage = () => {
+const InitRegisterPage = () => {
     const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>(""); 
     const [nameLegal, setNameLegal] = useState<boolean>(false);
@@ -15,11 +16,11 @@ const InitLoginPage = () => {
 
     const router = useRouter();
 
-    const userLogin = () => {
+    const saveUser = () => {
         let rand = randomInt(100000)
         document.cookie = "id=${rand}; path=/";
         fetch(
-            "api/user/login",
+            "api/user/register",
             {
                 method:"POST",
                 credentials: 'include',
@@ -56,7 +57,8 @@ const InitLoginPage = () => {
                 </li>
             </ul>
             <div id="main" style={{ display: "flex", flexDirection: "column", margin: "50px auto" }}>
-                <img src="https://i.hd-r.cn/95c0358239b9d888355844c9dd54d67a.png"></img>
+                <p id="title">欢迎，新的杀软er</p>
+                <p id="info">请在下方填写您的注册信息</p>
                 <input
                     id="usernameinput"
                     type="text"
@@ -64,6 +66,7 @@ const InitLoginPage = () => {
                     value={name}
                     onChange={(e) => checkName(e.target.value)}
                 />
+                <span id={nameLegal? "usernamelegaltip":"usernameillegaltip"}>*用户名必须由3-16位字母、数字和下划线组成</span>
                 <input
                     id="pwdinput"
                     type="password"
@@ -71,10 +74,8 @@ const InitLoginPage = () => {
                     value={password}
                     onChange={(e) => checkPassword(e.target.value)}
                 />
-                <button onClick={userLogin} disabled={!nameLegal || !passwordLegal}>
-                    登录
-                </button>
-                <button onClick={() => router.push("/register")}>
+                <span id={passwordLegal? "pwdlegaltip":"pwdillegaltip"}>*密码必须由6-16位字母、数字和下划线组成</span>
+                <button onClick={saveUser} disabled={!nameLegal || !passwordLegal}>
                     注册新用户
                 </button>
             </div>
@@ -82,4 +83,4 @@ const InitLoginPage = () => {
     );
 };
 
-export default InitLoginPage;
+export default InitRegisterPage;
