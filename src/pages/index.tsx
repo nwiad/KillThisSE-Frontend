@@ -6,6 +6,7 @@ import { CREATE_USER_SUCCESS, FAILURE_PREFIX,CREATE_USER_FAILURE_PERFIX } from "
 import { request } from "../utils/network";
 import { nameValid, passwordValid } from "../utils/valid";
 import { randomInt } from "crypto";
+import initPage from "../pages/user/index"
 
 const InitLoginPage = () => {
     const [name, setName] = useState<string>("");
@@ -16,8 +17,8 @@ const InitLoginPage = () => {
     const router = useRouter();
 
     const userLogin = () => {
-        let rand = randomInt(100000)
-        document.cookie = "id=${rand}; path=/";
+        let rand = 114514;
+        document.cookie = 'id=${rand}; path=/';
         fetch(
             "api/user/login",
             {
@@ -29,7 +30,9 @@ const InitLoginPage = () => {
                 })
             }
         )
-            .then((res) => alert(CREATE_USER_SUCCESS))
+            .then((res) => {
+                router.push(`/user?cookie=${encodedCookie}`)
+            })
             .catch((err) => alert(CREATE_USER_FAILURE_PERFIX + err));
     };
 
@@ -44,6 +47,8 @@ const InitLoginPage = () => {
 
         setPasswordLegal(passwordValid(password_));
     };
+
+    const encodedCookie = encodeURIComponent(document.cookie);
 
     return (
         <div style={{padding: 12}}>
@@ -72,6 +77,11 @@ const InitLoginPage = () => {
                     onChange={(e) => checkPassword(e.target.value)}
                 />
                 <button onClick={userLogin} disabled={!nameLegal || !passwordLegal}>
+                    登录
+                </button>
+                <button onClick={() => {
+                    router.push(`/user?cookie=${encodedCookie}`)
+                }}>
                     登录
                 </button>
                 <button onClick={() => router.push("/register")}>

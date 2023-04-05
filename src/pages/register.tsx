@@ -30,7 +30,10 @@ const InitRegisterPage = () => {
                 })
             }
         )
-            .then((res) => alert(CREATE_USER_SUCCESS))
+            .then((res) => {
+                alert(CREATE_USER_SUCCESS)
+                router.push("/")
+            })
             .catch((err) => alert(CREATE_USER_FAILURE_PERFIX + err));
     };
 
