@@ -27,30 +27,27 @@ const InitPage = () => {
             }
         )
             .then((res) => {
-                alert(CREATE_USER_SUCCESS)
                 router.push("/")
             })
             .catch((err) => alert(err));
     };
-
-    const encodedCookie = encodeURIComponent(document.cookie);
 
     return (
         <div style={{padding: 12}}>
             <link href="../styles/login.css" rel="stylesheet"/>
             <ul>
                 <li>
-                    <Link href={`/user/?cookie=${encodedCookie}`}>
+                    <Link href={`/user/?cookie=${document.cookie}`}>
                         消息
                     </Link>
                 </li>
                 <li>
-                    <Link href={`/user/friends?cookie=${encodedCookie}`}>
+                    <Link href={`/user/friends?cookie=${document.cookie}`}>
                         好友
                     </Link>
                 </li>
                 <li className="logout">
-                    <Link href={`/user/info?cookie=${encodedCookie}`}>
+                    <Link href={`/user/info?cookie=${document.cookie}`}>
                         个人中心
                     </Link>
                 </li>

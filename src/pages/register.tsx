@@ -17,13 +17,10 @@ const InitRegisterPage = () => {
     const router = useRouter();
 
     const saveUser = () => {
-        let rand = randomInt(100000)
-        document.cookie = "id=${rand}; path=/";
         fetch(
             "api/user/register",
             {
                 method:"POST",
-                credentials: 'include',
                 body:JSON.stringify({
                     name: name,
                     password: password,

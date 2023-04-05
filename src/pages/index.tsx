@@ -18,7 +18,7 @@ const InitLoginPage = () => {
 
     const userLogin = () => {
         let rand = 114514;
-        document.cookie = 'id=${rand}; path=/';
+        document.cookie = `id=${rand}; path=/`;
         fetch(
             "api/user/login",
             {
@@ -31,7 +31,7 @@ const InitLoginPage = () => {
             }
         )
             .then((res) => {
-                router.push(`/user?cookie=${encodedCookie}`)
+                router.push(`/user?cookie=${document.cookie}`)
             })
             .catch((err) => alert(CREATE_USER_FAILURE_PERFIX + err));
     };
@@ -47,8 +47,6 @@ const InitLoginPage = () => {
 
         setPasswordLegal(passwordValid(password_));
     };
-
-    const encodedCookie = encodeURIComponent(document.cookie);
 
     return (
         <div style={{padding: 12}}>
@@ -80,7 +78,7 @@ const InitLoginPage = () => {
                     登录
                 </button>
                 <button onClick={() => {
-                    router.push(`/user?cookie=${encodedCookie}`)
+                    router.push(`/user?cookie=${document.cookie}`)
                 }}>
                     登录
                 </button>
