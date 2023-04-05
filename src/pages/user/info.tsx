@@ -13,7 +13,7 @@ const InitPage = () => {
     const cookie = router.query.cookie;
 
     if (typeof cookie === 'string') {
-      document.cookie = decodeURIComponent(cookie);
+      document.cookie = cookie;
     } else {
       console.log('Cookie not found');
     }
@@ -41,8 +41,12 @@ const InitPage = () => {
             }
         )
             .then((res) => {
-                alert("注销成功")
-                router.push("/")
+                if(res.ok){
+                    alert("注销成功")
+                    router.push("/")
+                } else {
+                    throw new Error(`Request failed with status ${res.status}`);
+                }
             })
             .catch((err) => alert(CREATE_USER_FAILURE_PERFIX + err));
     };

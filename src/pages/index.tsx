@@ -31,9 +31,13 @@ const InitLoginPage = () => {
             }
         )
             .then((res) => {
-                router.push(`/user?cookie=${document.cookie}`)
+                if(res.ok){
+                    router.push(`/user?cookie=${document.cookie}`)
+                } else{
+                    throw new Error(`Request failed with status ${res.status}`);
+                }
             })
-            .catch((err) => alert(CREATE_USER_FAILURE_PERFIX + err));
+            .catch((err) => alert(err));
     };
 
     const checkName = (name_: string) => {

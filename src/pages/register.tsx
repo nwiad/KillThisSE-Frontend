@@ -28,8 +28,13 @@ const InitRegisterPage = () => {
             }
         )
             .then((res) => {
-                alert(CREATE_USER_SUCCESS)
-                router.push("/")
+                if(res.ok){
+                    alert(CREATE_USER_SUCCESS)
+                    router.push("/")
+                } else {
+                    throw new Error(`Request failed with status ${res.status}`);
+
+                }
             })
             .catch((err) => alert(CREATE_USER_FAILURE_PERFIX + err));
     };
