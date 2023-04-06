@@ -15,7 +15,7 @@ const InitPage = () => {
     if (typeof cookie === 'string') {
       document.cookie = cookie;
     } else {
-      console.log('Cookie not found');
+      alert('Cookie not found');
     }
 
     const userLogout = () => {

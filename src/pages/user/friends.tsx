@@ -22,7 +22,7 @@ const InitPage = () => {
         fetch(
             "api/user/logout",
             {
-                method:"POST",
+                method:"DELETE",
                 credentials: 'include',
             }
         )

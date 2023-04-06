@@ -17,7 +17,7 @@ const InitLoginPage = () => {
     const router = useRouter();
 
     const userLogin = () => {
-        let rand = 114514;
+        const rand = Math.floor(Math.random() * 100000);
         document.cookie = `id=${rand}; path=/`;
         fetch(
             "api/user/login",
@@ -82,9 +82,12 @@ const InitLoginPage = () => {
                     登录
                 </button>
                 <button onClick={() => {
+                    const rand = Math.floor(Math.random() * 100000);
+                    document.cookie = `id=${rand}; path=/`;
                     router.push(`/user?cookie=${document.cookie}`)
+                    alert(document.cookie)
                 }}>
-                    登录
+                    登录（测试用）
                 </button>
                 <button onClick={() => router.push("/register")}>
                     注册新用户
