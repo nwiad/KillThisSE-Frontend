@@ -57,7 +57,7 @@ const InitRegisterPage = () => {
             <ul>
                 <li>
                     <Link href="/">
-                        KillthisSE IM
+                        返回到登录界面
                     </Link>
                 </li>
             </ul>

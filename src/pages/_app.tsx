@@ -1,5 +1,7 @@
 import "../styles/globals.css";
 import "../styles/login.css";
+import "../styles/resetName.css"
+
 import type { AppProps } from "next/app";
 
 const App = ({ Component, pageProps }: AppProps) => {

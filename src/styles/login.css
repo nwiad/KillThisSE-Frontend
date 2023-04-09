@@ -70,15 +70,7 @@ img {
     color: rgb(255, 0, 0);
 }
 
-#usernameinput:focus + #usernamelegaltip{
-    display: block;
-}
-
 #usernameinput:focus + #usernameillegaltip{
-    display: block;
-}
-
-#pwdinput:focus + #pwdlegaltip {
     display: block;
 }
 
@@ -86,8 +78,8 @@ img {
     display: block;
 }
 
-#title{
-    margin: 30px auto;
+#title, #infoTitle{
+    margin: 50px auto;
     font-family:Arial, Helvetica, sans-serif;
     font-size:40px;
     font-weight: 1000;
@@ -106,7 +98,7 @@ ul {
     top: 0;
     left: 0;
     right: 0;
-    height: 7%;
+    height: 65px;
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -115,6 +107,7 @@ ul {
 
 li {
     float: left;
+    height: 65px;
     display: block;
     color: white;
     text-align: center;
@@ -124,6 +117,16 @@ li {
     font-family:Arial, Helvetica, sans-serif;
     font-size:20px;
     font-weight: 100;
+    border-style:solid;
+    border-width:1px;
+    border-left-color: #0660e9;
+    border-right-color: #589bff;
+    border-top-color: #0660e9;
+    border-bottom-color: #0660e9;
+}
+
+li:hover {
+    background-color: #004dc0;
 }
 
 .logout {
@@ -135,4 +138,10 @@ li {
     font-family:Arial, Helvetica, sans-serif;
     font-size:20px;
     font-weight: 300;
+    border-style:solid;
+    border-width:1px;
+    border-right-color: #0660e9;
+    border-left-color: #589bff;
+    border-top-color: #0660e9;
+    border-bottom-color: #0660e9;
 }
