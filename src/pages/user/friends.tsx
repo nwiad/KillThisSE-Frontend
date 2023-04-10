@@ -13,24 +13,6 @@ const InitPage = () => {
     } else {
       console.log("Cookie not found");
     }
-        
-    const userLogout = () => {
-        fetch(
-            "api/user/logout",
-            {
-                method:"DELETE",
-                credentials: 'include',
-            }
-        )
-            .then((res) => {
-                if(res.ok){
-                    router.push("/")
-                } else{
-                    throw new Error(`Request failed with status ${res.status}`);
-                }
-            })
-            .catch((err) => alert(err));
-    };
 
     return (
         <div style={{padding: 12}}>
