@@ -1,12 +1,7 @@
-import { time } from "console";
-import { useRouter } from "next/router";
 import Link from 'next/link';
-import { useRef, useState } from "react";
-import { CREATE_USER_SUCCESS, FAILURE_PREFIX,CREATE_USER_FAILURE_PERFIX } from "../constants/string";
-import { request } from "../utils/network";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
-import { randomInt } from "crypto";
-import initPage from "../pages/user/index"
 
 const InitLoginPage = () => {
     const [name, setName] = useState<string>("");
@@ -18,7 +13,7 @@ const InitLoginPage = () => {
 
     const userLogin = () => {
         const rand = Math.floor(Math.random() * 100000);
-        document.cookie = `id=${rand}; path=/`;
+        document.cookie = `session=${rand}; path=/`;
         fetch(
             "api/user/login",
             {
@@ -83,7 +78,7 @@ const InitLoginPage = () => {
                 </button>
                 <button onClick={() => {
                     const rand = Math.floor(Math.random() * 100000);
-                    document.cookie = `id=${rand}; path=/`;
+                    document.cookie = `session=${rand}; path=/`;
                     router.push(`/user?cookie=${document.cookie}`)
                     alert(document.cookie)
                 }}>
