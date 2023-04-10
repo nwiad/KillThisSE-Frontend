@@ -54,8 +54,7 @@ const InitLoginPage = () => {
 
     return (
         <div style={{padding: 12}}>
-            <link href="../styles/login.css" rel="stylesheet"/>
-            <ul>
+            <ul className="indexbar">
                 <li>
                     <Link href="/">
                         KillthisSE IM

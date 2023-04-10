@@ -93,7 +93,7 @@ img {
     color: #8c8c8c;
 }
 
-ul {
+.registerbar, .indexbar {
     position: fixed;
     top: 0;
     left: 0;
@@ -105,7 +105,7 @@ ul {
     background-color: #0660e9;
 }
 
-li {
+.registerbar, .indexbar li {
     float: left;
     height: 65px;
     display: block;
@@ -125,23 +125,6 @@ li {
     border-bottom-color: #0660e9;
 }
 
-li:hover {
+.registerbar, .indexbar li:hover {
     background-color: #004dc0;
-}
-
-.logout {
-    float: right;
-    text-align: center;
-    padding: 20px;
-    text-decoration: none;
-    margin-left: auto;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:20px;
-    font-weight: 300;
-    border-style:solid;
-    border-width:1px;
-    border-right-color: #0660e9;
-    border-left-color: #589bff;
-    border-top-color: #0660e9;
-    border-bottom-color: #0660e9;
 }

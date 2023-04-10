@@ -53,8 +53,7 @@ const InitRegisterPage = () => {
 
     return (
         <div style={{padding: 12}}>
-            <link href="../styles/login.css" rel="stylesheet"/>
-            <ul>
+            <ul className="registerbar">
                 <li>
                     <Link href="/">
                         返回到登录界面

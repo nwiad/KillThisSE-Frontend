@@ -149,7 +149,7 @@ const InitPage = () => {
 
     return (
         <div style={{ padding: 12 }}>
-            <Navbar />
+            <Navbar cookie={cookie}/>
             <div id="main" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
                 {avatar && (
                     <div

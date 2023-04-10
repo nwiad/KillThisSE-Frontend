@@ -16,7 +16,7 @@ const InitPage = () => {
 
     return (
         <div>
-            <Navbar />
+            <Navbar cookie={cookie}/>
             <div id="title">
                 这是消息界面
             </div>
