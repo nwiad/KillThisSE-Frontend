@@ -29,7 +29,7 @@ const FriendBar = ({cookie} : {cookie:string|string[]|undefined}) => {
     )
         .then((res) => res.json())
         .then((data) => {
-            setList(data.list)
+            setList(data.friends)
         })
         .catch((err) => alert(err));
         
@@ -44,7 +44,7 @@ const FriendBar = ({cookie} : {cookie:string|string[]|undefined}) => {
                     <li className="newfriend" onClick={() => {router.push(`/user/acceptfriend?cookie=${document.cookie}`)}}>
                         收到的好友邀请
                     </li>
-                    {list.map((item: Item) => (
+                    {list?.map((item: Item) => (
                         <li className="friend">
                             <img className="friendavatar" src={`${item.avatar}`}></img>
                             {item.name}

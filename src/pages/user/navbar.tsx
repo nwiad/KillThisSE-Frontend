@@ -15,7 +15,7 @@ const Navbar = ({cookie} : {cookie:string|string[]|undefined}) => {
         fetch(
             "api/user/logout",
             {
-                method:"DELETE",
+                method:"POST",
                 credentials: 'include',
             }
         )

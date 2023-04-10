@@ -11,7 +11,7 @@
     z-index: 9999;
   }
   
-  .popup input[type="text"] {
+  .popup input {
     width: 80%;
     height: 40px;
     margin-top: 50px;
@@ -21,6 +21,14 @@
     text-align: center;
   }
   
+  .popup .fileupload {
+    width: 80%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+
   .popup button {
     margin-bottom: 50px;
     margin: 20px;
