@@ -84,7 +84,6 @@ const InitLoginPage = () => {
                     const rand = Math.floor(Math.random() * 100000);
                     document.cookie = `id=${rand}; path=/`;
                     router.push(`/user?cookie=${document.cookie}`)
-                    alert(document.cookie)
                 }}>
                     登录（测试用）
                 </button>

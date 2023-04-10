@@ -41,6 +41,9 @@ const FriendBar = ({cookie} : {cookie:string|string[]|undefined}) => {
                     <li className="newfriend" onClick={() => {router.push(`/user/searchfriend?cookie=${document.cookie}`)}}>
                         + 添加新好友
                     </li>
+                    <li className="newfriend" onClick={() => {router.push(`/user/acceptfriend?cookie=${document.cookie}`)}}>
+                        收到的好友邀请
+                    </li>
                     {list.map((item: Item) => (
                         <li className="friend">
                             <img className="friendavatar" src={`${item.avatar}`}></img>
