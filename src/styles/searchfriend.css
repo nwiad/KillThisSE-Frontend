@@ -1,0 +1,15 @@
+.searchfriend {
+    position: fixed;
+    top: 100px;
+    left: 40%;
+    width: 50%;
+    display: inline-block;
+}
+
+.searchfriend input {
+    left: 100px;
+}
+
+.searchfriend button {
+    width: 20%;
+}

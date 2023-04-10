@@ -13,6 +13,7 @@ const InitPage = () => {
     const [newpassword, setNewPassword] = useState<string>("");
     const [nameLegal, setNameLegal] = useState<boolean>(false);
     const [passwordLegal, setPasswordLegal] = useState<boolean>(false);
+    const [showPopupAvatar, setShowPopupAvatar] = useState(false);
     const [showPopupName, setShowPopupName] = useState(false);
     const [showPopupPwd, setShowPopupPwd] = useState(false);
     const [isAvatarUploaded, setIsAvatarUploaded] = useState(false);
@@ -149,7 +150,7 @@ const InitPage = () => {
 
     return (
         <div style={{ padding: 12 }}>
-            <Navbar />
+            <Navbar cookie={cookie}/>
             <div id="main" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
                 {avatar && (
                     <div
@@ -168,16 +169,16 @@ const InitPage = () => {
                 <p id="infoTitle">
                     {name}
                 </p>
-                <button className="resetName" onClick={() => { setShowPopupName(true); }}>
+                <button className="resetName" onClick={() => { setShowPopupAvatar(true); }}>
                     修改头像
                 </button>
-                {showPopupName && (
+                {showPopupAvatar && (
                     <div className="popup">
-                        <form onSubmit={() => { resetAvatar; setIsAvatarUploaded(false); setShowPopupName(false); }}>
-                            <input type="file" name="avatar" onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
+                        <form onSubmit={() => { resetAvatar; setIsAvatarUploaded(false); setShowPopupAvatar(false); }}>
+                            <input className="fileupload" type="file" name="avatar" accept="image/*" onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
                             <button type="submit" disabled={!isAvatarUploaded}>上传头像</button>
                         </form>
-                        <button onClick={() => { setShowPopupName(false); }}>取消</button>
+                        <button onClick={() => { setShowPopupAvatar(false); }}>取消</button>
                     </div>
                 )}
                 <button className="resetName" onClick={() => { setShowPopupName(true); }}>

@@ -1,13 +1,12 @@
 import { useRouter } from "next/router";
 import Link from 'next/link';
 
-function Navbar() {
+const Navbar = ({cookie} : {cookie:string|string[]|undefined}) => {
     
     const router = useRouter();
-    const cookie = router.query.cookie;
 
     if (typeof cookie === 'string') {
-      document.cookie = cookie;
+        document.cookie = cookie;
     } else {
       alert('Cookie not found');
     }
@@ -16,7 +15,7 @@ function Navbar() {
         fetch(
             "api/user/logout",
             {
-                method:"DELETE",
+                method:"POST",
                 credentials: 'include',
             }
         )
@@ -32,26 +31,18 @@ function Navbar() {
 
     return (
         <nav style={{padding: 12}}>
-            <ul>
-                <li>
-                    <Link href={`/user/?cookie=${document.cookie}`}>
+            <ul className="navbar">
+                <li className="navbar_ele_r" onClick={() => {router.push(`/user/?cookie=${document.cookie}`)}}>
                         消息
-                    </Link>
                 </li>
-                <li>
-                    <Link href={`/user/friends?cookie=${document.cookie}`}>
+                <li className="navbar_ele_r" onClick={() => {router.push(`/user/friendindex?cookie=${document.cookie}`)}}>
                         好友
-                    </Link>
                 </li>
-                <li className="logout">
-                    <Link href={`/user/info?cookie=${document.cookie}`}>
+                <li className="navbar_ele_l" onClick={() => {router.push(`/user/info?cookie=${document.cookie}`)}}>
                         个人中心
-                    </Link>
                 </li>
-                <li className="logout">
-                    <Link href="/" onClick={userLogout}>
+                <li className="navbar_ele_l" onClick={() => {userLogout; router.push(`/`)}}>
                         登出
-                    </Link>
                 </li>
             </ul>
         </nav>

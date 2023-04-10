@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import Link from 'next/link';
 import { useRef, useState } from "react";
-import Navbar from "./navbar";
+import FriendBar from "./friendbar";
 
 const InitPage = () => {
     
@@ -11,15 +11,12 @@ const InitPage = () => {
     if (typeof cookie === 'string') {
       document.cookie = cookie;
     } else {
-      console.log("Cookie not found");
+        alert("Cookie not found");
     }
 
     return (
-        <div style={{padding: 12}}>
-            <Navbar />
-            <div id="title">
-                这是好友列表
-            </div>
+        <div>
+            <FriendBar cookie={cookie}/>
         </div>
     );
 };

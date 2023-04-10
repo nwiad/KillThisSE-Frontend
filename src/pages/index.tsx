@@ -49,8 +49,7 @@ const InitLoginPage = () => {
 
     return (
         <div style={{padding: 12}}>
-            <link href="../styles/login.css" rel="stylesheet"/>
-            <ul>
+            <ul className="indexbar">
                 <li>
                     <Link href="/">
                         KillthisSE IM
@@ -80,7 +79,6 @@ const InitLoginPage = () => {
                     const rand = Math.floor(Math.random() * 100000);
                     document.cookie = `session=${rand}; path=/`;
                     router.push(`/user?cookie=${document.cookie}`)
-                    alert(document.cookie)
                 }}>
                     登录（测试用）
                 </button>
