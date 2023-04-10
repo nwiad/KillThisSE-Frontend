@@ -13,12 +13,6 @@ const FriendBar = ({cookie} : {cookie:string|string[]|undefined}) => {
     const [list, setList] = useState<Item[]>([]);
 
     const router = useRouter();
-
-    if (typeof cookie === 'string') {
-        document.cookie = cookie;
-    } else {
-      alert("Cookie not found");
-    }
     
     fetch(
         "api/user/get_friends",
@@ -35,13 +29,13 @@ const FriendBar = ({cookie} : {cookie:string|string[]|undefined}) => {
         
     return (
         <div style={{padding: 12}}>
-            <Navbar cookie={cookie}/>
+            <Navbar/>
             <div>
                 <ul className="friendlist">
-                    <li className="newfriend" onClick={() => {router.push(`/user/searchfriend?cookie=${document.cookie}`)}}>
+                    <li className="newfriend" onClick={() => {router.push(`/user/searchfriend`)}}>
                         + 添加新好友
                     </li>
-                    <li className="newfriend" onClick={() => {router.push(`/user/acceptfriend?cookie=${document.cookie}`)}}>
+                    <li className="newfriend" onClick={() => {router.push(`/user/acceptfriend`)}}>
                         收到的好友邀请
                     </li>
                     {list?.map((item: Item) => (

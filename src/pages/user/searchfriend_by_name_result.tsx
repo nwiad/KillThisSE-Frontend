@@ -13,14 +13,7 @@ const InitPage = () => {
     const [list, setList] = useState<Item[]>([]);
     const [friend, setFriend] = useState<number>();
     const router = useRouter();
-    const cookie = router.query.cookie;
     const name = router.query.name;
-
-    if (typeof cookie === 'string') {
-        document.cookie = cookie;
-    } else {
-        alert("Cookie not found");
-    }
 
     fetch(
         "api/user/search_by_name",
@@ -63,7 +56,7 @@ const InitPage = () => {
 
     return (
         <div>
-            <FriendBar cookie={cookie} />
+            <FriendBar />
             <div>
                 {list.map((item: Item) => (
                     <div className="friend">

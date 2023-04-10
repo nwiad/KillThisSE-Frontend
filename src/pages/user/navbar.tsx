@@ -1,15 +1,9 @@
 import { useRouter } from "next/router";
 import Link from 'next/link';
 
-const Navbar = ({cookie} : {cookie:string|string[]|undefined}) => {
+const Navbar = () => {
     
     const router = useRouter();
-
-    if (typeof cookie === 'string') {
-        document.cookie = cookie;
-    } else {
-      alert('Cookie not found');
-    }
 
     const userLogout = () => {
         fetch(
@@ -32,13 +26,13 @@ const Navbar = ({cookie} : {cookie:string|string[]|undefined}) => {
     return (
         <nav style={{padding: 12}}>
             <ul className="navbar">
-                <li className="navbar_ele_r" onClick={() => {router.push(`/user/?cookie=${document.cookie}`)}}>
+                <li className="navbar_ele_r" onClick={() => {router.push(`/user/`)}}>
                         消息
                 </li>
-                <li className="navbar_ele_r" onClick={() => {router.push(`/user/friendindex?cookie=${document.cookie}`)}}>
+                <li className="navbar_ele_r" onClick={() => {router.push(`/user/friendindex`)}}>
                         好友
                 </li>
-                <li className="navbar_ele_l" onClick={() => {router.push(`/user/info?cookie=${document.cookie}`)}}>
+                <li className="navbar_ele_l" onClick={() => {router.push(`/user/info`)}}>
                         个人中心
                 </li>
                 <li className="navbar_ele_l" onClick={() => {userLogout; router.push(`/`)}}>

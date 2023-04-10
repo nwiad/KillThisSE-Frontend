@@ -6,17 +6,10 @@ import Navbar from "./navbar";
 const InitPage = () => {
     
     const router = useRouter();
-    const cookie = router.query.cookie;
-
-    if (typeof cookie === 'string') {
-      document.cookie = cookie;
-    } else {
-        console.log("Cookie not found");
-    }
 
     return (
         <div>
-            <Navbar cookie={cookie}/>
+            <Navbar/>
             <div id="title">
                 这是消息界面
             </div>

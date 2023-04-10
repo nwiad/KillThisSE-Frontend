@@ -19,13 +19,6 @@ const InitPage = () => {
     const [isAvatarUploaded, setIsAvatarUploaded] = useState(false);
 
     const router = useRouter();
-    const cookie = router.query.cookie;
-
-    if (typeof cookie === 'string') {
-        document.cookie = cookie;
-    } else {
-        console.log('Cookie not found');
-    }
 
     const deleteUser = () => {
         fetch(
@@ -96,7 +89,6 @@ const InitPage = () => {
             }
         )
             .then((res) => {
-                alert('尝试修改')
                 return res.json()
             })
             .then((res) => {
@@ -151,7 +143,7 @@ const InitPage = () => {
 
     return (
         <div style={{ padding: 12 }}>
-            <Navbar cookie={cookie}/>
+            <Navbar/>
             <div id="main" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
                 {avatar && (
                     <div
@@ -175,14 +167,14 @@ const InitPage = () => {
                 </button>
                 {showPopupAvatar && (
                     <div className="popup">
-                        <form onSubmit={() => { resetAvatar(); setIsAvatarUploaded(false); router.push(`/user/info?cookie=${cookie}`); setShowPopupAvatar(false);  }}>
+                        <form onSubmit={() => { resetAvatar(); setIsAvatarUploaded(false); router.push(`/user/info`); setShowPopupAvatar(false);  }}>
                             <input className="fileupload" type="file" name="avatar" accept="image/*" onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
                             <button type="submit" disabled={!isAvatarUploaded}>上传头像</button>
                         </form>
                         <button onClick={() => { setShowPopupAvatar(false); }}>取消</button>
                     </div>
                 )}
-                <button className="resetName" onClick={() => { setShowPopupName(true); }}>
+                <button className="resetName" onClick={() => { setShowPopupName(true); setNewName("")}}>
                     修改用户名
                 </button>
                 {showPopupName && (
@@ -194,19 +186,19 @@ const InitPage = () => {
                             placeholder="请输入新的用户名"
                             id="usernameinput" />
                         <span id={nameLegal ? "usernamelegaltip" : "usernameillegaltip"}>*用户名必须由3-16位字母、数字和下划线组成</span>
-                        <button onClick={() => { resetName(); router.push(`/user/info?cookie=${cookie}`); setShowPopupName(false);}} disabled={!nameLegal}>保存</button>
+                        <button onClick={() => { resetName(); router.push(`/user/info`); setShowPopupName(false);}} disabled={!nameLegal}>保存</button>
                         <button onClick={() => { setShowPopupName(false); }}>取消</button>
                     </div>
                 )}
-                <button className="resetName" onClick={() => { setShowPopupPwd(true) }}>
+                <button className="resetName" onClick={() => { setShowPopupPwd(true); setPassword(""); setNewPassword("") }}>
                     修改密码
                 </button>
                 {showPopupPwd && (
-                    <div className="popup">
+                    <div className="popuppwd">
                         <input type="password" value={password} onChange={(e) => { setPassword(e.target.value) }} placeholder="请输入原密码" />
                         <input type="password" value={newpassword} onChange={(e) => { checkNewPassword(e.target.value) }} placeholder="请输入新的密码" id="pwdinput" />
                         <span id={passwordLegal ? "pwdlegaltip" : "pwdillegaltip"}>*密码必须由6-16位字母、数字和下划线组成</span>
-                        <button onClick={() => { resetPassword(); router.push(`/user/info?cookie=${cookie}`); setShowPopupPwd(false);  }}>保存</button>
+                        <button onClick={() => { resetPassword(); router.push(`/user/info`); setShowPopupPwd(false);  }}>保存</button>
                         <button onClick={() => { setShowPopupPwd(false); }}>取消</button>
                     </div>
                 )}
