@@ -1,7 +1,12 @@
-import Link from 'next/link';
+import { time } from "console";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import Link from 'next/link';
+import { useRef, useState } from "react";
+import { CREATE_USER_SUCCESS, FAILURE_PREFIX,CREATE_USER_FAILURE_PERFIX } from "../constants/string";
+import { request } from "../utils/network";
 import { nameValid, passwordValid } from "../utils/valid";
+import { randomInt } from "crypto";
+import initPage from "../pages/user/index"
 
 const InitLoginPage = () => {
     const [name, setName] = useState<string>("");
@@ -25,11 +30,12 @@ const InitLoginPage = () => {
                 })
             }
         )
+            .then((res) => {return res.json()})
             .then((res) => {
-                if(res.ok){
+                if(res.code === 0){
                     router.push(`/user?cookie=${document.cookie}`)
                 } else{
-                    throw new Error(`Request failed with status ${res.status}`);
+                    throw new Error(`${res.status}`);
                 }
             })
             .catch((err) => alert(err));
@@ -77,7 +83,7 @@ const InitLoginPage = () => {
                 </button>
                 <button onClick={() => {
                     const rand = Math.floor(Math.random() * 100000);
-                    document.cookie = `session=${rand}; path=/`;
+                    document.cookie = `id=${rand}; path=/`;
                     router.push(`/user?cookie=${document.cookie}`)
                 }}>
                     登录（测试用）

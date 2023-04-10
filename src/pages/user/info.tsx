@@ -24,7 +24,7 @@ const InitPage = () => {
         fetch(
             "api/user/cancel_account",
             {
-                method: "DELETE",
+                method: "POST",
                 credentials: 'include',
             }
         )
