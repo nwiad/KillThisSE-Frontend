@@ -25,7 +25,7 @@ const InitPage = () => {
     fetch(
         "api/user/search_by_id",
         {
-            method: "GET",
+            method: "POST",
             credentials: 'include',
             body: JSON.stringify({
                 friend_user_id: id,
@@ -51,8 +51,8 @@ const InitPage = () => {
         )
             .then((res) => res.json())
             .then((res) => {
-                if (res.code == 200) {
-                    alert(`成功添加好友`)
+                if (res.code === 0) {
+                    alert(`成功发送请求`)
                 } else {
                     throw new Error(`${res.info}`);
                 }

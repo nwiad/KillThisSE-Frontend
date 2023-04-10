@@ -73,7 +73,7 @@ const InitPage = () => {
                 return res.json()
             })
             .then((res) => {
-                if (res.code == 200) {
+                if (res.code == 0) {
                     alert(`成功修改用户名为${newname}`)
                 } else {
                     throw new Error(`${res.info}`);
@@ -96,10 +96,11 @@ const InitPage = () => {
             }
         )
             .then((res) => {
+                alert('尝试修改')
                 return res.json()
             })
             .then((res) => {
-                if (res.code == 200) {
+                if (res.code == 0) {
                     alert(`成功修改密码`)
                 } else {
                     throw new Error(`${res.info}`);
@@ -124,7 +125,7 @@ const InitPage = () => {
                 return res.json()
             })
             .then((res) => {
-                if (res.code == 200) {
+                if (res.code === 0) {
                     alert(`成功修改头像`)
                 } else {
                     throw new Error(`${res.info}`);
@@ -174,7 +175,7 @@ const InitPage = () => {
                 </button>
                 {showPopupAvatar && (
                     <div className="popup">
-                        <form onSubmit={() => { resetAvatar; setIsAvatarUploaded(false); setShowPopupAvatar(false); }}>
+                        <form onSubmit={() => { resetAvatar(); setIsAvatarUploaded(false); router.push(`/user/info?cookie=${cookie}`); setShowPopupAvatar(false);  }}>
                             <input className="fileupload" type="file" name="avatar" accept="image/*" onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
                             <button type="submit" disabled={!isAvatarUploaded}>上传头像</button>
                         </form>
@@ -193,7 +194,7 @@ const InitPage = () => {
                             placeholder="请输入新的用户名"
                             id="usernameinput" />
                         <span id={nameLegal ? "usernamelegaltip" : "usernameillegaltip"}>*用户名必须由3-16位字母、数字和下划线组成</span>
-                        <button onClick={() => { resetName; setShowPopupName(false); }} disabled={!nameLegal}>保存</button>
+                        <button onClick={() => { resetName(); router.push(`/user/info?cookie=${cookie}`); setShowPopupName(false);}} disabled={!nameLegal}>保存</button>
                         <button onClick={() => { setShowPopupName(false); }}>取消</button>
                     </div>
                 )}
@@ -205,7 +206,7 @@ const InitPage = () => {
                         <input type="password" value={password} onChange={(e) => { setPassword(e.target.value) }} placeholder="请输入原密码" />
                         <input type="password" value={newpassword} onChange={(e) => { checkNewPassword(e.target.value) }} placeholder="请输入新的密码" id="pwdinput" />
                         <span id={passwordLegal ? "pwdlegaltip" : "pwdillegaltip"}>*密码必须由6-16位字母、数字和下划线组成</span>
-                        <button onClick={() => { resetPassword; setShowPopupPwd(false); }}>保存</button>
+                        <button onClick={() => { resetPassword(); router.push(`/user/info?cookie=${cookie}`); setShowPopupPwd(false);  }}>保存</button>
                         <button onClick={() => { setShowPopupPwd(false); }}>取消</button>
                     </div>
                 )}
