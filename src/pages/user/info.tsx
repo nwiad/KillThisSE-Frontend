@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { nameValid, passwordValid } from "../../utils/valid";
 import Navbar from "./navbar";
+import {uploadFile} from "../../utils/oss";
 
 
 const InitPage = () => {
@@ -66,7 +67,7 @@ const InitPage = () => {
                 return res.json()
             })
             .then((res) => {
-                if (res.code == 0) {
+                if (res.code === 0) {
                     alert(`成功修改用户名为${newname}`)
                 } else {
                     throw new Error(`${res.info}`);
@@ -92,7 +93,7 @@ const InitPage = () => {
                 return res.json()
             })
             .then((res) => {
-                if (res.code == 0) {
+                if (res.code === 0) {
                     alert(`成功修改密码`)
                 } else {
                     throw new Error(`${res.info}`);
@@ -102,14 +103,20 @@ const InitPage = () => {
             .catch((err) => alert(err));
     };
 
-    const resetAvatar = () => {
+    const resetAvatar = async (pic: File|undefined) => {
+        if(pic === undefined) {
+            alert("未检测到图片");
+            return;
+        }
+        const image_url = await uploadFile(pic);
+
         fetch(
             "api/user/reset_avatar",
             {
                 method: "POST",
                 credentials: 'include',
                 body: JSON.stringify({
-                    avatar: newavatar,
+                    avatar: image_url,
                 })
             }
         )
@@ -118,7 +125,7 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    alert(`成功修改头像`)
+                    alert(`已提交，请稍后刷新`)
                 } else {
                     throw new Error(`${res.info}`);
                 }
@@ -168,7 +175,7 @@ const InitPage = () => {
                 </button>
                 {showPopupAvatar && (
                     <div className="popup">
-                        <form onSubmit={() => { resetAvatar(); setIsAvatarUploaded(false); router.push(`/user/info`); setShowPopupAvatar(false);  }}>
+                        <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false); router.push(`/user/info`); setShowPopupAvatar(false);  }}>
                             <input className="fileupload" type="file" name="avatar" accept="image/*" onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
                             <button type="submit" disabled={!isAvatarUploaded}>上传头像</button>
                         </form>
