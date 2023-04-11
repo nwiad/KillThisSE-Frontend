@@ -12,6 +12,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@types/ali-oss": "^6.16.7",
+    "ali-oss": "^6.17.1",
     "axios": "^1.2.0",
     "jest-sonar-reporter": "^2.0.0",
     "next": "13.0.4",
