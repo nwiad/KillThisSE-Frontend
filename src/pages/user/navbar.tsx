@@ -35,7 +35,7 @@ const Navbar = () => {
                 <li className="navbar_ele_l" onClick={() => {router.push(`/user/info`)}}>
                         个人中心
                 </li>
-                <li className="navbar_ele_l" onClick={() => {userLogout; router.push(`/`)}}>
+                <li className="navbar_ele_l" onClick={() => {userLogout(); router.push(`/`)}}>
                         登出
                 </li>
             </ul>

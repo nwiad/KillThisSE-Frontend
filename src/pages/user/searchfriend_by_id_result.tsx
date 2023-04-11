@@ -3,17 +3,35 @@ import Link from 'next/link';
 import { useRef, useState } from "react";
 import FriendBar from "./friendbar";
 
-interface Item {
-    id: number;
-    name: string;
-    avatar: string;
-}
-
 const InitPage = () => {
-    const [list, setList] = useState<Item[]>([]);
     const [friend, setFriend] = useState<number>();
+    const [avatar, setAvatar] = useState<string>("");    
     const router = useRouter();
     const id = router.query.id;
+
+    const getNewFriend = () => {
+        fetch(
+            "api/user/send_friend_request",
+            {
+                method: "POST",
+                credentials: 'include',
+                body: JSON.stringify({
+                    friend_user_id: id,
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.code === 0) {
+                    alert(`成功发送请求`)
+                } else {
+                    throw new Error(`${res.code}`);
+                }
+
+            })
+            .catch((err) => alert(err));
+    };
+
 
     fetch(
         "api/user/search_by_id",
@@ -27,47 +45,38 @@ const InitPage = () => {
     )
         .then((res) => res.json())
         .then((data) => {
-            setList(data.list)
-        })
-        .catch((err) => alert(err));
-
-    const getNewFriend = () => {
-        fetch(
-            "api/user/send_friend_request",
-            {
-                method: "POST",
-                credentials: 'include',
-                body: JSON.stringify({
-                    friend_id: friend,
-                })
+            if(data.code === 0){
+            setFriend(data.name);
+            setAvatar(data.avatar);
+            
+            } else {
+                throw new Error(`${data.info}`);
             }
-        )
-            .then((res) => res.json())
-            .then((res) => {
-                if (res.code === 0) {
-                    alert(`成功发送请求`)
-                } else {
-                    throw new Error(`${res.info}`);
-                }
+        })
+        .catch((err) => {alert(err); router.push(`/user/searchfriend`)});
+        
 
-            })
-            .catch((err) => alert(err));
-    };
-
-    return (
-        <div>
-            <FriendBar />
+        return (
             <div>
-                {list.map((item: Item) => (
+                <FriendBar />
+                <div>
                     <div className="friend">
-                        <img className="friendavatar" src={`${item.avatar}`}></img>
-                        {item.name}
-                        <button onClick={() => { setFriend(item.id); getNewFriend; }}>添加好友</button>
+                            <img className="friendavatar" src={`${avatar}`} style={{
+                                width: '100px',
+                                height: '100px',
+                                borderRadius: '50%',
+                                backgroundImage: `url(${avatar})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                border: '2px solid #ccc',
+                                margin: '50px auto',
+                            }}></img>
+                            <p>{friend}</p>
+                            <button onClick={() => {getNewFriend(); }}>添加好友</button>
                     </div>
-                ))}
+                </div>
             </div>
-        </div>
-    );
+        );
 };
 
 export default InitPage;

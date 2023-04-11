@@ -138,6 +138,7 @@ const InitPage = () => {
         .then((data) => {
             setName(data.name)
             setAvatar(data.avatar)
+
         })
         .catch((err) => alert(err));
 
