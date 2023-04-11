@@ -3,14 +3,14 @@ import Link from 'next/link';
 import { useRef, useState } from "react";
 import Navbar from "./navbar";
 
-interface Item {
-    id: number;
+interface Friend {
+    user_id: number;
     name: string;
     avatar: string;
-}
+  }
   
-const FriendBar = ({cookie} : {cookie:string|string[]|undefined}) => {
-    const [list, setList] = useState<Item[]>([]);
+const FriendBar = () => {
+    const [friendsList, setFriendsList] = useState([]);
 
     const router = useRouter();
     
@@ -23,7 +23,16 @@ const FriendBar = ({cookie} : {cookie:string|string[]|undefined}) => {
     )
         .then((res) => res.json())
         .then((data) => {
-            setList(data.friends)
+            if (data.code === 0){
+                const friends = data.friends.map((friend : Friend) => ({
+                    user_id: friend.user_id,
+                    name: friend.name,
+                    avatar: friend.avatar
+                }));
+                setFriendsList(friends);
+            } else {
+                throw new Error(`${data.info}`);
+            }
         })
         .catch((err) => alert(err));
         
@@ -38,7 +47,7 @@ const FriendBar = ({cookie} : {cookie:string|string[]|undefined}) => {
                     <li className="newfriend" onClick={() => {router.push(`/user/acceptfriend`)}}>
                         收到的好友邀请
                     </li>
-                    {list?.map((item: Item) => (
+                    {friendsList?.map((item: Friend) => (
                         <li className="friend">
                             <img className="friendavatar" src={`${item.avatar}`}></img>
                             {item.name}

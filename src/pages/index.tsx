@@ -18,7 +18,7 @@ const InitLoginPage = () => {
 
     const userLogin = () => {
         const rand = Math.floor(Math.random() * 100000);
-        document.cookie = `session=${rand}; path=/`;
+        document.cookie = `session=${rand}; path=/;`;
         fetch(
             "api/user/login",
             {
@@ -33,9 +33,9 @@ const InitLoginPage = () => {
             .then((res) => {return res.json()})
             .then((res) => {
                 if(res.code === 0){
-                    router.push(`/user?cookie=${document.cookie}`)
+                    router.push(`/user`)
                 } else{
-                    throw new Error(`${res.status}`);
+                    throw new Error(`${res.code} cookie=${document.cookie}`);
                 }
             })
             .catch((err) => alert(err));
@@ -83,8 +83,7 @@ const InitLoginPage = () => {
                 </button>
                 <button onClick={() => {
                     const rand = Math.floor(Math.random() * 100000);
-                    document.cookie = `id=${rand}; path=/`;
-                    router.push(`/user?cookie=${document.cookie}`)
+                    router.push(`/user`)
                 }}>
                     登录（测试用）
                 </button>

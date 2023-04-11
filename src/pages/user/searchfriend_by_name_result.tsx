@@ -4,13 +4,13 @@ import { useRef, useState } from "react";
 import FriendBar from "./friendbar";
 
 interface Item {
-    id: number;
+    user_id: number;
     name: string;
     avatar: string;
 }
 
 const InitPage = () => {
-    const [list, setList] = useState<Item[]>([]);
+    const [friendsList, setFriendsList] = useState<Item[]>([]);
     const [friend, setFriend] = useState<number>();
     const router = useRouter();
     const name = router.query.name;
@@ -27,7 +27,12 @@ const InitPage = () => {
     )
         .then((res) => res.json())
         .then((data) => {
-            setList(data.list)
+            const friends = data.friends.map((friend : Item) => ({
+                user_id: friend.user_id,
+                name: friend.name,
+                avatar: friend.avatar
+            }));
+            setFriendsList(friends);
         })
         .catch((err) => alert(err));
         
@@ -58,11 +63,11 @@ const InitPage = () => {
         <div>
             <FriendBar />
             <div>
-                {list.map((item: Item) => (
+                {friendsList?.map((friend) => (
                     <div className="friend">
-                        <img className="friendavatar" src={`${item.avatar}`}></img>
-                        {item.name}
-                        <button onClick={() => { setFriend(item.id); getNewFriend; }}>添加好友</button>
+                        <img className="friendavatar" src={`${friend.avatar}`}></img>
+                        {friend.name}
+                        <button onClick={() => { setFriend(friend.user_id); getNewFriend; }}>添加好友</button>
                     </div>
                 ))}
             </div>
