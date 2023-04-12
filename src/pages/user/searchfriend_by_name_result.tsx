@@ -8,7 +8,6 @@ const InitPage = () => {
     const [avatar, setAvatar] = useState<string>("");    
     const router = useRouter();
     const name = router.query.name;
-    alert(`查找${name}的请求发送中`);
 
     const getNewFriend = () => {
         fetch(
@@ -26,7 +25,7 @@ const InitPage = () => {
                 if (res.code === 0) {
                     alert(`成功发送请求`)
                 } else {
-                    throw new Error(`${res.code}`);
+                    throw new Error(`${res.info}`);
                 }
 
             })
@@ -47,7 +46,7 @@ const InitPage = () => {
         .then((res) => res.json())
         .then((data) => {
             if(data.code === 0){
-            setFriend(data.id);
+            setFriend(data.user_id);
             setAvatar(data.avatar);
             
             } else {
@@ -73,6 +72,7 @@ const InitPage = () => {
                                 margin: '50px auto',
                             }}></img>
                             <p>{name}</p>
+                            <p>id:{friend}</p>
                             <button onClick={() => { setFriend(friend); getNewFriend(); }}>添加好友</button>
                     </div>
                 </div>

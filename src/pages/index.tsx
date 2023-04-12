@@ -35,7 +35,7 @@ const InitLoginPage = () => {
                 if(res.code === 0){
                     router.push(`/user`)
                 } else{
-                    throw new Error(`${res.code} cookie=${document.cookie}`);
+                    throw new Error(`${res.info}`);
                 }
             })
             .catch((err) => alert(err));

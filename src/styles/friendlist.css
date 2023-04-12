@@ -8,6 +8,7 @@
     margin: 0;
     padding: 0;
     background-color: #535353;
+    
 }
 
 .friendlist li {
@@ -16,8 +17,8 @@
     width: 100%;
     display: block;
     color: white;
-    text-align: center;
-    padding: 20px;
+    padding: 0;
+    text-align:center;
     text-decoration: none;
     margin: auto;
     left: 0;
@@ -33,22 +34,37 @@
 }
 
 .friendlist li:hover {
-    background-color: #d4d4d4;
+    background-color: #888888;
 }
 
-.navbar_ele_l {
-    float: right;
-    text-align: center;
-    padding: 20px;
-    text-decoration: none;
-    margin-left: auto;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:20px;
-    font-weight: 300;
-    border-style:solid;
-    border-width:1px;
-    border-right-color: #0660e9;
-    border-left-color: #589bff;
-    border-top-color: #0660e9;
-    border-bottom-color: #0660e9;
+.friendlist img{
+    float: left;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #ccc;
+    margin-left: 20px;
+    margin-top: 10px;
 }
+
+.friendlist p{
+    float: left;
+    margin: 20px 20px;
+}
+
+.deleteFriend {
+    margin-top: 100px;
+    margin-left: 50%;
+    text-align:center;
+    height: 50px;
+    width: 300px;
+    background-color: #e90606;
+    border-radius: 5px;
+    border: 1px solid #7d7d7d;
+    color: rgb(255, 255, 255);
+    font-size:14px;
+}
+.deleteFriend:hover {background-color: #af0000}
+.deleteFriend:active {background-color: #5a0101}

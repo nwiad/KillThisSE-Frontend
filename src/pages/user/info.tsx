@@ -210,7 +210,7 @@ const InitPage = () => {
                         <button onClick={() => { setShowPopupPwd(false); }}>取消</button>
                     </div>
                 )}
-                <button className="delete" onClick={deleteUser}>
+                <button className="delete" onClick={() => {deleteUser()}}>
                     注销本用户
                 </button>
             </div>
