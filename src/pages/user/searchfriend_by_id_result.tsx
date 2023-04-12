@@ -54,27 +54,27 @@ const InitPage = () => {
         .catch((err) => {alert(err); 
             router.push("/user/searchfriend");});
         
-        return (
+    return (
+        <div>
+            <FriendBar />
             <div>
-                <FriendBar />
-                <div>
-                    <div className="friend">
-                        <img className="friendavatar" src={"${avatar}"} style={{
-                            width: "100px",
-                            height: "100px",
-                            borderRadius: "50%",
-                            backgroundImage: "url(${avatar})",
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                            border: "2px solid #ccc",
-                            margin: "50px auto",
-                        }}></img>
-                        <p>{friend}</p>
-                        <button onClick={() => {getNewFriend(); }}>添加好友</button>
-                    </div>
+                <div className="friend">
+                    <img className="friendavatar" src={"${avatar}"} style={{
+                        width: "100px",
+                        height: "100px",
+                        borderRadius: "50%",
+                        backgroundImage: "url(${avatar})",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        border: "2px solid #ccc",
+                        margin: "50px auto",
+                    }}></img>
+                    <p>{friend}</p>
+                    <button onClick={() => {getNewFriend(); }}>添加好友</button>
                 </div>
             </div>
-        );
+        </div>
+    );
 };
 
 export default InitPage;

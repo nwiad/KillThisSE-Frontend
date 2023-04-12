@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import FriendBar from "./friendbar";
 
 const InitPage = () => {
@@ -21,10 +20,10 @@ const InitPage = () => {
                 })
             }
         )
-            .then((res) => {return res.json()})
+            .then((res) => {return res.json();})
             .then((res) => {
                 if (res.code === 0) {
-                    alert("成功发送请求")
+                    alert("成功发送请求");
                 } else {
                     throw new Error("${res.info}");
                 }
@@ -63,38 +62,38 @@ const InitPage = () => {
         .then((res) => res.json())
         .then((data) => {
             if(data.code === 0){
-            setFriend(data.user_id);
-            setAvatar(data.avatar);
+                setFriend(data.user_id);
+                setAvatar(data.avatar);
             
             } else {
                 throw new Error("${data.info}");
             }
         })
-        .catch((err) => {alert(err); router.push("/user/searchfriend")});
+        .catch((err) => {alert(err); router.push("/user/searchfriend");});
         
 
-        return (
+    return (
+        <div>
+            <FriendBar />
             <div>
-                <FriendBar />
-                <div>
-                    <div className="friend">
-                            <img className="friendavatar" src={"${avatar}"} style={{
-                                width: "100px",
-                                height: "100px",
-                                borderRadius: "50%",
-                                backgroundImage: "url(${avatar})",
-                                backgroundSize: "cover",
-                                backgroundPosition: "center",
-                                border: "2px solid #ccc",
-                                margin: "50px auto",
-                            }}></img>
-                            <p>{name}</p>
-                            <p>id:{friend}</p>
-                            <button onClick={() => { setFriend(friend); getNewFriend(); }} disabled={id===friend}>添加好友</button>
-                    </div>
+                <div className="friend">
+                    <img className="friendavatar" src={"${avatar}"} style={{
+                        width: "100px",
+                        height: "100px",
+                        borderRadius: "50%",
+                        backgroundImage: "url(${avatar})",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        border: "2px solid #ccc",
+                        margin: "50px auto",
+                    }}></img>
+                    <p>{name}</p>
+                    <p>id:{friend}</p>
+                    <button onClick={() => { setFriend(friend); getNewFriend(); }} disabled={id===friend}>添加好友</button>
                 </div>
             </div>
-        );
+        </div>
+    );
 };
 
 export default InitPage;
