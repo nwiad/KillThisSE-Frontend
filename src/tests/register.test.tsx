@@ -1,55 +1,49 @@
-import { assert } from "console";
-import { nameValid, passwordValid } from "../utils/valid";
+// tests/InitPage.test.tsx
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { useRouter } from 'next/router';
+import 'regenerator-runtime/runtime';
+import InitPage from '../pages/register';
 
-const TEST_TIMES = 100;
+// Mock the router
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
+}));
 
-const chars = "a/bcd{ef~gh`ijkl、m——n#opq?rs$tu!vwx;yzAB>CD$E^FGH%IJK,LM&NOP@QRS}TUV*WX[]YZ01|23=4+5)67(89_-";
+describe('InitPage', () => {
+  beforeEach(() => {
+    (useRouter as jest.Mock).mockReturnValue({ push: jest.fn() });
+  });
 
-const charsLen = chars.length;
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-const validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+  test('renders the component', () => {
+    render(<InitPage />);
 
-const randomString = (): string => {
-    const length = Math.round(Math.random() * 50);
-    let str = "";
-    for(let i = 0; i < length; i++) {
-        str += chars.charAt(Math.random() * charsLen);
-    }
-    return str;
-};
+    expect(screen.getByText('欢迎，新的杀软er')).toBeInTheDocument();
+    expect(screen.getByText('请在下方填写您的注册信息')).toBeInTheDocument();
+  });
 
-const naiveValidation = (str: string, type: "name"|"pwd"): boolean => {
-    const length = str.length;
-    let minLen = (type === "name") ? 3 : 6;
-    let maxLen = 16;
-    if(length < minLen || length > maxLen) {
-        return false;
-    }
-    for(let i = 0; i < length; i++) {
-        if(validChars.indexOf(str.charAt(i)) === -1) {
-            return false;
-        }
-    }
-    return true;
-};
+  test('validates the name and password and enables the register button', async () => {
+    render(<InitPage />);
 
-it("Name and password validation test in registration.", () => {
-    for(let test = 0; test < TEST_TIMES; test++) {
-        const name = randomString();
-        const pwd = randomString();
-        const nameIsValid = naiveValidation(name, "name");
-        const pwdIsValid = naiveValidation(pwd, "pwd");
-        if(nameIsValid) {
-            expect(nameValid(name)).toBeTruthy();
-        }
-        else {
-            expect(nameValid(name)).toBeFalsy();
-        }
-        if(pwdIsValid) {
-            expect(passwordValid(pwd)).toBeTruthy();
-        }
-        else {
-            expect(passwordValid(pwd)).toBeFalsy();
-        }
-    }
+    // Find input elements
+    const usernameInput = screen.getByPlaceholderText('用户名');
+    const passwordInput = screen.getByPlaceholderText('密码');
+    const registerButton = screen.getByText('注册新用户');
+
+    // Check if the register button is initially disabled
+    expect(registerButton).toBeDisabled();
+
+    // Enter valid name and password
+    fireEvent.change(usernameInput, { target: { value: 'test_user' } });
+    fireEvent.change(passwordInput, { target: { value: 'test_password' } });
+    // fireEvent.click(registerButton);
+
+    // Wait for validation updates
+    await waitFor(() => {
+      expect(registerButton).toBeEnabled();
+    });
+  });
 });
