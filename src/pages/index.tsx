@@ -13,7 +13,7 @@ const InitLoginPage = () => {
 
     const userLogin = () => {
         const rand = Math.floor(Math.random() * 100000);
-        document.cookie = "session=${rand}; path=/;";
+        document.cookie = `session=${rand}; path=/;`;
         fetch(
             "api/user/login",
             {
@@ -28,7 +28,7 @@ const InitLoginPage = () => {
             .then((res) => {return res.json();})
             .then((res) => {
                 if(res.code === 0){
-                    router.push(`/user`);
+                    router.push("/user");
                 } else{
                     document.cookie = "session=logout; path=/;";
                     throw new Error(`${res.info}`);
@@ -44,7 +44,7 @@ const InitLoginPage = () => {
 
     const checkPassword = (password_: string) => {
         setPassword(password_);
-
+        // alert(document.cookie);
         setPasswordLegal(passwordValid(password_));
     };
 

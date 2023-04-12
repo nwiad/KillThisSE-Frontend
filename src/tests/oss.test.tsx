@@ -34,5 +34,5 @@ describe("uploadFile", () => {
             );
         };
         render(<TestComponent />);
-        });
+    });
 });

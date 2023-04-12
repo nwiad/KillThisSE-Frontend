@@ -25,7 +25,7 @@ const InitPage = () => {
                 if (res.code === 0) {
                     alert("成功发送请求");
                 } else {
-                    throw new Error("${res.info}");
+                    throw new Error(`${res.info}`);
                 }
 
             })
@@ -44,7 +44,7 @@ const InitPage = () => {
             if(data.code === 0){
                 setID(data.user_id);            
             } else {
-                throw new Error("${data.info}");
+                throw new Error(`${data.info}`);
             }
         })
         .catch((err) => {alert(err); });
@@ -66,7 +66,7 @@ const InitPage = () => {
                 setAvatar(data.avatar);
             
             } else {
-                throw new Error("${data.info}");
+                throw new Error(`${data.info}`);
             }
         })
         .catch((err) => {alert(err); router.push("/user/searchfriend");});
@@ -77,11 +77,11 @@ const InitPage = () => {
             <FriendBar />
             <div>
                 <div className="friend">
-                    <img className="friendavatar" src={"${avatar}"} style={{
+                    <img className="friendavatar" src={`${avatar}`} style={{
                         width: "100px",
                         height: "100px",
                         borderRadius: "50%",
-                        backgroundImage: "url(${avatar})",
+                        backgroundImage: `url(${avatar})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         border: "2px solid #ccc",

@@ -30,7 +30,7 @@ const FriendBar = () => {
                     }));
                     setFriendsList(friends);
                 } else {
-                    throw new Error("${data.info}");
+                    throw new Error(`${data.info}`);
                 }
             })
             .catch((err) => alert(err));
@@ -52,8 +52,8 @@ const FriendBar = () => {
                         收到的好友邀请
                     </li>
                     {friendsList?.map((item: Friend) => (
-                        <li key={item.user_id} className="friend" onClick={() => { router.push("/user/friendinfo?id=${item.user_id}"); }}>
-                            <img className="friendavatar" src={"${item.avatar}"}></img>
+                        <li key={item.user_id} className="friend" onClick={() => { router.push(`/user/friendinfo?id=${item.user_id}`); }}>
+                            <img className="friendavatar" src={`${item.avatar}`}></img>
                             <p>{item.name}</p>
                         </li>
                     ))}

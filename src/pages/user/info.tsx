@@ -33,7 +33,7 @@ const InitPage = () => {
                 if (res.ok) {
                     alert("注销成功");
                 } else {
-                    throw new Error("Request failed with status ${res.status}");
+                    throw new Error(`Request failed with status ${res.status}`);
                 }
             })
             .catch((err) => alert(err));
@@ -68,9 +68,9 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    alert("成功修改用户名为${newname}");
+                    alert(`成功修改用户名为${newname}`);
                 } else {
-                    throw new Error("${res.info}");
+                    throw new Error(`${res.info}`);
                 }
 
             })
@@ -97,7 +97,7 @@ const InitPage = () => {
                 if (res.code === 0) {
                     alert("成功修改密码");
                 } else {
-                    throw new Error("${res.info}");
+                    throw new Error(`${res.info}`);
                 }
 
             })
@@ -129,7 +129,7 @@ const InitPage = () => {
                 if (res.code === 0) {
                     alert("已提交，请稍后刷新");
                 } else {
-                    throw new Error("${res.info}");
+                    throw new Error(`${res.info}`);
                 }
 
             })
@@ -162,7 +162,7 @@ const InitPage = () => {
                             width: "100px",
                             height: "100px",
                             borderRadius: "50%",
-                            backgroundImage: "url(${avatar})",
+                            backgroundImage: `url(${avatar})`,
                             backgroundSize: "cover",
                             backgroundPosition: "center",
                             border: "2px solid #ccc",

@@ -22,7 +22,7 @@ const InitPage = () => {
                 if (data.code === 0) {
                     alert("成功");
                 } else {
-                    throw new Error("${data.info}");
+                    throw new Error(`${data.info}`);
                 }
             })
             .catch((err) => alert(err));

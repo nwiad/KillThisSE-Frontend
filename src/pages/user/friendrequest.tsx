@@ -28,7 +28,7 @@ const InitPage = () => {
                 if (data.code === 0) {
                     setRequests(data.requests); // 更新 requests 状态
                 } else {
-                    throw new Error("${data.info}");
+                    throw new Error(`${data.info}`);
                 }
             })
             .catch((err) => alert(err));
@@ -50,7 +50,7 @@ const InitPage = () => {
             .then((data) => {
                 if (data.code === 0) {
                 } else {
-                    throw new Error("${data.info}");
+                    throw new Error(`${data.info}`);
                 }
             })
             .catch((err) => alert(err));
@@ -64,7 +64,7 @@ const InitPage = () => {
             <ul className="requests">
                 {requests.map((request) => (
                     <li key = {request.user_id}  className="request">
-                        <img src={"${request.avatar}"} />
+                        <img src={`${request.avatar}`} />
                         <p>{request.name}</p>
                         <p>id:{request.user_id}</p>
                         <button className="reject" onClick={() => { sendRespond(request.user_id,"reject"); }}> 拒绝 </button>

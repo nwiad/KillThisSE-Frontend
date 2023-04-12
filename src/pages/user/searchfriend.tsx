@@ -16,8 +16,8 @@ const InitPage = () => {
                     value={friend}
                     onChange={(e) => setFriend(e.target.value)}
                 />
-                <button className="search" onClick={() => { router.push("/user/searchfriend_by_id_result?id=${friend}"); }}>按id查找</button>
-                <button className="search" onClick={() => { router.push("/user/searchfriend_by_name_result?name=${friend}"); }}>按用户名查找</button>
+                <button className="search" onClick={() => { router.push(`/user/searchfriend_by_id_result?id=${friend}`); }}>按id查找</button>
+                <button className="search" onClick={() => { router.push(`/user/searchfriend_by_name_result?name=${friend}`); }}>按用户名查找</button>
             </div>
         </div>
     );
