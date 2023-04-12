@@ -28,17 +28,17 @@ const InitLoginPage = () => {
             .then((res) => {return res.json();})
             .then((res) => {
                 if(res.code === 0){
-                    router.push("/user");
+                    router.push(`/user`);
                 } else{
-                    throw new Error("${res.info}");
+                    document.cookie = "session=logout; path=/;";
+                    throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => {alert(err); document.cookie = "session=logout; path=/;";});
     };
 
     const checkName = (name_: string) => {
         setName(name_);
-
         setNameLegal(nameValid(name_));
     };
 
@@ -73,7 +73,7 @@ const InitLoginPage = () => {
                     value={password}
                     onChange={(e) => checkPassword(e.target.value)}
                 />
-                <button onClick={userLogin} disabled={!nameLegal || !passwordLegal}>
+                <button onClick={userLogin} disabled={!nameLegal || !passwordLegal || document.cookie.match(/session=(\d+)/) !== null}>
                     登录
                 </button>
                 <button onClick={() => {

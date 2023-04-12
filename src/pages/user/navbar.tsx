@@ -5,6 +5,7 @@ const Navbar = () => {
     const router = useRouter();
 
     const userLogout = () => {
+
         fetch(
             "api/user/logout",
             {
@@ -15,6 +16,7 @@ const Navbar = () => {
             .then((res) => {
                 if(res.ok){
                     router.push("/");
+                    document.cookie = "session=logout; path=/;"
                 }   else {
                     throw new Error("Request failed with status ${res.status}");
                 }
