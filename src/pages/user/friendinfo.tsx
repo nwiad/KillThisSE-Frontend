@@ -8,8 +8,8 @@ const InitPage = () => {
     const router = useRouter();
     const id = router.query.id;
 
-    const sendDelete = () => {
-        fetch(
+    const sendDelete = async () => {
+        await fetch(
             "api/user/del_friend",
             {
                 method: "POST",
@@ -28,12 +28,13 @@ const InitPage = () => {
                 }
             })
             .catch((err) => alert(err));
+            router.push(`/user/friendindex`)
     }
 
     return (
         <div>
             <FriendBar />
-            <button className="deleteFriend" onClick={() => {sendDelete();router.push(`/user/friendindex`)}}>
+            <button className="deleteFriend" onClick={() => {sendDelete();}}>
                     删除此好友
             </button>
         </div>

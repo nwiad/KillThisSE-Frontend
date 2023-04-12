@@ -35,7 +35,7 @@ const FriendBar = () => {
                 }
             })
             .catch((err) => alert(err));
-    })
+    },[])
 
     return (
         <div style={{ padding: 12 }}>
@@ -53,7 +53,7 @@ const FriendBar = () => {
                         收到的好友邀请
                     </li>
                     {friendsList?.map((item: Friend) => (
-                        <li className="friend" onClick={() => {router.push(`/user/friendinfo?id=${item.user_id}`)}}>
+                        <li className="friend" onClick={() => { router.push(`/user/friendinfo?id=${item.user_id}`) }}>
                             <img className="friendavatar" src={`${item.avatar}`}></img>
                             <p>{item.name}</p>
                         </li>

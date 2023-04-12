@@ -21,8 +21,8 @@ const InitPage = () => {
 
     const router = useRouter();
 
-    const deleteUser = () => {
-        fetch(
+    const deleteUser = async () => {
+        await fetch(
             "api/user/cancel_account",
             {
                 method: "POST",
@@ -32,12 +32,12 @@ const InitPage = () => {
             .then((res) => {
                 if (res.ok) {
                     alert("注销成功")
-                    router.push("/")
                 } else {
                     throw new Error(`Request failed with status ${res.status}`);
                 }
             })
             .catch((err) => alert(err));
+            router.push("/")
     };
 
     const checkName = (name_: string) => {
@@ -52,8 +52,8 @@ const InitPage = () => {
         setPasswordLegal(passwordValid(password_));
     };
 
-    const resetName = () => {
-        fetch(
+    const resetName = async () => {
+        await fetch(
             "api/user/reset_name",
             {
                 method: "POST",
@@ -75,10 +75,11 @@ const InitPage = () => {
 
             })
             .catch((err) => alert(err));
+            router.push(`/user/info`);
     };
 
-    const resetPassword = () => {
-        fetch(
+    const resetPassword = async () => {
+        await fetch(
             "api/user/reset_password",
             {
                 method: "POST",
@@ -101,6 +102,7 @@ const InitPage = () => {
 
             })
             .catch((err) => alert(err));
+            router.push(`/user/info`);
     };
 
     const resetAvatar = async (pic: File|undefined) => {
@@ -110,7 +112,7 @@ const InitPage = () => {
         }
         const image_url = await uploadFile(pic);
 
-        fetch(
+        await fetch(
             "api/user/reset_avatar",
             {
                 method: "POST",
@@ -132,6 +134,7 @@ const InitPage = () => {
 
             })
             .catch((err) => alert(err));
+            router.push(`/user/info`);
     };
 
     fetch(
@@ -175,7 +178,7 @@ const InitPage = () => {
                 </button>
                 {showPopupAvatar && (
                     <div className="popup">
-                        <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false); router.push(`/user/info`); setShowPopupAvatar(false);  }}>
+                        <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false);  setShowPopupAvatar(false);  }}>
                             <input className="fileupload" type="file" name="avatar" accept="image/*" onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
                             <button type="submit" disabled={!isAvatarUploaded}>上传头像</button>
                         </form>
@@ -194,7 +197,7 @@ const InitPage = () => {
                             placeholder="请输入新的用户名"
                             id="usernameinput" />
                         <span id={nameLegal ? "usernamelegaltip" : "usernameillegaltip"}>*用户名必须由3-16位字母、数字和下划线组成</span>
-                        <button onClick={() => { resetName(); router.push(`/user/info`); setShowPopupName(false);}} disabled={!nameLegal}>保存</button>
+                        <button onClick={() => { resetName(); setShowPopupName(false);}} disabled={!nameLegal}>保存</button>
                         <button onClick={() => { setShowPopupName(false); }}>取消</button>
                     </div>
                 )}
@@ -206,7 +209,7 @@ const InitPage = () => {
                         <input type="password" value={password} onChange={(e) => { setPassword(e.target.value) }} placeholder="请输入原密码" />
                         <input type="password" value={newpassword} onChange={(e) => { checkNewPassword(e.target.value) }} placeholder="请输入新的密码" id="pwdinput" />
                         <span id={passwordLegal ? "pwdlegaltip" : "pwdillegaltip"}>*密码必须由6-16位字母、数字和下划线组成</span>
-                        <button onClick={() => { resetPassword(); router.push(`/user/info`); setShowPopupPwd(false);  }}>保存</button>
+                        <button onClick={() => { resetPassword();  setShowPopupPwd(false);  }}>保存</button>
                         <button onClick={() => { setShowPopupPwd(false); }}>取消</button>
                     </div>
                 )}

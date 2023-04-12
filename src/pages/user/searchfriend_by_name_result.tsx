@@ -5,6 +5,7 @@ import FriendBar from "./friendbar";
 
 const InitPage = () => {
     const [friend, setFriend] = useState<number>();
+    const [id, setID] = useState<number>();
     const [avatar, setAvatar] = useState<string>("");    
     const router = useRouter();
     const name = router.query.name;
@@ -20,7 +21,7 @@ const InitPage = () => {
                 })
             }
         )
-            .then((res) => res.json())
+            .then((res) => {return res.json()})
             .then((res) => {
                 if (res.code === 0) {
                     alert(`成功发送请求`)
@@ -32,6 +33,22 @@ const InitPage = () => {
             .catch((err) => alert(err));
     };
 
+    fetch(
+        "api/user/get_profile",
+        {
+            method: "GET",
+            credentials: 'include',
+        }
+    )
+        .then((res) => res.json())
+        .then((data) => {
+            if(data.code === 0){
+                setID(data.user_id);            
+            } else {
+                throw new Error(`${data.info}`);
+            }
+        })
+        .catch((err) => {alert(err); });
 
     fetch(
         "api/user/search_by_name",
@@ -73,7 +90,7 @@ const InitPage = () => {
                             }}></img>
                             <p>{name}</p>
                             <p>id:{friend}</p>
-                            <button onClick={() => { setFriend(friend); getNewFriend(); }}>添加好友</button>
+                            <button onClick={() => { setFriend(friend); getNewFriend(); }} disabled={id===friend}>添加好友</button>
                     </div>
                 </div>
             </div>
