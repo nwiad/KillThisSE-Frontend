@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import Link from 'next/link';
+import Link from "next/link";
 import { useRef, useState } from "react";
 import Navbar from "./navbar";
 

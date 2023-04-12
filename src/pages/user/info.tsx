@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { uploadFile } from "../../utils/oss";
 import { nameValid, passwordValid } from "../../utils/valid";
 import Navbar from "./navbar";
-import {uploadFile} from "../../utils/oss";
 
 
 const InitPage = () => {
@@ -26,18 +26,18 @@ const InitPage = () => {
             "api/user/cancel_account",
             {
                 method: "POST",
-                credentials: 'include',
+                credentials: "include",
             }
         )
             .then((res) => {
                 if (res.ok) {
-                    alert("注销成功")
+                    alert("注销成功");
                 } else {
-                    throw new Error(`Request failed with status ${res.status}`);
+                    throw new Error("Request failed with status ${res.status}");
                 }
             })
             .catch((err) => alert(err));
-            router.push("/")
+        router.push("/");
     };
 
     const checkName = (name_: string) => {
@@ -57,25 +57,25 @@ const InitPage = () => {
             "api/user/reset_name",
             {
                 method: "POST",
-                credentials: 'include',
+                credentials: "include",
                 body: JSON.stringify({
                     name: newname,
                 })
             }
         )
             .then((res) => {
-                return res.json()
+                return res.json();
             })
             .then((res) => {
                 if (res.code === 0) {
-                    alert(`成功修改用户名为${newname}`)
+                    alert("成功修改用户名为${newname}");
                 } else {
-                    throw new Error(`${res.info}`);
+                    throw new Error("${res.info}");
                 }
 
             })
             .catch((err) => alert(err));
-            router.push(`/user/info`);
+        router.push("/user/info");
     };
 
     const resetPassword = async () => {
@@ -83,7 +83,7 @@ const InitPage = () => {
             "api/user/reset_password",
             {
                 method: "POST",
-                credentials: 'include',
+                credentials: "include",
                 body: JSON.stringify({
                     old_pwd: password,
                     new_pwd: newpassword,
@@ -91,18 +91,18 @@ const InitPage = () => {
             }
         )
             .then((res) => {
-                return res.json()
+                return res.json();
             })
             .then((res) => {
                 if (res.code === 0) {
-                    alert(`成功修改密码`)
+                    alert("成功修改密码");
                 } else {
-                    throw new Error(`${res.info}`);
+                    throw new Error("${res.info}");
                 }
 
             })
             .catch((err) => alert(err));
-            router.push(`/user/info`);
+        router.push("/user/info");
     };
 
     const resetAvatar = async (pic: File|undefined) => {
@@ -116,38 +116,38 @@ const InitPage = () => {
             "api/user/reset_avatar",
             {
                 method: "POST",
-                credentials: 'include',
+                credentials: "include",
                 body: JSON.stringify({
                     avatar: image_url,
                 })
             }
         )
             .then((res) => {
-                return res.json()
+                return res.json();
             })
             .then((res) => {
                 if (res.code === 0) {
-                    alert(`已提交，请稍后刷新`)
+                    alert("已提交，请稍后刷新");
                 } else {
-                    throw new Error(`${res.info}`);
+                    throw new Error("${res.info}");
                 }
 
             })
             .catch((err) => alert(err));
-            router.push(`/user/info`);
+        router.push("/user/info");
     };
 
     fetch(
         "api/user/get_profile",
         {
             method: "GET",
-            credentials: 'include',
+            credentials: "include",
         }
     )
         .then((res) => res.json())
         .then((data) => {
-            setName(data.name)
-            setAvatar(data.avatar)
+            setName(data.name);
+            setAvatar(data.avatar);
 
         })
         .catch((err) => alert(err));
@@ -159,14 +159,14 @@ const InitPage = () => {
                 {avatar && (
                     <div
                         style={{
-                            width: '100px',
-                            height: '100px',
-                            borderRadius: '50%',
-                            backgroundImage: `url(${avatar})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            border: '2px solid #ccc',
-                            margin: '50px auto',
+                            width: "100px",
+                            height: "100px",
+                            borderRadius: "50%",
+                            backgroundImage: "url(${avatar})",
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            border: "2px solid #ccc",
+                            margin: "50px auto",
                         }}
                     />
                 )}
@@ -185,7 +185,7 @@ const InitPage = () => {
                         <button onClick={() => { setShowPopupAvatar(false); }}>取消</button>
                     </div>
                 )}
-                <button className="resetName" onClick={() => { setShowPopupName(true); setNewName("")}}>
+                <button className="resetName" onClick={() => { setShowPopupName(true); setNewName("");}}>
                     修改用户名
                 </button>
                 {showPopupName && (
@@ -193,7 +193,7 @@ const InitPage = () => {
                         <input
                             type="text"
                             value={newname}
-                            onChange={(e) => { checkName(e.target.value) }}
+                            onChange={(e) => { checkName(e.target.value); }}
                             placeholder="请输入新的用户名"
                             id="usernameinput" />
                         <span id={nameLegal ? "usernamelegaltip" : "usernameillegaltip"}>*用户名必须由3-16位字母、数字和下划线组成</span>
@@ -201,19 +201,19 @@ const InitPage = () => {
                         <button onClick={() => { setShowPopupName(false); }}>取消</button>
                     </div>
                 )}
-                <button className="resetName" onClick={() => { setShowPopupPwd(true); setPassword(""); setNewPassword("") }}>
+                <button className="resetName" onClick={() => { setShowPopupPwd(true); setPassword(""); setNewPassword(""); }}>
                     修改密码
                 </button>
                 {showPopupPwd && (
                     <div className="popuppwd">
-                        <input type="password" value={password} onChange={(e) => { setPassword(e.target.value) }} placeholder="请输入原密码" />
-                        <input type="password" value={newpassword} onChange={(e) => { checkNewPassword(e.target.value) }} placeholder="请输入新的密码" id="pwdinput" />
+                        <input type="password" value={password} onChange={(e) => { setPassword(e.target.value); }} placeholder="请输入原密码" />
+                        <input type="password" value={newpassword} onChange={(e) => { checkNewPassword(e.target.value); }} placeholder="请输入新的密码" id="pwdinput" />
                         <span id={passwordLegal ? "pwdlegaltip" : "pwdillegaltip"}>*密码必须由6-16位字母、数字和下划线组成</span>
                         <button onClick={() => { resetPassword();  setShowPopupPwd(false);  }}>保存</button>
                         <button onClick={() => { setShowPopupPwd(false); }}>取消</button>
                     </div>
                 )}
-                <button className="delete" onClick={() => {deleteUser()}}>
+                <button className="delete" onClick={() => {deleteUser();}}>
                     注销本用户
                 </button>
             </div>

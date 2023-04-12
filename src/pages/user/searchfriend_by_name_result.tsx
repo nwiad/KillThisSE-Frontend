@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import Link from 'next/link';
+import Link from "next/link";
 import { useRef, useState } from "react";
 import FriendBar from "./friendbar";
 
@@ -15,7 +15,7 @@ const InitPage = () => {
             "api/user/send_friend_request",
             {
                 method: "POST",
-                credentials: 'include',
+                credentials: "include",
                 body: JSON.stringify({
                     friend_user_id: friend,
                 })
@@ -24,9 +24,9 @@ const InitPage = () => {
             .then((res) => {return res.json()})
             .then((res) => {
                 if (res.code === 0) {
-                    alert(`成功发送请求`)
+                    alert("成功发送请求")
                 } else {
-                    throw new Error(`${res.info}`);
+                    throw new Error("${res.info}");
                 }
 
             })
@@ -37,7 +37,7 @@ const InitPage = () => {
         "api/user/get_profile",
         {
             method: "GET",
-            credentials: 'include',
+            credentials: "include",
         }
     )
         .then((res) => res.json())
@@ -45,7 +45,7 @@ const InitPage = () => {
             if(data.code === 0){
                 setID(data.user_id);            
             } else {
-                throw new Error(`${data.info}`);
+                throw new Error("${data.info}");
             }
         })
         .catch((err) => {alert(err); });
@@ -54,7 +54,7 @@ const InitPage = () => {
         "api/user/search_by_name",
         {
             method: "POST",
-            credentials: 'include',
+            credentials: "include",
             body: JSON.stringify({
                 friend_name: name,
             })
@@ -67,10 +67,10 @@ const InitPage = () => {
             setAvatar(data.avatar);
             
             } else {
-                throw new Error(`${data.info}`);
+                throw new Error("${data.info}");
             }
         })
-        .catch((err) => {alert(err); router.push(`/user/searchfriend`)});
+        .catch((err) => {alert(err); router.push("/user/searchfriend")});
         
 
         return (
@@ -78,15 +78,15 @@ const InitPage = () => {
                 <FriendBar />
                 <div>
                     <div className="friend">
-                            <img className="friendavatar" src={`${avatar}`} style={{
-                                width: '100px',
-                                height: '100px',
-                                borderRadius: '50%',
-                                backgroundImage: `url(${avatar})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                border: '2px solid #ccc',
-                                margin: '50px auto',
+                            <img className="friendavatar" src={"${avatar}"} style={{
+                                width: "100px",
+                                height: "100px",
+                                borderRadius: "50%",
+                                backgroundImage: "url(${avatar})",
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
+                                border: "2px solid #ccc",
+                                margin: "50px auto",
                             }}></img>
                             <p>{name}</p>
                             <p>id:{friend}</p>

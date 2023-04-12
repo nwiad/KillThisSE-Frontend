@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
-import Link from 'next/link';
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./navbar";
 
 interface Friend {
@@ -18,7 +17,7 @@ const FriendBar = () => {
             "api/user/get_friends",
             {
                 method: "GET",
-                credentials: 'include',
+                credentials: "include",
             }
         )
             .then((res) => res.json())
@@ -31,11 +30,11 @@ const FriendBar = () => {
                     }));
                     setFriendsList(friends);
                 } else {
-                    throw new Error(`${data.info}`);
+                    throw new Error("${data.info}");
                 }
             })
             .catch((err) => alert(err));
-    },[])
+    },[]);
 
     return (
         <div style={{ padding: 12 }}>
@@ -43,18 +42,18 @@ const FriendBar = () => {
             <div>
                 <ul className="friendlist">
                     <li className="newfriend"
-                        onClick={() => { router.push(`/user/searchfriend`) }}
+                        onClick={() => { router.push("/user/searchfriend"); }}
                         style={{ padding: 20 }}>
                         + 添加新好友
                     </li>
                     <li className="newfriend"
-                        onClick={() => { router.push(`/user/friendrequest`) }}
+                        onClick={() => { router.push("/user/friendrequest"); }}
                         style={{ padding: 20 }}>
                         收到的好友邀请
                     </li>
                     {friendsList?.map((item: Friend) => (
-                        <li className="friend" onClick={() => { router.push(`/user/friendinfo?id=${item.user_id}`) }}>
-                            <img className="friendavatar" src={`${item.avatar}`}></img>
+                        <li key={item.user_id} className="friend" onClick={() => { router.push("/user/friendinfo?id=${item.user_id}"); }}>
+                            <img className="friendavatar" src={"${item.avatar}"}></img>
                             <p>{item.name}</p>
                         </li>
                     ))}

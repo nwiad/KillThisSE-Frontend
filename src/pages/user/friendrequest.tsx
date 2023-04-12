@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
-import Link from 'next/link';
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import FriendBar from "./friendbar";
 
 interface FriendRequest {
@@ -21,42 +20,42 @@ const InitPage = () => {
             "api/user/get_friend_requests",
             {
                 method: "GET",
-                credentials: 'include',
+                credentials: "include",
             }
         )
-            .then((res) => { return res.json() })
+            .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
                     setRequests(data.requests); // 更新 requests 状态
                 } else {
-                    throw new Error(`${data.info}`);
+                    throw new Error("${data.info}");
                 }
             })
             .catch((err) => alert(err));
-    },[])
+    },[]);
 
     const sendRespond = async (id:number, respond:string) => {
         await fetch(
             "api/user/respond_friend_request",
             {
                 method: "POST",
-                credentials: 'include',
+                credentials: "include",
                 body: JSON.stringify({
                     response: respond,
                     friend_user_id: id,
                 })
             }
         )
-            .then((res) => { return res.json() })
+            .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
                 } else {
-                    throw new Error(`${data.info}`);
+                    throw new Error("${data.info}");
                 }
             })
             .catch((err) => alert(err));
-            router.push(`/user/friendindex`);
-    }
+        router.push("/user/friendindex");
+    };
 
 
     return (
@@ -64,8 +63,8 @@ const InitPage = () => {
             <FriendBar />
             <ul className="requests">
                 {requests.map((request) => (
-                    <li className="request">
-                        <img src={`${request.avatar}`} />
+                    <li key = {request.user_id}  className="request">
+                        <img src={"${request.avatar}"} />
                         <p>{request.name}</p>
                         <p>id:{request.user_id}</p>
                         <button className="reject" onClick={() => { sendRespond(request.user_id,"reject"); }}> 拒绝 </button>

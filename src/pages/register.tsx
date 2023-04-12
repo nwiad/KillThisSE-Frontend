@@ -1,6 +1,6 @@
 import { time } from "console";
 import { useRouter } from "next/router";
-import Link from 'next/link';
+import Link from "next/link";
 import { useRef, useState } from "react";
 import { CREATE_USER_SUCCESS, FAILURE_PREFIX,CREATE_USER_FAILURE_PERFIX } from "../constants/string";
 import { request } from "../utils/network";
@@ -29,8 +29,8 @@ const InitRegisterPage = () => {
         )
             .then((res) => {
                 if(res.ok){
-                    alert(CREATE_USER_SUCCESS)
-                    router.push("/")
+                    alert(CREATE_USER_SUCCESS);
+                    router.push("/");
                 } else {
                     throw new Error(`Request failed with status ${res.status}`);
 
