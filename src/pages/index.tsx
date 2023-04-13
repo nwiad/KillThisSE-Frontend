@@ -45,7 +45,6 @@ const InitLoginPage = () => {
 
     const checkPassword = (password_: string) => {
         setPassword(password_);
-        // alert(document.cookie);
         setPasswordLegal(passwordValid(password_));
     };
 
