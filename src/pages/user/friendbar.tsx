@@ -14,13 +14,13 @@ const FriendBar = () => {
     const router = useRouter();
     useEffect(() => {
         fetch(
-            "api/user/get_friends",
+            "api/user/get_friends/",
             {
                 method: "GET",
                 credentials: "include",
             }
         )
-            .then((res) => res.json())
+            .then((res) => {console.log(document.cookie); console.log(res.text()); return res.json();})
             .then((data) => {
                 if (data.code === 0) {
                     const friends = data.friends.map((friend: Friend) => ({

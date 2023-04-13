@@ -8,7 +8,7 @@ const InitPage = () => {
 
     const sendDelete = async () => {
         await fetch(
-            "api/user/del_friend",
+            "api/user/del_friend/",
             {
                 method: "POST",
                 credentials: "include",

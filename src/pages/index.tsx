@@ -15,7 +15,7 @@ const InitLoginPage = () => {
         const rand = Math.floor(Math.random() * 100000);
         document.cookie = `session=${rand}; path=/;`;
         fetch(
-            "api/user/login",
+            "api/user/login/",
             {
                 method:"POST",
                 credentials: "include",
@@ -29,6 +29,7 @@ const InitLoginPage = () => {
             .then((res) => {
                 if(res.code === 0){
                     router.push("/user");
+                    console.log("成功登录");
                 } else{
                     document.cookie = "session=logout; path=/;";
                     throw new Error(`${res.info}`);
@@ -71,7 +72,7 @@ const InitLoginPage = () => {
                     type="password"
                     placeholder="密码"
                     value={password}
-                    onChange={(e) => checkPassword(e.target.value)}
+                    onChange={(e) => {checkPassword(e.target.value); console.log(document.cookie);}}
                 />
                 <button onClick={userLogin} disabled={!nameLegal || !passwordLegal || document.cookie.match(/session=(\d+)/) !== null}>
                     登录
@@ -84,6 +85,9 @@ const InitLoginPage = () => {
                 </button>
                 <button onClick={() => router.push("/register")}>
                     注册新用户
+                </button>
+                <button onClick={() => {document.cookie = "session=logout; path=/;";}}>
+                    清除cookie
                 </button>
             </div>
         </div>
