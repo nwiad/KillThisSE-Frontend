@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import FriendBar from "./friendbar";
 
 interface FriendRequest {
@@ -64,7 +63,7 @@ const InitPage = () => {
             <FriendBar />
             <ul className="requests">
                 {requests.map((request) => (
-                    <li className="request" key={request.user_id}>
+                    <li key = {request.user_id}  className="request">
                         <img src={`${request.avatar}`} />
                         <p>{request.name}</p>
                         <p>id:{request.user_id}</p>

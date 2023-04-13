@@ -31,6 +31,7 @@ const InitRegisterPage = () => {
                 if(res.ok){
                     alert(CREATE_USER_SUCCESS);
                     router.push("/");
+                    console.log("成功注册");
                 } else {
                     throw new Error(`Request failed with status ${res.status}`);
 

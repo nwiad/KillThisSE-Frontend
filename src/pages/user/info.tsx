@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { uploadFile } from "../../utils/oss";
 import { nameValid, passwordValid } from "../../utils/valid";
 import Navbar from "./navbar";
-import {uploadFile} from "../../utils/oss";
 
 
 const InitPage = () => {
@@ -23,7 +23,7 @@ const InitPage = () => {
 
     const deleteUser = async () => {
         await fetch(
-            "api/user/cancel_account",
+            "api/user/cancel_account/",
             {
                 method: "POST",
                 credentials: "include",
@@ -54,7 +54,7 @@ const InitPage = () => {
 
     const resetName = async () => {
         await fetch(
-            "api/user/reset_name",
+            "api/user/reset_name/",
             {
                 method: "POST",
                 credentials: "include",
@@ -80,7 +80,7 @@ const InitPage = () => {
 
     const resetPassword = async () => {
         await fetch(
-            "api/user/reset_password",
+            "api/user/reset_password/",
             {
                 method: "POST",
                 credentials: "include",
@@ -113,7 +113,7 @@ const InitPage = () => {
         const image_url = await uploadFile(pic);
 
         await fetch(
-            "api/user/reset_avatar",
+            "api/user/reset_avatar/",
             {
                 method: "POST",
                 credentials: "include",
@@ -138,7 +138,7 @@ const InitPage = () => {
     };
 
     fetch(
-        "api/user/get_profile",
+        "api/user/get_profile/",
         {
             method: "GET",
             credentials: "include",
@@ -179,7 +179,7 @@ const InitPage = () => {
                 {showPopupAvatar && (
                     <div className="popup">
                         <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false);  setShowPopupAvatar(false);  }}>
-                            <input className="fileupload" type="file" name="avatar" accept="image/*" onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
+                            <input placeholder = "uploaded image" className="fileupload" type="file" name="avatar" accept="image/*" onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
                             <button type="submit" disabled={!isAvatarUploaded}>上传头像</button>
                         </form>
                         <button onClick={() => { setShowPopupAvatar(false); }}>取消</button>

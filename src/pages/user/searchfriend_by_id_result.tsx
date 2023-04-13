@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import FriendBar from "./friendbar";
 
 const InitPage = () => {
@@ -48,14 +47,13 @@ const InitPage = () => {
             if(data.code === 0){
                 setFriend(data.name);
                 setAvatar(data.avatar);
-            
             } else {
                 throw new Error(`${data.info}`);
             }
         })
-        .catch((err) => {alert(err); router.push("/user/searchfriend");});
+        .catch((err) => {alert(err); 
+            router.push("/user/searchfriend");});
         
-
     return (
         <div>
             <FriendBar />

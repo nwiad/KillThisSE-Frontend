@@ -1,12 +1,7 @@
-import { time } from "console";
-import { useRouter } from "next/router";
 import Link from "next/link";
-import { useRef, useState } from "react";
-import { CREATE_USER_SUCCESS, FAILURE_PREFIX,CREATE_USER_FAILURE_PERFIX } from "../constants/string";
-import { request } from "../utils/network";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
-import { randomInt } from "crypto";
-import initPage from "../pages/user/index";
 
 const InitLoginPage = () => {
     const [name, setName] = useState<string>("");
@@ -34,22 +29,23 @@ const InitLoginPage = () => {
             .then((res) => {
                 if(res.code === 0){
                     router.push("/user");
+                    console.log("成功登录");
                 } else{
+                    document.cookie = "session=logout; path=/;";
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => {alert(err); document.cookie = "session=logout; path=/;";});
     };
 
     const checkName = (name_: string) => {
         setName(name_);
-
         setNameLegal(nameValid(name_));
     };
 
     const checkPassword = (password_: string) => {
         setPassword(password_);
-
+        // alert(document.cookie);
         setPasswordLegal(passwordValid(password_));
     };
 
@@ -76,9 +72,9 @@ const InitLoginPage = () => {
                     type="password"
                     placeholder="密码"
                     value={password}
-                    onChange={(e) => checkPassword(e.target.value)}
+                    onChange={(e) => {checkPassword(e.target.value); console.log(document.cookie);}}
                 />
-                <button onClick={userLogin} disabled={!nameLegal || !passwordLegal}>
+                <button onClick={userLogin} disabled={!nameLegal || !passwordLegal || document.cookie.match(/session=(\d+)/) !== null}>
                     登录
                 </button>
                 <button onClick={() => {
@@ -89,6 +85,9 @@ const InitLoginPage = () => {
                 </button>
                 <button onClick={() => router.push("/register")}>
                     注册新用户
+                </button>
+                <button onClick={() => {document.cookie = "session=logout; path=/;";}}>
+                    清除cookie
                 </button>
             </div>
         </div>

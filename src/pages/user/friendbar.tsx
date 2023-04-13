@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./navbar";
 
 interface Friend {
@@ -21,7 +20,7 @@ const FriendBar = () => {
                 credentials: "include",
             }
         )
-            .then((res) => res.json())
+            .then((res) => {console.log(document.cookie); console.log(res.text()); return res.json();})
             .then((data) => {
                 if (data.code === 0) {
                     const friends = data.friends.map((friend: Friend) => ({
@@ -53,7 +52,7 @@ const FriendBar = () => {
                         收到的好友邀请
                     </li>
                     {friendsList?.map((item: Friend) => (
-                        <li className="friend" key={item.user_id} onClick={() => { router.push(`/user/friendinfo?id=${item.user_id}`); }}>
+                        <li key={item.user_id} className="friend" onClick={() => { router.push(`/user/friendinfo?id=${item.user_id}`); }}>
                             <img className="friendavatar" src={`${item.avatar}`}></img>
                             <p>{item.name}</p>
                         </li>
