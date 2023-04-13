@@ -7,7 +7,7 @@ const Navbar = () => {
 
     const userLogout = () => {
         fetch(
-            "api/user/logout",
+            "api/user/logout/",
             {
                 method:"POST",
                 credentials: "include",

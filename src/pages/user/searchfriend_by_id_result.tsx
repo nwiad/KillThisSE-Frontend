@@ -11,7 +11,7 @@ const InitPage = () => {
 
     const getNewFriend = () => {
         fetch(
-            "api/user/send_friend_request",
+            "api/user/send_friend_request/",
             {
                 method: "POST",
                 credentials: "include",
@@ -34,7 +34,7 @@ const InitPage = () => {
 
 
     fetch(
-        "api/user/search_by_id",
+        "api/user/search_by_id/",
         {
             method: "POST",
             credentials: "include",

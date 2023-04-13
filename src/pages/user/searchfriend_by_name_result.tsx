@@ -12,7 +12,7 @@ const InitPage = () => {
 
     const getNewFriend = () => {
         fetch(
-            "api/user/send_friend_request",
+            "api/user/send_friend_request/",
             {
                 method: "POST",
                 credentials: "include",
@@ -34,7 +34,7 @@ const InitPage = () => {
     };
 
     fetch(
-        "api/user/get_profile",
+        "api/user/get_profile/",
         {
             method: "GET",
             credentials: "include",
@@ -51,7 +51,7 @@ const InitPage = () => {
         .catch((err) => {alert(err); });
 
     fetch(
-        "api/user/search_by_name",
+        "api/user/search_by_name/",
         {
             method: "POST",
             credentials: "include",
