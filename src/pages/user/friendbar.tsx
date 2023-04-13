@@ -20,7 +20,7 @@ const FriendBar = () => {
                 credentials: "include",
             }
         )
-            .then((res) => {alert(document.cookie); alert(res.text()); return res.json();})
+            .then((res) => {return res.json();})
             .then((data) => {
                 if (data.code === 0) {
                     const friends = data.friends.map((friend: Friend) => ({
