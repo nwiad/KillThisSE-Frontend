@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import Link from 'next/link';
+import Link from "next/link";
 
 const Navbar = () => {
     
@@ -10,12 +10,12 @@ const Navbar = () => {
             "api/user/logout",
             {
                 method:"POST",
-                credentials: 'include',
+                credentials: "include",
             }
         )
             .then((res) => {
                 if(res.ok){
-                    router.push("/")
+                    router.push("/");
                 }   else {
                     throw new Error(`Request failed with status ${res.status}`);
                 }
@@ -26,16 +26,16 @@ const Navbar = () => {
     return (
         <nav style={{padding: 12}}>
             <ul className="navbar">
-                <li className="navbar_ele_r" onClick={() => {router.push(`/user/`)}}>
+                <li className="navbar_ele_r" onClick={() => {router.push("/user/");}}>
                         消息
                 </li>
-                <li className="navbar_ele_r" onClick={() => {router.push(`/user/friendindex`)}}>
+                <li className="navbar_ele_r" onClick={() => {router.push("/user/friendindex");}}>
                         好友
                 </li>
-                <li className="navbar_ele_l" onClick={() => {router.push(`/user/info`)}}>
+                <li className="navbar_ele_l" onClick={() => {router.push("/user/info");}}>
                         个人中心
                 </li>
-                <li className="navbar_ele_l" onClick={() => {userLogout(); router.push(`/`)}}>
+                <li className="navbar_ele_l" onClick={() => {userLogout(); router.push("/");}}>
                         登出
                 </li>
             </ul>

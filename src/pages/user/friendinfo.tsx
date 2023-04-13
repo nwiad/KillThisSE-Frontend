@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import Link from 'next/link';
+import Link from "next/link";
 import { useRef, useState } from "react";
 import FriendBar from "./friendbar";
 
@@ -13,13 +13,13 @@ const InitPage = () => {
             "api/user/del_friend",
             {
                 method: "POST",
-                credentials: 'include',
+                credentials: "include",
                 body: JSON.stringify({
                     friend_user_id: id,
                 })
             }
         )
-            .then((res) => { return res.json() })
+            .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
                     alert("成功");
@@ -28,8 +28,8 @@ const InitPage = () => {
                 }
             })
             .catch((err) => alert(err));
-            router.push(`/user/friendindex`)
-    }
+        router.push("/user/friendindex");
+    };
 
     return (
         <div>
