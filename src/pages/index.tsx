@@ -15,7 +15,7 @@ const InitLoginPage = () => {
         const rand = Math.floor(Math.random() * 100000);
         document.cookie = `session=${rand}; path=/;`;
         fetch(
-            "api/user/login/",
+            "/api/user/login/",
             {
                 method:"POST",
                 credentials: "include",

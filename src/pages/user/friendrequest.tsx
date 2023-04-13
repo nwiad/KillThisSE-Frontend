@@ -17,7 +17,7 @@ const InitPage = () => {
     const router = useRouter();
     useEffect(() => {
         fetch(
-            "api/user/get_friend_requests/",
+            "/api/user/get_friend_requests/",
             {
                 method: "GET",
                 credentials: "include",
@@ -36,7 +36,7 @@ const InitPage = () => {
 
     const sendRespond = async (id:number, respond:string) => {
         await fetch(
-            "api/user/respond_friend_request/",
+            "/api/user/respond_friend_request/",
             {
                 method: "POST",
                 credentials: "include",

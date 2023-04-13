@@ -23,7 +23,7 @@ const InitPage = () => {
 
     const deleteUser = async () => {
         await fetch(
-            "api/user/cancel_account/",
+            "/api/user/cancel_account/",
             {
                 method: "POST",
                 credentials: "include",
@@ -54,7 +54,7 @@ const InitPage = () => {
 
     const resetName = async () => {
         await fetch(
-            "api/user/reset_name/",
+            "/api/user/reset_name/",
             {
                 method: "POST",
                 credentials: "include",
@@ -80,7 +80,7 @@ const InitPage = () => {
 
     const resetPassword = async () => {
         await fetch(
-            "api/user/reset_password/",
+            "/api/user/reset_password/",
             {
                 method: "POST",
                 credentials: "include",
@@ -113,7 +113,7 @@ const InitPage = () => {
         const image_url = await uploadFile(pic);
 
         await fetch(
-            "api/user/reset_avatar/",
+            "/api/user/reset_avatar/",
             {
                 method: "POST",
                 credentials: "include",
@@ -138,7 +138,7 @@ const InitPage = () => {
     };
 
     fetch(
-        "api/user/get_profile/",
+        "/api/user/get_profile/",
         {
             method: "GET",
             credentials: "include",

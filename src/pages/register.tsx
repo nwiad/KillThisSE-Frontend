@@ -18,7 +18,7 @@ const InitRegisterPage = () => {
 
     const saveUser = () => {
         fetch(
-            "api/user/register/",
+            "/api/user/register/",
             {
                 method:"POST",
                 body:JSON.stringify({

@@ -14,7 +14,7 @@ const FriendBar = () => {
     const router = useRouter();
     useEffect(() => {
         fetch(
-            "api/user/get_friends/",
+            "/api/user/get_friends/",
             {
                 method: "GET",
                 credentials: "include",
