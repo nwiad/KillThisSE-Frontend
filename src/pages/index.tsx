@@ -28,14 +28,15 @@ const InitLoginPage = () => {
             .then((res) => {return res.json();})
             .then((res) => {
                 if(res.code === 0){
+                    console.log(res);
+                    localStorage.setItem("token", res.Token);
                     router.push("/user");
                     console.log("成功登录");
                 } else{
-                    document.cookie = "session=logout; path=/;";
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {alert(err); document.cookie = "session=logout; path=/;";});
+            .catch((err) => {alert(err);});
     };
 
     const checkName = (name_: string) => {
@@ -71,9 +72,9 @@ const InitLoginPage = () => {
                     type="password"
                     placeholder="密码"
                     value={password}
-                    onChange={(e) => {checkPassword(e.target.value); console.log(document.cookie);}}
+                    onChange={(e) => {checkPassword(e.target.value);}}
                 />
-                <button onClick={userLogin} disabled={!nameLegal || !passwordLegal || document.cookie.match(/session=(\d+)/) !== null}>
+                <button onClick={userLogin} disabled={!nameLegal || !passwordLegal}>
                     登录
                 </button>
                 <button onClick={() => {
@@ -84,9 +85,6 @@ const InitLoginPage = () => {
                 </button>
                 <button onClick={() => router.push("/register")}>
                     注册新用户
-                </button>
-                <button onClick={() => {document.cookie = "session=logout; path=/;";}}>
-                    清除cookie
                 </button>
             </div>
         </div>

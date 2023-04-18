@@ -1,8 +1,15 @@
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { websocket, createWebSocket, closeWebSocket } from "../../utils/websocket";
 
 const Navbar = () => {
+    const [msg, setMsg] = useState<string>("");
     
     const router = useRouter();
+
+    const sendMsg = () => {
+        createWebSocket("ws://localhost:8000/chat/");
+    };
 
     const userLogout = () => {
 
@@ -11,12 +18,14 @@ const Navbar = () => {
             {
                 method:"POST",
                 credentials: "include",
+                body:JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
             }
         )
             .then((res) => {
                 if(res.ok){
                     router.push("/");
-                    document.cookie = "session=logout; path=/;";
                 }   else {
                     throw new Error(`Request failed with status ${res.status}`);
                 }
@@ -33,6 +42,8 @@ const Navbar = () => {
                 <li className="navbar_ele_r" onClick={() => {router.push("/user/friendindex");}}>
                         好友
                 </li>
+                <input className="msg_box" type="text" value={msg} onChange={(e) => setMsg(e.target.value)} />
+                <button onClick={() => sendMsg()}>send</button>
                 <li className="navbar_ele_l" onClick={() => {router.push("/user/info");}}>
                         个人中心
                 </li>
