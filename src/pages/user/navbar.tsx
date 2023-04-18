@@ -8,7 +8,9 @@ const Navbar = () => {
     const router = useRouter();
 
     const sendMsg = () => {
-        createWebSocket("ws://localhost:8000/chat/");
+        websocket.onopen = () => {
+            websocket.send("{\"message\": \"FUCK\"}");
+        }
     };
 
     const userLogout = () => {

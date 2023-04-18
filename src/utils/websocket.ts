@@ -1,4 +1,4 @@
-let websocket, lockReconnect = false;
+let websocket: WebSocket = null, lockReconnect:boolean = false;
 let createWebSocket = (url) => {
     websocket = new WebSocket(url);
     websocket.onopen = function () {
