@@ -75,7 +75,7 @@ const InitPage = () => {
             }
         })
         .catch((err) => {alert(err); 
-            router.push("/user/searchfriend");});
+            router.push("/user/friend/searchfriend");});
         
     return (
         <div>

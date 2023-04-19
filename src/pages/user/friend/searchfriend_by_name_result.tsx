@@ -74,7 +74,7 @@ const InitPage = () => {
                 throw new Error(`${data.info}`);
             }
         })
-        .catch((err) => {alert(err); router.push("/user/searchfriend");});
+        .catch((err) => {alert(err); router.push("/user/friend/searchfriend");});
         
 
     return (

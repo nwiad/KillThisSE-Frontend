@@ -68,7 +68,7 @@ const Navbar = () => {
                 <li className="navbar_ele_r" onClick={() => {router.push("/user/");}}>
                         消息
                 </li>
-                <li className="navbar_ele_r" onClick={() => {router.push("/user/friendindex");}}>
+                <li className="navbar_ele_r" onClick={() => {router.push("/user/friend/friendindex");}}>
                         好友
                 </li>
                 <li className="navbar_ele_info" onClick={() => {router.push("/user/info");}}>

@@ -45,17 +45,17 @@ const FriendBar = () => {
             <div>
                 <ul className="friendlist">
                     <li className="newfriend"
-                        onClick={() => { router.push("/user/searchfriend"); }}
+                        onClick={() => { router.push("/user/friend/searchfriend"); }}
                         style={{ padding: 20 }}>
                         + 添加新好友
                     </li>
                     <li className="newfriend"
-                        onClick={() => { router.push("/user/friendrequest"); }}
+                        onClick={() => { router.push("/user/friend/friendrequest"); }}
                         style={{ padding: 20 }}>
                         收到的好友邀请
                     </li>
                     {friendsList?.map((item: Friend) => (
-                        <li key={item.user_id} className="friend" onClick={() => { router.push(`/user/friendinfo?id=${item.user_id}`); }}>
+                        <li key={item.user_id} className="friend" onClick={() => { router.push(`/user/friend/friendinfo?id=${item.user_id}`); }}>
                             <img className="friendavatar" src={`${item.avatar}`}></img>
                             <p>{item.name}</p>
                         </li>

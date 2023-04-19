@@ -27,7 +27,7 @@ const InitPage = () => {
                 }
             })
             .catch((err) => alert(err));
-        router.push("/user/friendindex");
+        router.push("/user/friend/friendindex");
     };
 
     return (
