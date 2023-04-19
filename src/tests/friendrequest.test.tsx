@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useRouter } from "next/router";
 import { act } from "react-dom/test-utils";
-import InitPage from "../pages/user/friendrequest";
+import InitPage from "../pages/user/friend/friendrequest";
 
 jest.mock("next/router", () => ({
     useRouter: jest.fn(),

@@ -1,0 +1,81 @@
+.msglist {
+    position: fixed;
+    top: 65px;
+    left: 0;
+    bottom: 0;
+    width: 20%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: #535353;
+    
+}
+
+.msglist li {
+    float: left;
+    height: 65px;
+    width: 100%;
+    display: block;
+    color: white;
+    padding: 0;
+    text-align:center;
+    text-decoration: none;
+    margin: auto;
+    left: 0;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:20px;
+    font-weight: 100;
+    border-style:solid;
+    border-width:1px;
+    border-left-color: #535353;
+    border-right-color: #535353;
+    border-top-color: #535353;
+    border-bottom-color: #a0a0a0;
+}
+
+.msglist li:hover {
+    background-color: #888888;
+}
+
+.msglist img{
+    float: left;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #ccc;
+    margin-left: 20px;
+    margin-top: 10px;
+}
+
+.msglist p{
+    float: left;
+    margin: 20px 20px;
+}
+
+.msginput {
+    display: inline;
+    margin-top: auto;
+    margin-bottom: 0;
+    margin-left: 20%;
+    text-align:center;
+    height: 300px;
+    width: 60%;
+    border-radius: 0;
+    border: 1px solid #7d7d7d;
+    color: rgb(255, 255, 255);
+    font-size:14px;
+}
+
+.msgbutton {
+    display: inline;
+    margin-top: auto;
+    margin-bottom: 0;
+    margin-left: 0;
+    width: 20%;
+    height: 300px;
+    font-size:30px;
+    border-radius: 0;
+    border: 1px solid #7d7d7d;
+}
