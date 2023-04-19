@@ -8,9 +8,14 @@ const Navbar = () => {
     const router = useRouter();
 
     const sendMsg = () => {
-        websocket.onopen = () => {
+        if(websocket.readyState === 1) {
             websocket.send("{\"message\": \"FUCK\"}");
+            console.log("ok");
         }
+        // websocket.onopen = () => {
+        //     websocket.send("{\"message\": \"FUCK\"}");
+        //     console.log("ok");
+        // }
     };
 
     const userLogout = () => {
