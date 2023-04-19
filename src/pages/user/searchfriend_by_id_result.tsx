@@ -4,9 +4,10 @@ import FriendBar from "./friendbar";
 
 const InitPage = () => {
     const [friend, setFriend] = useState<number>();
-    const [avatar, setAvatar] = useState<string>("");    
+    const [avatar, setAvatar] = useState<string>(""); 
+    const [myID, setID] = useState<number>();   
     const router = useRouter();
-    const id = router.query.id;
+    const id = Number(router.query.id);
 
     const getNewFriend = () => {
         fetch(
@@ -32,6 +33,26 @@ const InitPage = () => {
             .catch((err) => alert(err));
     };
 
+    fetch(
+        "/api/user/get_profile/",
+        {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify({
+                token: localStorage.getItem("token")
+            })
+        }
+    )
+        .then((res) => res.json())
+        .then((data) => {
+            if(data.code === 0){
+                setID(data.user_id);     
+                console.log("myID: "+data.user_id);       
+            } else {
+                throw new Error(`${data.info}`);
+            }
+        })
+        .catch((err) => {alert(err); });
 
     fetch(
         "/api/user/search_by_id/",
@@ -72,7 +93,7 @@ const InitPage = () => {
                         margin: "50px auto",
                     }}></img>
                     <p>{friend}</p>
-                    <button onClick={() => {getNewFriend(); }}>添加好友</button>
+                    <button onClick={() => {getNewFriend(); }} disabled={id === myID}>添加好友</button>
                 </div>
             </div>
         </div>

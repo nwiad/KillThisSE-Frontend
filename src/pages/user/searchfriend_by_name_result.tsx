@@ -94,7 +94,7 @@ const InitPage = () => {
                     }}></img>
                     <p>{name}</p>
                     <p>id:{friend}</p>
-                    <button onClick={() => { setFriend(friend); getNewFriend(); }} disabled={id===friend}>添加好友</button>
+                    <button onClick={() => { setFriend(friend); getNewFriend(); }} disabled={id === friend}>添加好友</button>
                 </div>
             </div>
         </div>
