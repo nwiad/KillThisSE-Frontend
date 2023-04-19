@@ -16,6 +16,7 @@ const InitPage = () => {
                 credentials: "include",
                 body: JSON.stringify({
                     friend_user_id: id,
+                    token: localStorage.getItem("token")
                 })
             }
         )
@@ -39,6 +40,7 @@ const InitPage = () => {
             credentials: "include",
             body: JSON.stringify({
                 friend_user_id: id,
+                token: localStorage.getItem("token")
             })
         }
     )

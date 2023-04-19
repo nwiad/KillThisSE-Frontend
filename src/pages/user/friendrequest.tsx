@@ -19,8 +19,11 @@ const InitPage = () => {
         fetch(
             "/api/user/get_friend_requests/",
             {
-                method: "GET",
+                method: "POST",
                 credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
             }
         )
             .then((res) => { return res.json(); })
@@ -43,6 +46,7 @@ const InitPage = () => {
                 body: JSON.stringify({
                     response: respond,
                     friend_user_id: id,
+                    token: localStorage.getItem("token")
                 })
             }
         )

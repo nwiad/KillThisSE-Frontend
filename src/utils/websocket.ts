@@ -13,7 +13,7 @@ const createWebSocket = (url: string) => {
         console.log("websocket 断开: " + e.code + " " + e.reason + " " + e.wasClean);
     };
     websocket.onmessage = function (event) {
-        lockReconnect=true;
+        //lockReconnect=true;
         console.log(event.data);
         //event 为服务端传输的消息，在这里可以处理
     };

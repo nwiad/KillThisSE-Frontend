@@ -27,6 +27,9 @@ const InitPage = () => {
             {
                 method: "POST",
                 credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
             }
         )
             .then((res) => {
@@ -60,6 +63,7 @@ const InitPage = () => {
                 credentials: "include",
                 body: JSON.stringify({
                     name: newname,
+                    token: localStorage.getItem("token")
                 })
             }
         )
@@ -87,6 +91,7 @@ const InitPage = () => {
                 body: JSON.stringify({
                     old_pwd: password,
                     new_pwd: newpassword,
+                    token: localStorage.getItem("token")
                 })
             }
         )
@@ -119,6 +124,7 @@ const InitPage = () => {
                 credentials: "include",
                 body: JSON.stringify({
                     avatar: image_url,
+                    token: localStorage.getItem("token")
                 })
             }
         )
@@ -140,8 +146,11 @@ const InitPage = () => {
     fetch(
         "/api/user/get_profile/",
         {
-            method: "GET",
+            method: "POST",
             credentials: "include",
+            body: JSON.stringify({
+                token: localStorage.getItem("token")
+            })
         }
     )
         .then((res) => res.json())

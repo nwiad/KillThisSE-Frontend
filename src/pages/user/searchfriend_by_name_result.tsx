@@ -17,6 +17,7 @@ const InitPage = () => {
                 credentials: "include",
                 body: JSON.stringify({
                     friend_user_id: friend,
+                    token: localStorage.getItem("token")
                 })
             }
         )
@@ -35,8 +36,11 @@ const InitPage = () => {
     fetch(
         "/api/user/get_profile/",
         {
-            method: "GET",
+            method: "POST",
             credentials: "include",
+            body: JSON.stringify({
+                token: localStorage.getItem("token")
+            })
         }
     )
         .then((res) => res.json())
@@ -56,6 +60,7 @@ const InitPage = () => {
             credentials: "include",
             body: JSON.stringify({
                 friend_name: name,
+                token: localStorage.getItem("token")
             })
         }
     )

@@ -25,7 +25,7 @@ const Navbar = () => {
             {
                 method:"POST",
                 credentials: "include",
-                body:JSON.stringify({
+                body: JSON.stringify({
                     token: localStorage.getItem("token")
                 })
             }

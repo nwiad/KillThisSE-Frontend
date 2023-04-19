@@ -16,8 +16,11 @@ const FriendBar = () => {
         fetch(
             "/api/user/get_friends/",
             {
-                method: "GET",
+                method: "POST",
                 credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
             }
         )
             .then((res) => {return res.json();})
