@@ -7,13 +7,12 @@ interface msgProps {
 }
 
 const MsgBox = (props: msgProps) => {
+    console.log(props.msg);
     return (
         <div style={{ padding: 12 }}>
             <Navbar />
             <div>
-                <text className="msgbox">
-                    {props.msg}
-                </text>
+                <textarea className="msgbox" value={props.msg} readOnly/>
             </div>
         </div>
     );

@@ -72,8 +72,8 @@ const Navbar = () => {
                         好友
                 </li>
                 <li className="navbar_ele_info" onClick={() => {router.push("/user/info");}}>
-                        <p>{name}</p>
-                        <img className="navbarAvatar" src={`${avatar}`}/>
+                        <p style={{display : "inline-block", verticalAlign: "middle"}}>{name}</p>
+                        <img className="navbarAvatar" src={`${avatar}`} style={{display : "inline-block", verticalAlign: "middle"}}/>
                 </li>
                 <li className="navbar_ele_l" onClick={() => {userLogout(); router.push("/");}}>
                         登出

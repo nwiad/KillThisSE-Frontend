@@ -1,14 +1,12 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import MsgBar from "./msgbar";
 import { websocket, createWebSocket, closeWebSocket, msg } from "../../../utils/websocket";
 import MsgBox from "./msgbox";
 
 const InitPage = () => {
-    
-    const router = useRouter();
-
+    const [inputValue, setInput] = useState<string>("");
     const [message, setMsg] = useState<string>("");
     const [receivedMsg, setReceived] = useState<string>("");
 
@@ -23,19 +21,31 @@ const InitPage = () => {
         setReceived(JSON.parse(event.data).message);
     };
 
+    const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
+        setInput(event.target.value);
+    };
+
+    const handleClick = () => {
+        setInput("");
+    };
+
     return (
         <div>
             <MsgBar />
-            <input 
-                className="msginput"
-                type="text"
-                placeholder="请输入内容"
-                onChange={(e) => setMsg(e.target.value)}
-            />
-            <button
-                className="msgbutton" onClick={() => sendPublic()}
-            > 发送 </button>
-            <MsgBox msg={receivedMsg}/>
+            <MsgBox msg={receivedMsg}/> 
+            <div>
+                <input 
+                    className="msginput"
+                    type="text"
+                    placeholder="请输入内容"
+                    value={inputValue}
+                    onChange={(e) => {handleInput(e); setMsg(e.target.value);}}
+                    style={{display : "inline-block", verticalAlign: "middle"}}
+                />
+                <button
+                    className="msgbutton" onClick={() => {sendPublic(); handleClick();}} style={{display : "inline-block", verticalAlign: "middle"}}
+                > 发送 </button>
+            </div>
         </div>
     );
 };

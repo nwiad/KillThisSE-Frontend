@@ -56,37 +56,38 @@
 
 .msginput {
     display: inline;
-    margin-top: auto;
+    margin-top: 190px;
     margin-bottom: 0;
     margin-left: 20%;
-    text-align:center;
-    height: 300px;
-    width: 60%;
+    text-align:left;
+    height: 80px;
+    width: 70%;
     border-radius: 0;
     border: 1px solid #7d7d7d;
-    color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
     font-size:14px;
 }
 
 .msgbutton {
     display: inline;
-    margin-top: auto;
+    margin-top: 190px;
     margin-bottom: 0;
     margin-left: 0;
-    width: 20%;
-    height: 300px;
+    width: 10%;
+    height: 80px;
     font-size:30px;
     border-radius: 0;
     border: 1px solid #7d7d7d;
 }
 
 .msgbox {
+    resize: none;
     display: inline;
     margin-top: auto;
     margin-bottom: 0;
     margin-left: 350px;
-    width: 20%;
-    height: 500px;
+    width: 1050px;
+    height: 350px;
     font-size:30px;
     border-radius: 0;
     border: 1px solid #7d7d7d;
