@@ -1,4 +1,5 @@
 let websocket: WebSocket, lockReconnect: boolean = false;
+let msg: string;
 const createWebSocket = (url: string) => {
     websocket = new WebSocket(url);
     websocket.onopen = function () {
@@ -11,11 +12,16 @@ const createWebSocket = (url: string) => {
     };
     websocket.onclose = function (e) {
         console.log("websocket 断开: " + e.code + " " + e.reason + " " + e.wasClean);
+        console.log("reconnecting");
+        reconnect(url);
     };
     websocket.onmessage = function (event) {
         //lockReconnect=true;
         console.log(event.data);
         //event 为服务端传输的消息，在这里可以处理
+        //console.log(typeof(event.data));
+        msg = JSON.parse(event.data).message;
+        console.log(msg);
     };
 };
 const reconnect = (url: string) => {
@@ -28,7 +34,7 @@ const reconnect = (url: string) => {
     }, 4000);
 };
 let heartCheck = {
-    timeout: 10000, //60秒
+    timeout: 60000, //60秒
     timeoutObj: null as NodeJS.Timeout | null,
     reset: function () {
         clearInterval(this.timeoutObj!);
@@ -38,8 +44,13 @@ let heartCheck = {
         this.timeoutObj = setInterval(function () {
             //这里发送一个心跳，后端收到后，返回一个心跳消息，
             //onmessage拿到返回的心跳就说明连接正常
-            websocket.send("{\"message\": \"heartbeat\"}");
-            console.log("heartbeat");
+            if(websocket.readyState === 1) {
+                //websocket.send("{\"message\": \"heartbeat\"}");
+                console.log("heartbeat");                
+            }
+            else{
+                closeWebSocket();
+            }
         }, this.timeout);
     }
 };
@@ -47,8 +58,10 @@ let heartCheck = {
 const closeWebSocket=()=> {
     websocket && websocket.close();
 };
+
 export {
     websocket,
+    msg,
     createWebSocket,
     closeWebSocket
 };

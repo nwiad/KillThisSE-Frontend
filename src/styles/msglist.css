@@ -79,3 +79,15 @@
     border-radius: 0;
     border: 1px solid #7d7d7d;
 }
+
+.msgbox {
+    display: inline;
+    margin-top: auto;
+    margin-bottom: 0;
+    margin-left: 350px;
+    width: 20%;
+    height: 500px;
+    font-size:30px;
+    border-radius: 0;
+    border: 1px solid #7d7d7d;
+}

@@ -15,7 +15,7 @@ const MsgBar = () => {
             <div>
                 <ul className="msglist">
                     <li style={{ padding: 20 }} onClick={() => router.push("/user/msg/msg")}>
-                        假装这是某个聊天
+                        公屏聊天
                     </li>
                     <li style={{ padding: 20 }}>
                         假装这是另一个聊天
