@@ -57,7 +57,7 @@ const FriendBar = () => {
                     </li>
                     {friendsList?.map((item: Friend) => (
                         <li key={item.user_id} className="friend" onClick={() => { router.push(`/user/friend/friendinfo?id=${item.user_id}`); }}>
-                            <Image className="friendavatar" src={`${item.avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"}/>
+                            <img className="friendavatar" src={`${item.avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"}/>
                             <p>{item.name}</p>
                         </li>
                     ))}

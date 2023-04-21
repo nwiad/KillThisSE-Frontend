@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { websocket, createWebSocket, closeWebSocket } from "../../utils/websocket";
-import Image from "next/image";
 
 const Navbar = () => {
     const [msg, setMsg] = useState<string>("");
@@ -74,7 +73,7 @@ const Navbar = () => {
                 </li>
                 <li className="navbar_ele_info" onClick={() => {router.push("/user/info");}}>
                     <p style={{display : "inline-block", verticalAlign: "middle"}}>{name}</p>
-                    <Image className="navbarAvatar" src={`${avatar}`} style={{display : "inline-block", verticalAlign: "middle"}} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"}/>
+                    <img className="navbarAvatar" src={`${avatar}`} style={{display : "inline-block", verticalAlign: "middle"}} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"}/>
                 </li>
                 <li className="navbar_ele_l" onClick={() => {userLogout(); router.push("/");}}>
                         登出

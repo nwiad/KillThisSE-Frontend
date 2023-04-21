@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import FriendBar from "./friendbar";
-import Image from "next/image";
 
 const InitPage = () => {
     const [friend, setFriend] = useState<number>();
@@ -83,7 +82,7 @@ const InitPage = () => {
             <FriendBar />
             <div>
                 <div className="friend">
-                    <Image className="friendavatar" src={`${avatar}`} style={{
+                    <img className="friendavatar" src={`${avatar}`} style={{
                         width: "100px",
                         height: "100px",
                         borderRadius: "50%",
