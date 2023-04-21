@@ -23,7 +23,7 @@ export class Socket extends Heart {
     OPTIONS: Options = {
         url: "", // 链接的通道的地址
         heartTime: 5000, // 心跳时间间隔
-        heartMsg: "ping", // 心跳信息,默认为"ping"
+        heartMsg: "{\"message\": \"ping\"}", // 心跳信息,默认为"ping"
         isReconnect: true, // 是否自动重连
         isDestroy: false, // 是否销毁
         reconnectTime: 5000, // 重连时间间隔
