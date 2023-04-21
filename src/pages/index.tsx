@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
-import { createWebSocket } from "../utils/websocket";
+// import { createWebSocket } from "../utils/websocket";
 
 const InitLoginPage = () => {
     const [name, setName] = useState<string>("");
@@ -33,7 +33,7 @@ const InitLoginPage = () => {
                     localStorage.setItem("token", res.Token);
                     router.push("/user");
                     console.log("成功登录");
-                    createWebSocket("ws://localhost:8000/chat/");
+                    //createWebSocket("ws://localhost:8000/chat/");
                 } else{
                     throw new Error(`${res.info}`);
                 }

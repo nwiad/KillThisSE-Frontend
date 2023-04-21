@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Navbar from "../navbar";
-import Image from "next/image";
 
 interface Friend {
     user_id: number;

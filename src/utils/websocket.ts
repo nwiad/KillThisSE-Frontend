@@ -1,68 +1,183 @@
-let websocket: WebSocket, lockReconnect: boolean = false;
-let msg: string;
-const createWebSocket = (url: string) => {
-    websocket = new WebSocket(url);
-    websocket.onopen = function () {
-        console.log("connected");
-        heartCheck.reset().start();
-    };
-    websocket.onerror = function () {
-        console.log("reconnecting");
-        reconnect(url);
-    };
-    websocket.onclose = function (e) {
-        console.log("websocket 断开: " + e.code + " " + e.reason + " " + e.wasClean);
-        console.log("reconnecting");
-        reconnect(url);
-    };
-    websocket.onmessage = function (event) {
-        //lockReconnect=true;
-        console.log(event.data);
-        //event 为服务端传输的消息，在这里可以处理
-        //console.log(typeof(event.data));
-        msg = JSON.parse(event.data).message;
-        console.log(msg);
-    };
+import { Heart } from "./heart";
+
+export interface Options {
+    url: string, // 链接的通道的地址
+    heartTime: number, // 心跳时间间隔
+    heartMsg: string, // 心跳信息,默认为"ping"
+    isReconnect: boolean, // 是否自动重连
+    isDestroy: boolean, // 是否销毁
+    reconnectTime: number, // 重连时间间隔
+    reconnectCount: number, // 重连次数 -1 则不限制
+    openCb: Function, // 连接成功的回调
+    closeCb: Function, // 关闭的回调
+    messageCb: Function, // 消息的回调
+    errorCb: Function // 错误的回调
 };
-const reconnect = (url: string) => {
-    if (lockReconnect) return;
-    lockReconnect = true;
-    //没连接上会一直重连，设置延迟避免请求过多
-    setTimeout(function () {
-        createWebSocket(url);
-        lockReconnect = false;
-    }, 4000);
-};
-let heartCheck = {
-    timeout: 60000, //60秒
-    timeoutObj: null as NodeJS.Timeout | null,
-    reset: function () {
-        clearInterval(this.timeoutObj!);
-        return this;
-    },
-    start: function () {
-        this.timeoutObj = setInterval(function () {
-            //这里发送一个心跳，后端收到后，返回一个心跳消息，
-            //onmessage拿到返回的心跳就说明连接正常
-            if(websocket.readyState === 1) {
-                //websocket.send("{\"message\": \"heartbeat\"}");
-                console.log("heartbeat");                
-            }
-            else{
-                closeWebSocket();
-            }
-        }, this.timeout);
+
+export class Socket extends Heart {
+    ws: WebSocket|undefined;
+
+    RECONNECT_TIMER: NodeJS.Timeout|undefined; // 重连计时器
+    RECONNECT_COUNT: number = 10; // 变量保存，防止丢失
+
+    OPTIONS: Options = {
+        url: "", // 链接的通道的地址
+        heartTime: 5000, // 心跳时间间隔
+        heartMsg: "ping", // 心跳信息,默认为"ping"
+        isReconnect: true, // 是否自动重连
+        isDestroy: false, // 是否销毁
+        reconnectTime: 5000, // 重连时间间隔
+        reconnectCount: 5, // 重连次数 -1 则不限制
+        openCb: () => {}, // 连接成功的回调
+        closeCb: () => {}, // 关闭的回调
+        messageCb: () => {}, // 消息的回调
+        errorCb: () => {} // 错误的回调
+    };
+
+    constructor (ops: Options) {
+        super();
+        Object.assign(this.OPTIONS, ops);
+        this.create();
     }
-};
-//关闭连接
-const closeWebSocket=()=> {
-    websocket && websocket.close();
-};
-
-export {
-    websocket,
-    msg,
-    createWebSocket,
-    closeWebSocket
-};
-
+    /**
+     * 建立连接
+     */
+    create () {
+        if (!("WebSocket" in window)) {
+        /* eslint-disable no-new */
+            new Error("当前浏览器不支持，无法使用");
+            return;
+        }
+        if (!this.OPTIONS.url) {
+            new Error("地址不存在，无法建立通道");
+            return;
+        }
+        delete this.ws;
+        this.ws = new WebSocket(this.OPTIONS.url);
+        this.onopen();
+        this.onclose();
+        this.onmessage();
+    }
+    /**
+     * 自定义连接成功事件
+     * 如果callback存在，调用callback，不存在调用OPTIONS中的回调
+     * @param {Function} callback 回调函数
+     */
+    onopen (callback?: Function) {
+        if(this.ws === undefined) {
+            console.log("onopen: ws is undefined");
+            return;
+        }
+        this.ws!.onopen = (event) => {
+            console.log("WebSocket 已连接");
+            clearTimeout(this.RECONNECT_TIMER); // 清除重连定时器
+            this.OPTIONS.reconnectCount = this.RECONNECT_COUNT; // 计数器重置
+            // 建立心跳机制
+            super.reset().start(() => {
+                this.send(this.OPTIONS.heartMsg);
+                console.log("send heartbeat");
+            });
+            if (typeof callback === "function") {
+                callback(event);
+            } else {
+                (typeof this.OPTIONS.openCb === "function") && this.OPTIONS.openCb(event);
+            }
+        };
+    }
+    /**
+     * 自定义关闭事件
+     * 如果callback存在，调用callback，不存在调用OPTIONS中的回调
+     * @param {Function} callback 回调函数
+     */
+    onclose (callback?: Function) {
+        if(this.ws === undefined) {
+            console.log("onclose: ws is undefined");
+            return;
+        }
+        this.ws!.onclose = (event) => {
+            console.log("WebSocket 已关闭");
+            super.reset();
+            !this.OPTIONS.isDestroy && this.onreconnect();
+            if (typeof callback === "function") {
+                callback(event);
+            } else {
+                (typeof this.OPTIONS.closeCb === "function") && this.OPTIONS.closeCb(event);
+            }
+        };
+    }
+    /**
+     * 自定义错误事件
+     * 如果callback存在，调用callback，不存在调用OPTIONS中的回调
+     * @param {Function} callback 回调函数
+     */
+    onerror (callback?: Function) {
+        if(this.ws === undefined) {
+            console.log("onerror: ws is undefined");
+            return;
+        }
+        this.ws!.onerror = (event) => {
+            if (typeof callback === "function") {
+                callback(event);
+            } else {
+                (typeof this.OPTIONS.errorCb === "function") && this.OPTIONS.errorCb(event);
+            }
+        };
+    }
+    /**
+     * 自定义消息监听事件
+     * 如果callback存在，调用callback，不存在调用OPTIONS中的回调
+     * @param {Function} callback 回调函数
+     */
+    onmessage (callback?: Function) {
+        if(this.ws === undefined) {
+            console.log("onmessage: ws is undefined");
+            return;
+        }
+        this.ws!.onmessage = (event) => {
+            // 收到任何消息，重新开始倒计时心跳检测
+            console.log(JSON.parse(event.data).message);
+            super.reset().start(() => {
+                this.send(this.OPTIONS.heartMsg);
+            });
+            if (typeof callback === "function") {
+                callback(event.data);
+            } else {
+                (typeof this.OPTIONS.messageCb === "function") && this.OPTIONS.messageCb(event);
+            }
+        };
+    }
+    /**
+     * 自定义发送消息事件
+     * @param {String} data 发送的文本
+     */
+    send (data: string) {
+        if (this.ws!.readyState !== this.ws!.OPEN) {
+            new Error("没有连接到服务器，无法推送");
+            return;
+        }
+        this.ws!.send(data);
+    }
+    /**
+     * 连接事件
+     */
+    onreconnect () {
+        if (this.OPTIONS.reconnectCount > 0 || this.OPTIONS.reconnectCount === -1) {
+            this.RECONNECT_TIMER = setTimeout(() => {
+                this.create();
+                if (this.OPTIONS.reconnectCount !== -1) this.OPTIONS.reconnectCount--;
+            }, this.OPTIONS.reconnectTime);
+        } else {
+            clearTimeout(this.RECONNECT_TIMER);
+            this.OPTIONS.reconnectCount = this.RECONNECT_COUNT;
+        }
+    }
+    /**
+     * 销毁
+     */
+    destroy () {
+        super.reset();
+        clearTimeout(this.RECONNECT_TIMER); // 清除重连定时器
+        this.OPTIONS.isDestroy = true;
+        this.ws!.close();
+    }
+}
