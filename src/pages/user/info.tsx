@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { uploadFile } from "../../utils/oss";
 import { nameValid, passwordValid } from "../../utils/valid";
 import Navbar from "./navbar";
@@ -142,24 +142,25 @@ const InitPage = () => {
             .catch((err) => alert(err));
         router.push("/user/info");
     };
+    useEffect(() => {
+        fetch(
+            "/api/user/get_profile/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                setName(data.name);
+                setAvatar(data.avatar);
 
-    fetch(
-        "/api/user/get_profile/",
-        {
-            method: "POST",
-            credentials: "include",
-            body: JSON.stringify({
-                token: localStorage.getItem("token")
             })
-        }
-    )
-        .then((res) => res.json())
-        .then((data) => {
-            setName(data.name);
-            setAvatar(data.avatar);
-
-        })
-        .catch((err) => alert(err));
+            .catch((err) => alert(err));
+    }, []);
 
     return (
         <div style={{ padding: 12 }}>

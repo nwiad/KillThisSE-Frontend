@@ -17,7 +17,7 @@ const InitPage = () => {
         }
     };
 
-    websocket.onmessage = function (event) {
+    websocket.onmessage = (event) => {
         setReceived(JSON.parse(event.data).message);
     };
 

@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import FriendBar from "./friendbar";
+import Image from "next/image";
 
 const InitPage = () => {
     const [friend, setFriend] = useState<number>();
@@ -82,7 +83,7 @@ const InitPage = () => {
             <FriendBar />
             <div>
                 <div className="friend">
-                    <img className="friendavatar" src={`${avatar}`} style={{
+                    <Image className="friendavatar" src={`${avatar}`} style={{
                         width: "100px",
                         height: "100px",
                         borderRadius: "50%",
@@ -91,7 +92,7 @@ const InitPage = () => {
                         backgroundPosition: "center",
                         border: "2px solid #ccc",
                         margin: "50px auto",
-                    }}></img>
+                    }} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
                     <p>{friend}</p>
                     <button onClick={() => {getNewFriend(); }} disabled={id === myID}>添加好友</button>
                 </div>

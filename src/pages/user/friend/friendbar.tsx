@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Navbar from "../navbar";
+import Image from "next/image";
 
 interface Friend {
     user_id: number;
@@ -37,7 +38,7 @@ const FriendBar = () => {
                 }
             })
             .catch((err) => alert(err));
-    },[]);
+    }, []);
 
     return (
         <div style={{ padding: 12 }}>
@@ -56,7 +57,7 @@ const FriendBar = () => {
                     </li>
                     {friendsList?.map((item: Friend) => (
                         <li key={item.user_id} className="friend" onClick={() => { router.push(`/user/friend/friendinfo?id=${item.user_id}`); }}>
-                            <img className="friendavatar" src={`${item.avatar}`}></img>
+                            <Image className="friendavatar" src={`${item.avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"}/>
                             <p>{item.name}</p>
                         </li>
                     ))}

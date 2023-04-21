@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import FriendBar from "./friendbar";
+import Image from "next/image";
 
 interface FriendRequest {
     user_id: number;
@@ -68,7 +69,7 @@ const InitPage = () => {
             <ul className="requests">
                 {requests.map((request) => (
                     <li key = {request.user_id}  className="request">
-                        <img src={`${request.avatar}`} />
+                        <Image src={`${request.avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
                         <p>{request.name}</p>
                         <p>id:{request.user_id}</p>
                         <button className="reject" onClick={() => { sendRespond(request.user_id,"reject"); }}> 拒绝 </button>
