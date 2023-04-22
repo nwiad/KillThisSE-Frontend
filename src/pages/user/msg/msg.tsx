@@ -12,23 +12,22 @@ const InitPage = () => {
 
     const socket = useRef<Socket>();
 
-    const options: Options = {
-        url: "ws://localhost:8000/chat/",
-        heartTime: 5000, // 心跳时间间隔
-        heartMsg: "{\"message\": \"heartbeat\"}", // 心跳信息,默认为"ping"
-        isReconnect: true, // 是否自动重连
-        isDestroy: false, // 是否销毁
-        reconnectTime: 5000, // 重连时间间隔
-        reconnectCount: 5, // 重连次数 -1 则不限制
-        openCb: () => {}, // 连接成功的回调
-        closeCb: () => {}, // 关闭的回调
-        messageCb: (event: MessageEvent) => {
-            setReceived(JSON.parse(event.data).message);
-        }, // 消息的回调
-        errorCb: () => {} // 错误的回调
-    };
-
     useEffect(() => {
+        const options: Options = {
+            url: "ws://localhost:8000/chat/",
+            heartTime: 5000, // 心跳时间间隔
+            heartMsg: "{\"message\": \"heartbeat\"}", // 心跳信息,默认为"ping"
+            isReconnect: true, // 是否自动重连
+            isDestroy: false, // 是否销毁
+            reconnectTime: 5000, // 重连时间间隔
+            reconnectCount: 5, // 重连次数 -1 则不限制
+            openCb: () => {}, // 连接成功的回调
+            closeCb: () => {}, // 关闭的回调
+            messageCb: (event: MessageEvent) => {
+                setReceived(JSON.parse(event.data).message);
+            }, // 消息的回调
+            errorCb: () => {} // 错误的回调
+        };
         socket.current = new Socket(options);
         return (() => {
             socket.current?.destroy();

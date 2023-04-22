@@ -73,6 +73,7 @@ const InitPage = () => {
             .then((res) => {
                 if (res.code === 0) {
                     alert(`成功修改用户名为${newname}`);
+                    setName(newname);
                 } else {
                     throw new Error(`${res.info}`);
                 }
@@ -134,6 +135,7 @@ const InitPage = () => {
             .then((res) => {
                 if (res.code === 0) {
                     alert("已提交，请稍后刷新");
+                    setAvatar(image_url);
                 } else {
                     throw new Error(`${res.info}`);
                 }
@@ -142,6 +144,7 @@ const InitPage = () => {
             .catch((err) => alert(err));
         router.push("/user/info");
     };
+
     useEffect(() => {
         fetch(
             "/api/user/get_profile/",
@@ -160,7 +163,7 @@ const InitPage = () => {
 
             })
             .catch((err) => alert(err));
-    }, []);
+    }, [avatar, name]);
 
     return (
         <div style={{ padding: 12 }}>

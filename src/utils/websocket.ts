@@ -140,7 +140,7 @@ export class Socket extends Heart {
                 this.send(this.OPTIONS.heartMsg);
             });
             if (typeof callback === "function") {
-                callback(event.data);
+                callback(event);  // 函数签名可能需要修改
             } else {
                 (typeof this.OPTIONS.messageCb === "function") && this.OPTIONS.messageCb(event);
             }

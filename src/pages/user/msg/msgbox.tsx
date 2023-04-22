@@ -7,7 +7,7 @@ interface msgProps {
 }
 
 const MsgBox = (props: msgProps) => {
-    console.log(props.msg);
+    console.log("props.msg:", props.msg);
     return (
         <div style={{ padding: 12 }}>
             <Navbar />
