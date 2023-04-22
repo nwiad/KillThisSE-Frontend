@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { websocket, createWebSocket, closeWebSocket } from "../../utils/websocket";
 
 const Navbar = () => {
     const [msg, setMsg] = useState<string>("");
@@ -8,17 +7,6 @@ const Navbar = () => {
     const [avatar, setAvatar] = useState<string>();
     
     const router = useRouter();
-
-    const sendMsg = () => {
-        if(websocket.readyState === 1) {
-            websocket.send("{\"message\": \"FUCK\"}");
-            console.log("ok");
-        }
-        // websocket.onopen = () => {
-        //     websocket.send("{\"message\": \"FUCK\"}");
-        //     console.log("ok");
-        // }
-    };
 
     const userLogout = () => {
 
