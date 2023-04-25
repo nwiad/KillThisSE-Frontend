@@ -1,18 +1,6 @@
 import { Heart } from "./heart";
 
-export interface Options {
-    url: string, // 链接的通道的地址
-    heartTime: number, // 心跳时间间隔
-    heartMsg: string, // 心跳信息,默认为"ping"
-    isReconnect: boolean, // 是否自动重连
-    isDestroy: boolean, // 是否销毁
-    reconnectTime: number, // 重连时间间隔
-    reconnectCount: number, // 重连次数 -1 则不限制
-    openCb: Function, // 连接成功的回调
-    closeCb: Function, // 关闭的回调
-    messageCb: Function, // 消息的回调
-    errorCb: Function // 错误的回调
-};
+import {Options} from "./type";
 
 export class Socket extends Heart {
     ws: WebSocket|undefined;
