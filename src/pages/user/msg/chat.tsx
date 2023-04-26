@@ -2,12 +2,14 @@ import { ChangeEvent, useEffect, useState, useRef } from "react";
 import Navbar from "../navbar";
 import { useRouter } from "next/router";
 import { Socket } from "../../../utils/websocket";
-import { Options } from "../../../utils/type";
+import { Options, MsgMetaData } from "../../../utils/type";
+import MsgBar from "./msgbar";
 
 const ChatScreen = () => {
     const [inputValue, setInput] = useState<string>("");
     const [message, setMsg] = useState<string>("");
-    const [msgList, setMsgList] = useState<string[]>([]);
+    const [msgList, setMsgList] = useState<MsgMetaData[]>([]);
+    const [myID, setID] = useState<number>(-1);
     const router = useRouter();
     const query = router.query;
 
@@ -43,7 +45,7 @@ const ChatScreen = () => {
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
                 //console.log(JSON.parse(event.data).messages);
-                setMsgList(JSON.parse(event.data).messages.map((val: any) => (val.msg_body)));
+                setMsgList(JSON.parse(event.data).messages.map((val: any) => ({...val})));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -54,20 +56,43 @@ const ChatScreen = () => {
         });
     }, [router, query]);
 
-    // useEffect(() => {
-    //     if(msgList?.length > 0) {
-    //         console.log("msgLIst:", msgList);
-    //     }
-    // }, [msgList]);
+    useEffect(() => {
+        fetch(
+            "/api/user/get_profile/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                setID(data.id);
+            })
+            .catch((err) => alert(err));
+        //todo: 获取聊天记录
+    }, []);
 
     return (
         <div style={{ padding: 12 }}>
             <Navbar />
-            <div>
+            <div style={{display: "flex", flexDirection:"column"}}>
                 {msgList.map((msg) => (
-                    <div key={1}>
-                        {msg}
-                    </div>
+                    (msg.sender_id === myID) ? (
+                        <div key={msg.msg_id} style={{textAlign: "right"}} className="msg">
+                            <img className="sender_avatar" src={msg.sender_avatar} />
+                            {msg.sender_name}
+                            {msg.msg_body}
+                        </div>
+                    ) : (
+                        <div key={msg.msg_id} style={{float: "right"}} className="msg">
+                            <img className="sender_avatar" src={msg.sender_avatar}/>
+                            {msg.sender_name}
+                            {msg.msg_body}
+                        </div>
+                    )
                 ))}
             </div>
             <div>

@@ -19,12 +19,20 @@ export interface Options {
 };
 
 export interface ChatMetaData {  // 会话列表显示的信息
-    id: number;
+    id: number,
     friend_id: number,
-    isGroup: boolean;
-    friend_name: string;
-    friend_avatar: string;
-    lastMsg: string;
-    time: string;
-    unreadMsg: number;
+    isGroup: boolean,
+    friend_name: string,
+    friend_avatar: string,
+    lastMsg: string,
+    time: string,
+    unreadMsg: number
+};
+
+export interface MsgMetaData {
+    msg_id: number,
+    msg_body: string,
+    sender_id: number,
+    sender_name: string,
+    sender_avatar: string
 };

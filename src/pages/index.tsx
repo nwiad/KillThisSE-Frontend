@@ -75,12 +75,6 @@ const InitLoginPage = () => {
                 <button onClick={userLogin} disabled={!nameLegal || !passwordLegal}>
                     登录
                 </button>
-                <button onClick={() => {
-                    const rand = Math.floor(Math.random() * 100000);
-                    router.push("/user");
-                }}>
-                    登录（测试用）
-                </button>
                 <button onClick={() => router.push("/register")}>
                     注册新用户
                 </button>

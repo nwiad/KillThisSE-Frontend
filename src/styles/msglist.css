@@ -94,3 +94,25 @@
     border-radius: 0;
     border: 0px solid #7d7d7d;
 }
+
+.sender_avatar {
+    display: inline;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #ccc;
+    margin: 10px 20px;
+}
+
+.msg {
+    display: inline;
+    width: 50%;
+    height: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #08e429;
+    margin: 10px 20px;
+    float: right;
+}

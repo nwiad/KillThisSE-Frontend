@@ -18,7 +18,7 @@ const InitRegisterPage = () => {
 
     const saveUser = () => {
         fetch(
-            "/api/user/register/",
+            "/api/user/register_without_email/",
             {
                 method:"POST",
                 body:JSON.stringify({
