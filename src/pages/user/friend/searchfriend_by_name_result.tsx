@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FriendBar from "./friendbar";
 
 const InitPage = () => {
@@ -32,50 +32,51 @@ const InitPage = () => {
             })
             .catch((err) => alert(err));
     };
-
-    fetch(
-        "/api/user/get_profile/",
-        {
-            method: "POST",
-            credentials: "include",
-            body: JSON.stringify({
-                token: localStorage.getItem("token")
-            })
-        }
-    )
-        .then((res) => res.json())
-        .then((data) => {
-            if(data.code === 0){
-                setID(data.user_id);            
-            } else {
-                throw new Error(`${data.info}`);
+    
+    useEffect(() => {
+        fetch(
+            "/api/user/get_profile/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
             }
-        })
-        .catch((err) => {alert(err); });
-
-    fetch(
-        "/api/user/search_by_name/",
-        {
-            method: "POST",
-            credentials: "include",
-            body: JSON.stringify({
-                friend_name: name,
-                token: localStorage.getItem("token")
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0){
+                    setID(data.user_id);            
+                } else {
+                    throw new Error(`${data.info}`);
+                }
             })
-        }
-    )
-        .then((res) => res.json())
-        .then((data) => {
-            if(data.code === 0){
-                setFriend(data.user_id);
-                setAvatar(data.avatar);
-            
-            } else {
-                throw new Error(`${data.info}`);
+            .catch((err) => {alert(err); });
+    
+        fetch(
+            "/api/user/search_by_name/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    friend_name: name,
+                    token: localStorage.getItem("token")
+                })
             }
-        })
-        .catch((err) => {alert(err); router.push("/user/friend/searchfriend");});
-        
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0){
+                    setFriend(data.user_id);
+                    setAvatar(data.avatar);
+                
+                } else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => {alert(err); router.push("/user/friend/searchfriend");});
+    }, [name, router, router.query]);
 
     return (
         <div>

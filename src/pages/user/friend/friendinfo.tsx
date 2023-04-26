@@ -14,8 +14,10 @@ const InitPage = () => {
     const id = router.query.id;
     const [showPopupGrouptoAdd, setShowPopupGrouptoAdd] = useState(false);
     const [groupsList, setGroupsList] = useState<Group[]>([]);
+    const [chatID, setChatID] = useState<number>(-1);
 
     useEffect(() => {
+        console.log(chatID);
         fetch(
             "/api/user/get_group/",
             {
@@ -66,7 +68,7 @@ const InitPage = () => {
         router.push("/user/friend/friendindex");
     };
 
-    const addtoGroup = async (groupID:number) => {
+    const addtoGroup = async (groupID: number) => {
         alert(groupID);
         await fetch(
             "/api/user/add_friend_to_group/",
@@ -91,10 +93,42 @@ const InitPage = () => {
             .catch((err) => alert(err));
         router.push("/user/friend/friendindex");
     };
-
+    const startChat = async () => {
+        await fetch(
+            "/api/user/get_or_create_private_conversation/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    friend: id,
+                    token: localStorage.getItem("token")
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.code === 0) {
+                    console.log("成功发起会话");
+                    setChatID(data.conversation_id);
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert(err));
+        router.push("/user/friend/friendindex");
+    };
+    useEffect(() => {
+        if (chatID > 0) {
+            router.push(`/user/msg/chat?id=${chatID}`);
+        }
+    }, [chatID, router]);
     return (
         <div>
             <FriendBar />
+            <button className="deleteFriend" style={{ backgroundColor: "blue" }} onClick={() => { startChat(); }}>
+                发消息
+            </button>
             <button className="addtoGroup" onClick={() => { setShowPopupGrouptoAdd(true) }}>
                 加入分组
             </button>
@@ -105,11 +139,11 @@ const InitPage = () => {
                             请选择需要加入的分组
                         </li>
                         {groupsList?.map((item: Group) => (
-                            <li key={item.group_id} onClick={() => {addtoGroup(item.group_id) }}>
+                            <li key={item.group_id} onClick={() => { addtoGroup(item.group_id) }}>
                                 {item.group_name}
                             </li>
                         ))}
-                        <li onClick={() => { setShowPopupGrouptoAdd(false)}}>
+                        <li onClick={() => { setShowPopupGrouptoAdd(false) }}>
                             取消
                         </li>
                     </ul>

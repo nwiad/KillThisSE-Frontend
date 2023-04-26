@@ -3,7 +3,8 @@ import Link from "next/link";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import MsgBar from "./msgbar";
 import MsgBox from "./msgbox";
-import { Options, Socket } from "../../../utils/websocket";
+import { Socket } from "../../../utils/websocket";
+import { Options } from "../../..//utils/type";
 
 const InitPage = () => {
     const [inputValue, setInput] = useState<string>("");
@@ -20,7 +21,7 @@ const InitPage = () => {
             isReconnect: true, // 是否自动重连
             isDestroy: false, // 是否销毁
             reconnectTime: 5000, // 重连时间间隔
-            reconnectCount: 5, // 重连次数 -1 则不限制
+            reconnectCount: -1, // 重连次数 -1 则不限制
             openCb: () => { }, // 连接成功的回调
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
@@ -59,10 +60,10 @@ const InitPage = () => {
                     value={inputValue}
                     onChange={(e) => { handleInput(e); setMsg(e.target.value); }}
                     onKeyDown={(event) => {
-                        if (event.keyCode === 13) {
-                          event.preventDefault();
-                          sendPublic(); 
-                          handleClick();
+                        if (event.key === "Enter") {
+                            event.preventDefault();
+                            sendPublic(); 
+                            handleClick();
                         }}}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />

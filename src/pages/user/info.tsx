@@ -134,7 +134,7 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    alert("已提交，请稍后刷新");
+                    alert("修改成功");
                     setAvatar(image_url);
                 } else {
                     throw new Error(`${res.info}`);
