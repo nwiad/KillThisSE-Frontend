@@ -80,19 +80,24 @@ const ChatScreen = () => {
             <Navbar />
             <div style={{display: "flex", flexDirection:"column"}}>
                 {msgList.map((msg) => (
-                    (msg.sender_id === myID) ? (
-                        <div key={msg.msg_id} style={{textAlign: "right"}} className="msg">
-                            <img className="sender_avatar" src={msg.sender_avatar} />
-                            {msg.sender_name}:
-                            {msg.msg_body}
-                        </div>
-                    ) : (
-                        <div key={msg.msg_id} style={{float: "right"}} className="msg">
-                            <img className="sender_avatar" src={msg.sender_avatar}/>
-                            {msg.sender_name}:
-                            {msg.msg_body}
-                        </div>
-                    )
+                    <div key={msg.msg_id} style={{textAlign: "right"}} className="msg">
+                        <img className="sender_avatar" src={msg.sender_avatar} />
+                        {msg.sender_name}:
+                        {msg.msg_body}
+                    </div>
+                    // (msg.sender_id === myID) ? (
+                    //     <div key={msg.msg_id} style={{textAlign: "right"}} className="msg">
+                    //         <img className="sender_avatar" src={msg.sender_avatar} />
+                    //         {msg.sender_name}:
+                    //         {msg.msg_body}
+                    //     </div>
+                    // ) : (
+                    //     <div key={msg.msg_id} style={{float: "right"}} className="msg">
+                    //         <img className="sender_avatar" src={msg.sender_avatar}/>
+                    //         {msg.sender_name}:
+                    //         {msg.msg_body}
+                    //     </div>
+                    // )
                 ))}
             </div>
             <div>
