@@ -34,7 +34,7 @@ const ChatScreen = () => {
         }
         
         const options: Options = {
-            url: `ws://localhost:8000/chat/${router.query.id}/`,
+            url: `/api/chat/${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true}),
             isReconnect: true, // 是否自动重连
@@ -83,13 +83,13 @@ const ChatScreen = () => {
                     (msg.sender_id === myID) ? (
                         <div key={msg.msg_id} style={{textAlign: "right"}} className="msg">
                             <img className="sender_avatar" src={msg.sender_avatar} />
-                            {msg.sender_name}
+                            {msg.sender_name}:
                             {msg.msg_body}
                         </div>
                     ) : (
                         <div key={msg.msg_id} style={{float: "right"}} className="msg">
                             <img className="sender_avatar" src={msg.sender_avatar}/>
-                            {msg.sender_name}
+                            {msg.sender_name}:
                             {msg.msg_body}
                         </div>
                     )
