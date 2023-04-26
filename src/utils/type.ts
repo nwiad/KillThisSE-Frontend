@@ -20,10 +20,10 @@ export interface Options {
 
 export interface ChatMetaData {  // 会话列表显示的信息
     id: number;
-    user_id: number,
+    friend_id: number,
     isGroup: boolean;
-    name: string;
-    avatar: string;
+    friend_name: string;
+    friend_avatar: string;
     lastMsg: string;
     time: string;
     unreadMsg: number;

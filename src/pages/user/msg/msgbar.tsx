@@ -69,8 +69,8 @@ const MsgBar = () => {
                 <ul className="msglist">
                     {chatList.map((chat) => (
                         <div key={chat.id} style={{display: "flex", flexDirection: "row"}} onClick={() => router.push(`/user/msg/chat?id=${chat.id}`)}>
-                            <img src={`${chat.avatar}`}/>
-                            <div>{chat.name}</div>
+                            <img src={`${chat.friend_avatar}`}/>
+                            <div>{chat.friend_name}</div>
                             {/* <div>{chat.time}</div>
                             <div>{chat.unreadMsg}</div>
                             <div>{chat.lastMsg.slice(10)}</div> */}

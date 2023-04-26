@@ -1,6 +1,5 @@
 export class Heart {
     HEART_TIMEOUT: NodeJS.Timeout|undefined; // 心跳计时器
-    SERVER_HEART_TIMEOUT: NodeJS.Timeout|undefined; // 心跳计时器
     timeout: number;
   
     constructor () {
@@ -8,8 +7,7 @@ export class Heart {
     }
     // 重置
     reset () {
-        clearTimeout(this.HEART_TIMEOUT);
-        clearTimeout(this.SERVER_HEART_TIMEOUT);
+        clearInterval(this.HEART_TIMEOUT);
         return this;
     }
     /**
@@ -17,13 +15,8 @@ export class Heart {
      * @param {Function} cb 回调函数
      */
     start (cb: Function) {
-        this.HEART_TIMEOUT = setTimeout(() => {
+        this.HEART_TIMEOUT = setInterval(() => {
             cb();
-            this.SERVER_HEART_TIMEOUT = setTimeout(() => {
-                cb();
-                // 重新开始检测
-                this.reset().start(cb());
-            }, this.timeout);
         }, this.timeout);
     }
 }

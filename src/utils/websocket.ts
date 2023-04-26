@@ -62,8 +62,8 @@ export class Socket extends Heart {
             this.OPTIONS.reconnectCount = this.RECONNECT_COUNT; // 计数器重置
             // 建立心跳机制
             super.reset().start(() => {
+                console.log("发送心跳");
                 this.send(this.OPTIONS.heartMsg);
-                console.log("send heartbeat");
             });
             if (typeof callback === "function") {
                 callback(event);
@@ -123,8 +123,9 @@ export class Socket extends Heart {
         }
         this.ws!.onmessage = (event) => {
             // 收到任何消息，重新开始倒计时心跳检测
-            console.log(JSON.parse(event.data).message);
+            console.log(JSON.parse(event.data).messages);
             super.reset().start(() => {
+                console.log("发送心跳");
                 this.send(this.OPTIONS.heartMsg);
             });
             if (typeof callback === "function") {
