@@ -34,7 +34,7 @@ const ChatScreen = () => {
         }
         
         const options: Options = {
-            url: `/ws/chat/${router.query.id}/`,
+            url: `ws://chat/${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true}),
             isReconnect: true, // 是否自动重连
