@@ -90,9 +90,10 @@ const InitPage = () => {
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         border: "2px solid #ccc",
-                        margin: "50px auto",
+                        margin: "50px 90px",
                     }} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
-                    <p>{friend}</p>
+                    <p className="resultName">{friend}</p>
+                    <p className="resultId">id:{id}</p>
                     <button onClick={() => {getNewFriend(); }} disabled={id === myID}>添加好友</button>
                 </div>
             </div>

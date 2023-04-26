@@ -118,7 +118,7 @@ const InitPage = () => {
         }
         const image_url = await uploadFile(pic);
 
-        await fetch(
+        await fetch(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
             "/api/user/reset_avatar/",
             {
                 method: "POST",

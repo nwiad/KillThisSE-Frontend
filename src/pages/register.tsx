@@ -18,7 +18,7 @@ const InitRegisterPage = () => {
 
     const saveUser = () => {
         fetch(
-            "/api/user/register/",
+            "/api/user/register_without_email/",
             {
                 method:"POST",
                 body:JSON.stringify({
@@ -34,7 +34,6 @@ const InitRegisterPage = () => {
                     console.log("成功注册");
                 } else {
                     throw new Error(`Request failed with status ${res.status}`);
-
                 }
             })
             .catch((err) => alert(CREATE_USER_FAILURE_PERFIX + err));
