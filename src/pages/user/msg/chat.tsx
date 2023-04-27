@@ -53,7 +53,9 @@ const ChatScreen = () => {
             errorCb: () => { } // 错误的回调
         };
         socket.current = new Socket(options);
-        return cleanUp();
+        return () => {
+            socket.current?.destroy();
+        };
     }, [router, query]);
 
     useEffect(() => {
