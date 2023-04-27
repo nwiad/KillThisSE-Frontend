@@ -28,6 +28,7 @@ const ChatScreen = () => {
     };
 
     const cleanUp = () => {
+        console.log("回收");
         socket.current?.destroy();
     };
     
@@ -47,13 +48,12 @@ const ChatScreen = () => {
             openCb: () => { }, // 连接成功的回调
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
-                //console.log(JSON.parse(event.data).messages);
                 setMsgList(JSON.parse(event.data).messages.map((val: any) => ({...val})));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
         socket.current = new Socket(options);
-        return cleanUp();
+        return cleanUp;
     }, [router, query]);
 
     useEffect(() => {
