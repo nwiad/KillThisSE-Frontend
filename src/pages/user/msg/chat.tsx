@@ -27,6 +27,9 @@ const ChatScreen = () => {
         socket.current!.send(JSON.stringify({ message: message, token: localStorage.getItem("token") }));
     };
 
+    const cleanUp = () => {
+        socket.current?.destroy();
+    };
     
     useEffect(() => {
         if(!router.isReady) {
@@ -50,10 +53,7 @@ const ChatScreen = () => {
             errorCb: () => { } // 错误的回调
         };
         socket.current = new Socket(options);
-        // todo: 获取消息列表
-        return (() => {
-            socket.current?.destroy();
-        });
+        return cleanUp();
     }, [router, query]);
 
     useEffect(() => {
@@ -72,7 +72,6 @@ const ChatScreen = () => {
                 setID(data.id);
             })
             .catch((err) => alert(err));
-        //todo: 获取聊天记录
     }, []);
 
     return (
@@ -85,19 +84,6 @@ const ChatScreen = () => {
                         {msg.sender_name}:
                         {msg.msg_body}
                     </div>
-                    // (msg.sender_id === myID) ? (
-                    //     <div key={msg.msg_id} style={{textAlign: "right"}} className="msg">
-                    //         <img className="sender_avatar" src={msg.sender_avatar} />
-                    //         {msg.sender_name}:
-                    //         {msg.msg_body}
-                    //     </div>
-                    // ) : (
-                    //     <div key={msg.msg_id} style={{float: "right"}} className="msg">
-                    //         <img className="sender_avatar" src={msg.sender_avatar}/>
-                    //         {msg.sender_name}:
-                    //         {msg.msg_body}
-                    //     </div>
-                    // )
                 ))}
             </div>
             <div>
