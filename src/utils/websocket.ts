@@ -33,10 +33,10 @@ export class Socket extends Heart {
     create () {
         if (!("WebSocket" in window)) {
         /* eslint-disable no-new */
-            throw new Error("当前浏览器不支持，无法使用");
+            new Error("当前浏览器不支持，无法使用");
         }
         if (!this.OPTIONS.url) {
-            throw new Error("地址不存在，无法建立通道");
+            new Error("地址不存在，无法建立通道");
         }
         delete this.ws;
         this.ws = new WebSocket(this.OPTIONS.url);
@@ -139,7 +139,7 @@ export class Socket extends Heart {
      */
     send (data: string) {
         if (this.ws!.readyState !== this.ws!.OPEN) {
-            throw new Error("没有连接到服务器，无法推送");
+            new Error("没有连接到服务器，无法推送");
         }
         this.ws!.send(data);
     }
