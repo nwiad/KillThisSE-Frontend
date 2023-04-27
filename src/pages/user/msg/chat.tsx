@@ -80,7 +80,7 @@ const ChatScreen = () => {
             <Navbar />
             <div style={{display: "flex", flexDirection:"column"}}>
                 {msgList.map((msg) => (
-                    <div key={msg.msg_id} style={{textAlign: "right"}} className="msg">
+                    <div key={msg.msg_id} className="msg">
                         <img className="sender_avatar" src={msg.sender_avatar} />
                         {msg.sender_name}:
                         {msg.msg_body}
