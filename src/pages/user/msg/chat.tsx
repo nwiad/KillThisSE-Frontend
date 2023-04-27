@@ -38,7 +38,7 @@ const ChatScreen = () => {
         }
         
         const options: Options = {
-            url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
+            url: `wss://2023-im-backend-killthisse.app.secoder.net:80/ws/chat/${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true}),
             isReconnect: true, // 是否自动重连
