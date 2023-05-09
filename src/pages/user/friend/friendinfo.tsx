@@ -69,7 +69,6 @@ const InitPage = () => {
     };
 
     const addtoGroup = async (groupID: number) => {
-        alert(groupID);
         await fetch(
             "/api/user/add_friend_to_group/",
             {

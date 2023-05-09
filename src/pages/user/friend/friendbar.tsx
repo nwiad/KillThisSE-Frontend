@@ -2,7 +2,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Navbar from "../navbar";
 import { all } from "axios";
-import { MouseEvent as ReactMouseEvent } from 'react';
+import { MouseEvent as ReactMouseEvent } from "react";
+
 
 interface Friend {
     user_id: number;
@@ -23,6 +24,7 @@ const FriendBar = () => {
     const [allCollapsed, setAllCollapsed] = useState(false);
     const [showPopupNewGroup, setShowPopupNewGroup] = useState(false);
     const [newGroup, setNewGroup] = useState<string>("");
+    const [refresh, setRefresh] = useState(false);
 
     const router = useRouter();
     useEffect(() => {
@@ -75,7 +77,7 @@ const FriendBar = () => {
                 }
             })
             .catch((err) => alert(err));
-    }, []);
+    }, [refresh]);
 
     const createNewGroup = async () => {
         await fetch(
@@ -93,6 +95,7 @@ const FriendBar = () => {
             .then((data) => {
                 if (data.code === 0) {
                     alert("成功");
+                    setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -149,7 +152,7 @@ const FriendBar = () => {
             .then((data) => {
                 if (data.code === 0) {
                     alert("成功");
-                    router.push("/user/friend/friendindex");
+                    setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -175,7 +178,7 @@ const FriendBar = () => {
             .then((data) => {
                 if (data.code === 0) {
                     alert("成功");
-                    router.push("/user/friend/friendindex");
+                    setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -196,19 +199,18 @@ const FriendBar = () => {
         document.body.appendChild(contextMenu);
 
         function hideContextMenu() {
-            document.removeEventListener('mousedown', hideContextMenu);
-            document.removeEventListener('click', hideContextMenu);
+            document.removeEventListener("mousedown", hideContextMenu);
+            document.removeEventListener("click", hideContextMenu);
             document.body.removeChild(contextMenu);
         }
 
-        contextMenu.addEventListener('click', () => {
+        contextMenu.addEventListener("click", () => {
             event.stopPropagation();
-            console.log('执行删除操作');
             deleteGroup(group);
             hideContextMenu();
         });
 
-        document.addEventListener('click', hideContextMenu);
+        document.addEventListener("click", hideContextMenu);
     }
 
     function removeFriendContextMenu(event: ReactMouseEvent<HTMLLIElement, MouseEvent>, group: number, friend: number) {
@@ -224,15 +226,14 @@ const FriendBar = () => {
 
 
         function hideContextMenu() {
-            document.removeEventListener('mousedown', hideContextMenu);
-            document.removeEventListener('click', hideContextMenu);
+            document.removeEventListener("mousedown", hideContextMenu);
+            document.removeEventListener("click", hideContextMenu);
             document.body.removeChild(contextMenu);
         }
-        document.addEventListener('click', hideContextMenu);
+        document.addEventListener("click", hideContextMenu);
 
-        contextMenu.addEventListener('click', () => {
+        contextMenu.addEventListener("click", () => {
             event.stopPropagation();
-            console.log('执行删除操作');
             deleteFriendFromGroup(group, friend);
             hideContextMenu();
         });
@@ -285,16 +286,15 @@ const FriendBar = () => {
                         </li>
                     ))}
                     {groupsList?.map((item: Group) => (
-                        <div>
+                        <div key={item.group_id}>
                             <li key={item.group_id} className="friend"
                                 onClick={() => {
                                     getGroupInfo(item.group_id);
                                     const foundGroup = groupsList.find(group => group.group_id === item.group_id);
                                     if (foundGroup) foundGroup.collapsed = !item.collapsed;
                                 }}
-                                onContextMenu={async (event) => {
-                                    await deleteGroupContextMenu(event, item.group_name);
-                                    router.push("/user/friend/friendindex");
+                                onContextMenu={ (event) => {
+                                    deleteGroupContextMenu(event, item.group_name);
                                 }}>
                                 <p>{item.group_name}</p>
                             </li>
@@ -303,9 +303,8 @@ const FriendBar = () => {
                                     className="friendinList"
                                     onClick={() => { router.push(`/user/friend/friendinfo?id=${friend.user_id}`); }}
                                     style={{ display: `${item.collapsed ? "block" : "none"}`, width: "80%" }}
-                                    onContextMenu={async (event) => {
-                                        await removeFriendContextMenu(event, item.group_id, friend.user_id);
-                                        router.push("/user/friend/friendindex");
+                                    onContextMenu={ (event) => {
+                                        removeFriendContextMenu(event, item.group_id, friend.user_id);
                                     }}>
                                     <img className="friendavatar" src={`${friend.avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
                                     <p>{friend.name}</p>
