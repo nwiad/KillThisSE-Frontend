@@ -164,6 +164,8 @@
 }
 
 #msgdisplay {
+    display: flex;
+    flex-direction: column-reverse;
     position: fixed;
     width: 80%;
     height: auto;

@@ -139,7 +139,7 @@ export class Socket extends Heart {
      */
     send (data: string) {
         if (this.ws!.readyState !== this.ws!.OPEN) {
-            throw new Error("没有连接到服务器，无法推送");
+            // throw new Error("没有连接到服务器，无法推送");
         }
         this.ws!.send(data);
     }

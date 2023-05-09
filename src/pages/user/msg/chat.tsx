@@ -10,6 +10,8 @@ const ChatScreen = () => {
     const [message, setMsg] = useState<string>("");
     const [msgList, setMsgList] = useState<MsgMetaData[]>([]);
     const [myID, setID] = useState<number>(-1);
+    const [msgRefresh, setMsgRefresh] = useState<boolean>(false);
+    const chatBoxRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
     const query = router.query;
 
@@ -32,11 +34,11 @@ const ChatScreen = () => {
         socket.current?.destroy();
     };
     
+
     useEffect(() => {
         if(!router.isReady) {
             return;
         }
-        
         const options: Options = {
             url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
             // url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
@@ -49,13 +51,18 @@ const ChatScreen = () => {
             openCb: () => { }, // 连接成功的回调
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
-                setMsgList(JSON.parse(event.data).messages.map((val: any) => ({...val})));
+                setMsgList(JSON.parse(event.data).messages.map((val: any) => ({...val})))
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
         socket.current = new Socket(options);
         return cleanUp;
     }, [router, query]);
+
+    useEffect(() => {
+        const msgs = document.getElementById("msgdisplay");
+        msgs?.scroll(0, msgs?.scrollHeight - msgs?.clientHeight);
+    }, [msgList]);
 
     useEffect(() => {
         fetch(
@@ -79,7 +86,7 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <div id="msgdisplay" style={{display: "flex", flexDirection:"column"}}>
+            <div ref={chatBoxRef} id="msgdisplay" style={{display: "flex", flexDirection:"column"}}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
                         <div key={msg.msg_id} className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
