@@ -48,17 +48,17 @@ const MsgBar = () => {
         <div style = {{ padding: 12 }}>
             <Navbar />
             {chatList.length === 0 ? (
-                <ul className="msglist"> 当前没有会话 </ul>
+                <ul className="friendlist"> 当前没有会话 </ul>
             ) : (
-                <ul className="msglist">
+                <ul className="friendlist">
                     {chatList.map((chat) => (
-                        <div key={chat.id} style={{display: "flex", flexDirection: "row"}} onClick={() => router.push(`/user/msg/chat?id=${chat.id}`)}>
+                        <li key={chat.id} style={{display: "flex", flexDirection: "row"}} onClick={() => router.push(`/user/msg/chat?id=${chat.id}`)}>
                             <img src={`${chat.friend_avatar}`}/>
-                            <div>{chat.friend_name}</div>
+                            <p>{chat.friend_name}</p>
                             {/* <div>{chat.time}</div>
                             <div>{chat.unreadMsg}</div>
                             <div>{chat.lastMsg.slice(10)}</div> */}
-                        </div>
+                        </li>
                     ))}</ul>
             )}
         </div>

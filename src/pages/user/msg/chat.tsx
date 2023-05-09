@@ -77,12 +77,17 @@ const ChatScreen = () => {
     return (
         <div style={{ padding: 12 }}>
             <Navbar />
-            <div style={{display: "flex", flexDirection:"column"}}>
+            <MsgBar />
+            <div id="msgdisplay" style={{display: "flex", flexDirection:"column"}}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
-                        <img className="sender_avatar" src={msg.sender_avatar} />
-                        {msg.sender_name}:
-                        {msg.msg_body}
+                        <div key={msg.msg_id} className="msgavatar">
+                            <img className="sender_avatar" src={msg.sender_avatar} />
+                        </div>
+                        <div key={msg.msg_id} className="msgmain">
+                            <p className="sendername">{msg.sender_name}</p>
+                            <p className="msgbody">{msg.msg_body}</p>
+                        </div>
                     </div>
                 ))}
             </div>
