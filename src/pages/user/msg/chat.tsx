@@ -38,7 +38,8 @@ const ChatScreen = () => {
         }
         
         const options: Options = {
-            url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
+            url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
+            // url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true}),
             isReconnect: true, // 是否自动重连
@@ -69,7 +70,7 @@ const ChatScreen = () => {
         )
             .then((res) => res.json())
             .then((data) => {
-                setID(data.id);
+                setID(data.user_id);
             })
             .catch((err) => alert(err));
     }, []);
@@ -81,12 +82,12 @@ const ChatScreen = () => {
             <div id="msgdisplay" style={{display: "flex", flexDirection:"column"}}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
-                        <div key={msg.msg_id} className="msgavatar">
+                        <div key={msg.msg_id} className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
-                        <div key={msg.msg_id} className="msgmain">
+                        <div key={msg.msg_id} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain" }>
                             <p className="sendername">{msg.sender_name}</p>
-                            <p className="msgbody">{msg.msg_body}</p>
+                            <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody" }>{msg.msg_body}</p>
                         </div>
                     </div>
                 ))}

@@ -107,16 +107,39 @@
 }
 
 .msg {
-    display: flex;
-    flex-direction: row;
+    display: block;
     width: auto;
     height: auto;
     right: 0;
     margin-left: 0;
+    margin-top: auto;
     background-size: cover;
     background-position: center;
-    float: right;
 }
+
+.mymsgavatar {
+    display: inline;
+    float: right;
+    right: 0;
+}
+
+.msgavatar {
+    display: inline;
+    float: left;
+}
+
+.mymsgmain {
+    display: inline;
+    float: right;
+    margin-right: auto;
+}
+
+.msgmain {
+    display: inline;
+    float: left;
+    margin-left: auto;
+}
+
 .msgbody {
     display: block;
     border-radius: 5px;
@@ -125,10 +148,21 @@
     padding: 12px;
     margin-bottom: 0;
 }
+
+.mymsgbody {
+    display: block;
+    border-radius: 5px;
+    background-color: #0660e9;
+    width: auto;
+    padding: 12px;
+    margin-bottom: 0;
+}
+
 .sendername {
     display: block;
     font-size: 12px;
 }
+
 #msgdisplay {
     position: fixed;
     width: 80%;
