@@ -271,7 +271,7 @@ const FriendBar = () => {
                         </div>
                     )}
                     <li className="newfriend"
-                        onClick={() => { setAllCollapsed(!allCollapsed) }}
+                        onClick={() => { setAllCollapsed(!allCollapsed); }}
                         style={{ padding: 20 }}>
                         全部好友
                     </li>
@@ -313,7 +313,6 @@ const FriendBar = () => {
                             ))}
                         </div>
                     ))}
-
                 </ul>
             </div>
         </div>

@@ -27,6 +27,10 @@ const ChatScreen = () => {
         socket.current!.send(JSON.stringify({ message: message, token: localStorage.getItem("token") }));
     };
 
+    const cleanUp = () => {
+        console.log("回收");
+        socket.current?.destroy();
+    };
     
     useEffect(() => {
         if(!router.isReady) {
@@ -34,7 +38,7 @@ const ChatScreen = () => {
         }
         
         const options: Options = {
-            url: `/api/chat/${router.query.id}/`,
+            url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true}),
             isReconnect: true, // 是否自动重连
@@ -44,16 +48,12 @@ const ChatScreen = () => {
             openCb: () => { }, // 连接成功的回调
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
-                //console.log(JSON.parse(event.data).messages);
                 setMsgList(JSON.parse(event.data).messages.map((val: any) => ({...val})));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
         socket.current = new Socket(options);
-        // todo: 获取消息列表
-        return (() => {
-            socket.current?.destroy();
-        });
+        return cleanUp;
     }, [router, query]);
 
     useEffect(() => {
@@ -72,7 +72,6 @@ const ChatScreen = () => {
                 setID(data.id);
             })
             .catch((err) => alert(err));
-        //todo: 获取聊天记录
     }, []);
 
     return (
@@ -80,19 +79,11 @@ const ChatScreen = () => {
             <Navbar />
             <div style={{display: "flex", flexDirection:"column"}}>
                 {msgList.map((msg) => (
-                    (msg.sender_id === myID) ? (
-                        <div key={msg.msg_id} style={{textAlign: "right"}} className="msg">
-                            <img className="sender_avatar" src={msg.sender_avatar} />
-                            {msg.sender_name}:
-                            {msg.msg_body}
-                        </div>
-                    ) : (
-                        <div key={msg.msg_id} style={{float: "right"}} className="msg">
-                            <img className="sender_avatar" src={msg.sender_avatar}/>
-                            {msg.sender_name}:
-                            {msg.msg_body}
-                        </div>
-                    )
+                    <div key={msg.msg_id} className="msg">
+                        <img className="sender_avatar" src={msg.sender_avatar} />
+                        {msg.sender_name}:
+                        {msg.msg_body}
+                    </div>
                 ))}
             </div>
             <div>

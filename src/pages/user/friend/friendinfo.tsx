@@ -129,7 +129,7 @@ const InitPage = () => {
             <button className="deleteFriend" style={{ backgroundColor: "blue" }} onClick={() => { startChat(); }}>
                 发消息
             </button>
-            <button className="addtoGroup" onClick={() => { setShowPopupGrouptoAdd(true) }}>
+            <button className="addtoGroup" onClick={() => { setShowPopupGrouptoAdd(true); }}>
                 加入分组
             </button>
             {showPopupGrouptoAdd && (
@@ -139,11 +139,11 @@ const InitPage = () => {
                             请选择需要加入的分组
                         </li>
                         {groupsList?.map((item: Group) => (
-                            <li key={item.group_id} onClick={() => { addtoGroup(item.group_id) }}>
+                            <li key={item.group_id} onClick={() => { addtoGroup(item.group_id); }}>
                                 {item.group_name}
                             </li>
                         ))}
-                        <li onClick={() => { setShowPopupGrouptoAdd(false) }}>
+                        <li onClick={() => { setShowPopupGrouptoAdd(false); }}>
                             取消
                         </li>
                     </ul>

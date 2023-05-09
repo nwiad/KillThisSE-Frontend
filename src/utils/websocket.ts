@@ -11,7 +11,7 @@ export class Socket extends Heart {
     OPTIONS: Options = {
         url: "", // 链接的通道的地址
         heartTime: 5000, // 心跳时间间隔
-        heartMsg: "{\"message\": \"ping\"}", // 心跳信息,默认为"ping"
+        heartMsg: JSON.stringify({message: "ping", token: localStorage.getItem("token"), heartbeat: true}), // 心跳信息,默认为"ping"
         isReconnect: true, // 是否自动重连
         isDestroy: false, // 是否销毁
         reconnectTime: 5000, // 重连时间间隔
@@ -33,12 +33,10 @@ export class Socket extends Heart {
     create () {
         if (!("WebSocket" in window)) {
         /* eslint-disable no-new */
-            new Error("当前浏览器不支持，无法使用");
-            return;
+            throw new Error("当前浏览器不支持，无法使用");
         }
         if (!this.OPTIONS.url) {
-            new Error("地址不存在，无法建立通道");
-            return;
+            throw new Error("地址不存在，无法建立通道");
         }
         delete this.ws;
         this.ws = new WebSocket(this.OPTIONS.url);
@@ -141,8 +139,7 @@ export class Socket extends Heart {
      */
     send (data: string) {
         if (this.ws!.readyState !== this.ws!.OPEN) {
-            new Error("没有连接到服务器，无法推送");
-            return;
+            throw new Error("没有连接到服务器，无法推送");
         }
         this.ws!.send(data);
     }
