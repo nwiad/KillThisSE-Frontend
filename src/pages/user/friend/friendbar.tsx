@@ -285,7 +285,7 @@ const FriendBar = () => {
                         </li>
                     ))}
                     {groupsList?.map((item: Group) => (
-                        <div>
+                        <div key={item.group_id}>
                             <li key={item.group_id} className="friend"
                                 onClick={() => {
                                     getGroupInfo(item.group_id);
