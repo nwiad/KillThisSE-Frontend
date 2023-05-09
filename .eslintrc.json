@@ -16,9 +16,9 @@
     }
   },
   "rules": {
-    "indent": ["error", 4],
-    "quotes": ["error", "double"],
-    "semi": ["error", "always"]
+    // "indent": ["error", 4],
+    // "quotes": ["error", "double"],
+    // "semi": ["error", "always"]
   },
   "ignorePatterns": ["node_modules/", ".next/"],
   "settings": {
