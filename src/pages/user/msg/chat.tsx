@@ -89,10 +89,10 @@ const ChatScreen = () => {
             <div ref={chatBoxRef} id="msgdisplay" style={{display: "flex", flexDirection:"column"}}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
-                        <div key={msg.msg_id} className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
+                        <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
-                        <div key={msg.msg_id} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain" }>
+                        <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain" }>
                             <p className="sendername">{msg.sender_name}</p>
                             <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody" }>{msg.msg_body}</p>
                         </div>
