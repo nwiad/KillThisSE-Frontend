@@ -8,11 +8,11 @@ interface Friend {
 }
 
 const Navbar = () => {
-    const [msg, setMsg] = useState<string>("");
     const [name, setName] = useState<string>("");
     const [avatar, setAvatar] = useState<string>();
     const [showPopUpFriendList, setShowPopUpFriendList] = useState<boolean>(false);
     const [groupFriendList, setGroupFriendList] = useState<Friend[]>([]);
+    const [groupName, setGroupName] = useState<string>("");
     const [groupMembers, setGroupMembers] = useState<number[]>([]);
     
     const router = useRouter();
@@ -102,6 +102,7 @@ const Navbar = () => {
                 credentials: "include",
                 body: JSON.stringify({
                     token: localStorage.getItem("token"),
+                    name: groupName,
                     members: groupMembers
                 })
             }
@@ -132,23 +133,24 @@ const Navbar = () => {
                 {showPopUpFriendList && (
                     <div className="popup">
                         <div>发起群聊</div>
+                        <input onChange={(e) => setGroupName(e.target.value)} />
                         {groupFriendList?.map((item: Friend) => (
                             <li key={item.user_id}
                                 className="friendinList"
                                 onClick={() => { addGroupMember(item.user_id); }}
                                 style={{ display: "flex", width: "100%" }}>
-                                <img className="sender_avatar" src={`${item.avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
+                                <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
                                 <p style={{ color: "black" }}>{item.name}</p>
                             </li>
                         ))}
                         <button onClick={() => {createGroupChat(); setGroupFriendList([]); setGroupMembers([]); 
-                            setShowPopUpFriendList(false);}} disabled={groupMembers.length === 0}>完成</button>
+                            setShowPopUpFriendList(false);}} disabled={groupMembers.length === 0 || groupName.length === 0}>完成</button>
                         <button onClick={() => {setGroupFriendList([]); setGroupMembers([]); setShowPopUpFriendList(false);}}>取消</button>
                     </div>
                 )}
                 <li className="navbar_ele_info" onClick={() => {router.push("/user/info");}}>
                     <p style={{display : "inline-block", verticalAlign: "middle"}}>{name}</p>
-                    <img className="navbarAvatar" src={`${avatar}`} style={{display : "inline-block", verticalAlign: "middle"}} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"}/>
+                    <img className="navbarAvatar" src={`${avatar}`} style={{display : "inline-block", verticalAlign: "middle"}} alt="oops"/>
                 </li>
                 <li className="navbar_ele_l" onClick={() => {userLogout(); router.push("/");}}>
                         登出

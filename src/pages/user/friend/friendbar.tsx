@@ -281,7 +281,7 @@ const FriendBar = () => {
                             className="friendinList"
                             onClick={() => { router.push(`/user/friend/friendinfo?id=${item.user_id}`); }}
                             style={{ display: `${allCollapsed ? "block" : "none"}`, width: "80%" }}>
-                            <img className="friendavatar" src={`${item.avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
+                            <img className="friendavatar" src={`${item.avatar}`} alt="oops" />
                             <p>{item.name}</p>
                         </li>
                     ))}
@@ -306,7 +306,7 @@ const FriendBar = () => {
                                     onContextMenu={ (event) => {
                                         removeFriendContextMenu(event, item.group_id, friend.user_id);
                                     }}>
-                                    <img className="friendavatar" src={`${friend.avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
+                                    <img className="friendavatar" src={`${friend.avatar}`} alt="oops" />
                                     <p>{friend.name}</p>
                                 </li>
                             ))}

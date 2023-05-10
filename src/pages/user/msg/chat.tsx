@@ -10,20 +10,11 @@ const ChatScreen = () => {
     const [message, setMsg] = useState<string>("");
     const [msgList, setMsgList] = useState<MsgMetaData[]>([]);
     const [myID, setID] = useState<number>(-1);
-    const [msgRefresh, setMsgRefresh] = useState<boolean>(false);
     const chatBoxRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
     const query = router.query;
 
     const socket = useRef<Socket>();
-
-    const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
-        setInput(event.target.value);
-    };
-
-    const handleClick = () => {
-        setInput("");
-    };
 
     const sendPublic = () => {
         socket.current!.send(JSON.stringify({ message: message, token: localStorage.getItem("token") }));
@@ -40,8 +31,8 @@ const ChatScreen = () => {
             return;
         }
         const options: Options = {
-            // url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
-            url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
+            url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
+            // url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true}),
             isReconnect: true, // 是否自动重连
@@ -51,7 +42,7 @@ const ChatScreen = () => {
             openCb: () => { }, // 连接成功的回调
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
-                setMsgList(JSON.parse(event.data).messages.map((val: any) => ({...val})))
+                setMsgList(JSON.parse(event.data).messages.map((val: any) => ({...val})));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -106,17 +97,17 @@ const ChatScreen = () => {
                     type="text"
                     placeholder="请输入内容"
                     value={inputValue}
-                    onChange={(e) => { handleInput(e); setMsg(e.target.value); }}
+                    onChange={(e) => { setInput(e.target.value); setMsg(e.target.value); }}
                     onKeyDown={(event) => {
                         if (event.key === "Enter") {
                             event.preventDefault();
                             sendPublic(); 
-                            handleClick();
+                            setInput("");
                         }}}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
                 <button
-                    className="msgbutton" onClick={() => { sendPublic(); handleClick(); }} style={{ display: "inline-block", verticalAlign: "middle" }}
+                    className="msgbutton" onClick={() => { sendPublic(); setInput(""); }} style={{ display: "inline-block", verticalAlign: "middle" }}
                 > 发送 </button>
             </div>
         </div>
