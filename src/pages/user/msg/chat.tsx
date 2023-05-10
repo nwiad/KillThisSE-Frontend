@@ -25,7 +25,7 @@ const ChatScreen = () => {
     };
     // 功能：处理emoji点击
     const handleEmojiClick = (emoji: { native: string; }) => {
-        console.log("emoji clicked: ", emoji.native);
+        setMsg(inputValue + emoji.native);
         setInput(inputValue + emoji.native);
         setShowEmojiPicker(false);
     };
@@ -110,23 +110,7 @@ const ChatScreen = () => {
                     </div>
                 ))}
             </div>
-            <div style = {{display: "flex", justifyContent: "flex-end"}}>
-                <button
-                    className="emoji-picker-button"
-                    onClick={()=>{ toggleEmojiPicker();}}
-                >😀</button>
-                {showEmojiPicker && (
-                    <div className="emoji-picker-container" > 
-                        <Picker 
-                            data = {data} 
-                            onSelect={(emoji:{native:string}) => {
-                                handleEmojiClick(emoji)
-                            }}
-                        />
-                    </div>
-                )}
-            </div>
-            <div>
+            <div className="inputdisplay">
                 <input
                     className="msginput"
                     id="msginput"
@@ -143,13 +127,27 @@ const ChatScreen = () => {
                     }}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
-                <button
-                    className="msgbutton"
-                    onClick={() => { sendPublic(); setInput(""); }}
-                    style={{ display: "inline-block", verticalAlign: "middle" }}
-                > 发送 </button>
-                {/* add 发送emoji表情功能 */}
+                <div className="sendbuttons" style={{ display: "flex", flexDirection: "column" }}>
+                    <button
+                        className="emojibutton"
+                        onClick={() => { toggleEmojiPicker(); }}
+                    >😀</button>
+                    <button
+                        className="msgbutton"
+                        onClick={() => { sendPublic(); setInput(""); }}
+                        style={{ display: "inline-block", verticalAlign: "middle" }}
+                    > 发送 </button>
+                </div>
             </div>
+            {showEmojiPicker && (
+                <div className="emoji-picker-container" >
+                    <Picker
+                        onEmojiSelect={(emoji: { native: string }) => {
+                            handleEmojiClick(emoji);
+                        }}
+                    />
+                </div>
+            )}
         </div>
     );
 };
