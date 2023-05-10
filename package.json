@@ -12,9 +12,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@emoji-mart/data": "^1.1.2",
+    "@emoji-mart/react": "^1.1.1",
     "@types/ali-oss": "^6.16.7",
     "ali-oss": "^6.17.1",
     "axios": "^1.2.0",
+    "emoji-mart": "^5.5.2",
     "jest-sonar-reporter": "^2.0.0",
     "miragejs": "^0.1.47",
     "next": "13.0.4",

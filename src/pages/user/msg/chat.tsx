@@ -1,8 +1,11 @@
-import { ChangeEvent, useEffect, useState, useRef } from "react";
-import Navbar from "../navbar";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
+import "emoji-mart/css/emoji-mart.css";
 import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket } from "../../../utils/websocket";
-import { Options, MsgMetaData } from "../../../utils/type";
+import Navbar from "../navbar";
 import MsgBar from "./msgbar";
 
 const ChatScreen = () => {
@@ -13,8 +16,19 @@ const ChatScreen = () => {
     const chatBoxRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
     const query = router.query;
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     const socket = useRef<Socket>();
+
+    // 功能：切换emoji显示
+    const toggleEmojiPicker = () => {
+        setShowEmojiPicker(!showEmojiPicker);
+    };
+    // 功能：处理emoji点击
+    const handleEmojiClick = (emoji: { native: string; }) => {
+        setInput(inputValue + emoji.native);
+        setShowEmojiPicker(false);
+    };
 
     const sendPublic = () => {
         socket.current!.send(JSON.stringify({ message: message, token: localStorage.getItem("token") }));
@@ -107,8 +121,21 @@ const ChatScreen = () => {
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
                 <button
-                    className="msgbutton" onClick={() => { sendPublic(); setInput(""); }} style={{ display: "inline-block", verticalAlign: "middle" }}
+                    className="msgbutton" 
+                    onClick={() => { sendPublic(); setInput(""); }} 
+                    style={{ display: "inline-block", verticalAlign: "middle" }}
                 > 发送 </button>
+                {/* add 发送emoji表情功能 */}
+                <button
+                    className="emoji-picker-button"
+                    onClick={toggleEmojiPicker}
+                    style={{ display: "inline-block", verticalAlign: "middle" }}
+                >😀</button>
+                {showEmojiPicker && (
+                    <div className="emoji-picker-container" style={{ position: "absolute", bottom: "50px", right: "50px" }}> 
+                        <Picker data = {data} onSelect={handleEmojiClick} />
+                    </div>
+                )}
             </div>
         </div>
     );
