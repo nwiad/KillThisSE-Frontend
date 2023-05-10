@@ -158,6 +158,14 @@
     margin-bottom: 0;
 }
 
+.msgbody a {
+    color: #0baaf9;
+}
+
+.mymsgbody a {
+    color: #0baaf9;
+}
+
 .sendername {
     display: block;
     font-size: 12px;

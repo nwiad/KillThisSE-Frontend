@@ -34,6 +34,12 @@ const ChatScreen = () => {
         socket.current?.destroy();
     };
     
+    function createLinkifiedMsgBody(msgBody: string) {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        return msgBody.replace(urlRegex, (url) => {
+          return `<a href="${url}" target="_blank">${url}</a>`;
+        });
+    }
 
     useEffect(() => {
         if(!router.isReady) {
@@ -94,7 +100,7 @@ const ChatScreen = () => {
                         </div>
                         <div key={msg.msg_id} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain" }>
                             <p className="sendername">{msg.sender_name}</p>
-                            <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody" }>{msg.msg_body}</p>
+                            <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody" } dangerouslySetInnerHTML={{__html : createLinkifiedMsgBody(msg.msg_body)}}></p>
                         </div>
                     </div>
                 ))}
