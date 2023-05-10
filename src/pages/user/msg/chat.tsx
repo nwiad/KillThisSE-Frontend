@@ -1,6 +1,5 @@
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
-import "emoji-mart/css/emoji-mart.css";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { MsgMetaData, Options } from "../../../utils/type";
