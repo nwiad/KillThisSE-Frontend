@@ -37,23 +37,23 @@ const ChatScreen = () => {
         console.log("回收");
         socket.current?.destroy();
     };
-    
+
     function createLinkifiedMsgBody(msgBody: string) {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         return msgBody.replace(urlRegex, (url) => {
-          return `<a href="${url}" target="_blank">${url}</a>`;
+            return `<a href="${url}" target="_blank">${url}</a>`;
         });
     }
 
     useEffect(() => {
-        if(!router.isReady) {
+        if (!router.isReady) {
             return;
         }
         const options: Options = {
             url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
             // url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
-            heartMsg: JSON.stringify({message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true}),
+            heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
             isReconnect: true, // 是否自动重连
             isDestroy: false, // 是否销毁
             reconnectTime: 5000, // 重连时间间隔
@@ -61,7 +61,7 @@ const ChatScreen = () => {
             openCb: () => { }, // 连接成功的回调
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
-                setMsgList(JSON.parse(event.data).messages.map((val: any) => ({...val})));
+                setMsgList(JSON.parse(event.data).messages.map((val: any) => ({ ...val })));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -96,15 +96,15 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <div ref={chatBoxRef} id="msgdisplay" style={{display: "flex", flexDirection:"column"}}>
+            <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
-                        <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain" }>
+                        <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
                             <p className="sendername">{msg.sender_name}</p>
-                            <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody" } dangerouslySetInnerHTML={{__html : createLinkifiedMsgBody(msg.msg_body)}}></p>
+                            <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>
                         </div>
                     </div>
                 ))}
@@ -120,14 +120,15 @@ const ChatScreen = () => {
                     onKeyDown={(event) => {
                         if (event.key === "Enter") {
                             event.preventDefault();
-                            sendPublic(); 
+                            sendPublic();
                             setInput("");
-                        }}}
+                        }
+                    }}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
                 <button
-                    className="msgbutton" 
-                    onClick={() => { sendPublic(); setInput(""); }} 
+                    className="msgbutton"
+                    onClick={() => { sendPublic(); setInput(""); }}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 > 发送 </button>
                 {/* add 发送emoji表情功能 */}
@@ -137,8 +138,8 @@ const ChatScreen = () => {
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 >😀</button>
                 {showEmojiPicker && (
-                    <div className="emoji-picker-container" style={{ position: "absolute", bottom: "50px", right: "50px" }}> 
-                        <Picker data = {data} onSelect={handleEmojiClick} />
+                    <div className="emoji-picker-container" style={{ position: "absolute", bottom: "50px", right: "50px" }}>
+                        <Picker data={data} onSelect={handleEmojiClick} />
                     </div>
                 )}
             </div>
