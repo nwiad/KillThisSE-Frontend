@@ -1,6 +1,6 @@
 import { Heart } from "./heart";
 
-import {Options} from "./type";
+import { Options } from "./type";
 
 export class Socket extends Heart {
     ws: WebSocket|undefined;

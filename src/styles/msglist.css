@@ -178,3 +178,24 @@
     float: right;
     overflow-y: auto;
 }
+
+.emoji-picker-button{
+    position: fixed;
+    display: inline;
+    float: right;
+    margin-top: 0;
+    bottom: 150px;
+    right: 0;
+    width: 10%;
+    height: 5%;
+    font-size:25px;
+    border-radius: 0;
+    border: 1px solid #80cbf9;
+}
+.emoji-picker-container{
+    position: fixed;
+    float: right;
+    bottom: "50px";
+    right: "50px";
+    height: 40%;
+}

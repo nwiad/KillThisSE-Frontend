@@ -21,10 +21,11 @@ const ChatScreen = () => {
 
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
-        setShowEmojiPicker(!showEmojiPicker);
+        setShowEmojiPicker(showEmojiPicker => !showEmojiPicker);
     };
     // 功能：处理emoji点击
     const handleEmojiClick = (emoji: { native: string; }) => {
+        console.log("emoji clicked: ", emoji.native);
         setInput(inputValue + emoji.native);
         setShowEmojiPicker(false);
     };
@@ -103,6 +104,22 @@ const ChatScreen = () => {
                     </div>
                 ))}
             </div>
+            <div style = {{display: "flex", justifyContent: "flex-end"}}>
+                <button
+                    className="emoji-picker-button"
+                    onClick={()=>{ toggleEmojiPicker();}}
+                >😀</button>
+                {showEmojiPicker && (
+                    <div className="emoji-picker-container" > 
+                        <Picker 
+                            data = {data} 
+                            onSelect={(emoji:{native:string}) => {
+                                handleEmojiClick(emoji)
+                            }}
+                        />
+                    </div>
+                )}
+            </div>
             <div>
                 <input
                     className="msginput"
@@ -125,16 +142,6 @@ const ChatScreen = () => {
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 > 发送 </button>
                 {/* add 发送emoji表情功能 */}
-                <button
-                    className="emoji-picker-button"
-                    onClick={toggleEmojiPicker}
-                    style={{ display: "inline-block", verticalAlign: "middle" }}
-                >😀</button>
-                {showEmojiPicker && (
-                    <div className="emoji-picker-container" style={{ position: "absolute", bottom: "50px", right: "50px" }}> 
-                        <Picker data = {data} onSelect={handleEmojiClick} />
-                    </div>
-                )}
             </div>
         </div>
     );
