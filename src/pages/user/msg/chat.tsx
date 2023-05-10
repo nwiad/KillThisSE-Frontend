@@ -120,6 +120,7 @@ const ChatScreen = () => {
                         <Picker 
                             data = {data} 
                             onSelect={(emoji:{native:string}) => {
+                                alert(emoji.native);
                                 handleEmojiClick(emoji)
                             }}
                         />
