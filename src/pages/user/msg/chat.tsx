@@ -1,8 +1,10 @@
-import { ChangeEvent, useEffect, useState, useRef } from "react";
-import Navbar from "../navbar";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket } from "../../../utils/websocket";
-import { Options, MsgMetaData } from "../../../utils/type";
+import Navbar from "../navbar";
 import MsgBar from "./msgbar";
 
 const ChatScreen = () => {
@@ -10,19 +12,21 @@ const ChatScreen = () => {
     const [message, setMsg] = useState<string>("");
     const [msgList, setMsgList] = useState<MsgMetaData[]>([]);
     const [myID, setID] = useState<number>(-1);
-    const [msgRefresh, setMsgRefresh] = useState<boolean>(false);
     const chatBoxRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
     const query = router.query;
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     const socket = useRef<Socket>();
 
-    const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
-        setInput(event.target.value);
+    // 功能：切换emoji显示
+    const toggleEmojiPicker = () => {
+        setShowEmojiPicker(!showEmojiPicker);
     };
-
-    const handleClick = () => {
-        setInput("");
+    // 功能：处理emoji点击
+    const handleEmojiClick = (emoji: { native: string; }) => {
+        setInput(inputValue + emoji.native);
+        setShowEmojiPicker(false);
     };
 
     const sendPublic = () => {
@@ -57,7 +61,7 @@ const ChatScreen = () => {
             openCb: () => { }, // 连接成功的回调
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
-                setMsgList(JSON.parse(event.data).messages.map((val: any) => ({...val})))
+                setMsgList(JSON.parse(event.data).messages.map((val: any) => ({...val})));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -95,10 +99,10 @@ const ChatScreen = () => {
             <div ref={chatBoxRef} id="msgdisplay" style={{display: "flex", flexDirection:"column"}}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
-                        <div key={msg.msg_id} className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
+                        <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
-                        <div key={msg.msg_id} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain" }>
+                        <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain" }>
                             <p className="sendername">{msg.sender_name}</p>
                             <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody" } dangerouslySetInnerHTML={{__html : createLinkifiedMsgBody(msg.msg_body)}}></p>
                         </div>
@@ -112,18 +116,31 @@ const ChatScreen = () => {
                     type="text"
                     placeholder="请输入内容"
                     value={inputValue}
-                    onChange={(e) => { handleInput(e); setMsg(e.target.value); }}
+                    onChange={(e) => { setInput(e.target.value); setMsg(e.target.value); }}
                     onKeyDown={(event) => {
                         if (event.key === "Enter") {
                             event.preventDefault();
                             sendPublic(); 
-                            handleClick();
+                            setInput("");
                         }}}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
                 <button
-                    className="msgbutton" onClick={() => { sendPublic(); handleClick(); }} style={{ display: "inline-block", verticalAlign: "middle" }}
+                    className="msgbutton" 
+                    onClick={() => { sendPublic(); setInput(""); }} 
+                    style={{ display: "inline-block", verticalAlign: "middle" }}
                 > 发送 </button>
+                {/* add 发送emoji表情功能 */}
+                <button
+                    className="emoji-picker-button"
+                    onClick={toggleEmojiPicker}
+                    style={{ display: "inline-block", verticalAlign: "middle" }}
+                >😀</button>
+                {showEmojiPicker && (
+                    <div className="emoji-picker-container" style={{ position: "absolute", bottom: "50px", right: "50px" }}> 
+                        <Picker data = {data} onSelect={handleEmojiClick} />
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -18,16 +18,24 @@ export interface Options {
     errorCb: Function // 错误的回调
 };
 
-export interface ChatMetaData {  // 会话列表显示的信息
+export interface ChatMetaData {  // 私聊列表显示的信息
     id: number,
     friend_id: number,
-    isGroup: boolean,
     friend_name: string,
     friend_avatar: string,
     lastMsg: string,
     time: string,
     unreadMsg: number
 };
+
+export interface GroupChatMetaData {
+    id: number,
+    name: string,
+    avatar: string,
+    lastMsg: string,
+    time: string,
+    unreadMsg: number
+}
 
 export interface MsgMetaData {
     msg_id: number,
