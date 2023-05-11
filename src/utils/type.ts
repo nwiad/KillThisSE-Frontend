@@ -42,5 +42,7 @@ export interface MsgMetaData {
     msg_body: string,
     sender_id: number,
     sender_name: string,
-    sender_avatar: string
+    sender_avatar: string,
+    is_image: boolean,
+    is_file: boolean
 };

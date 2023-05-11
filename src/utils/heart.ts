@@ -3,7 +3,7 @@ export class Heart {
     timeout: number;
   
     constructor () {
-        this.timeout = 5000;
+        this.timeout = 30000;
     }
     // 重置
     reset () {

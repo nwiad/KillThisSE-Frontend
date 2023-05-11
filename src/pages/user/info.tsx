@@ -192,7 +192,8 @@ const InitPage = () => {
                 {showPopupAvatar && (
                     <div className="popup">
                         <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false);  setShowPopupAvatar(false);  }}>
-                            <input placeholder = "uploaded image" className="fileupload" type="file" name="avatar" accept="image/*" onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
+                            <input placeholder = "uploaded image" className="fileupload" type="file" name="avatar" accept="image/*" 
+                            onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
                             <button type="submit" disabled={!isAvatarUploaded}>上传头像</button>
                         </form>
                         <button onClick={() => { setShowPopupAvatar(false); }}>取消</button>

@@ -1,7 +1,7 @@
-import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
+import { uploadFile } from "../../../utils/oss";
 import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket } from "../../../utils/websocket";
 import Navbar from "../navbar";
@@ -16,6 +16,9 @@ const ChatScreen = () => {
     const router = useRouter();
     const query = router.query;
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [newimg, setNewImg] = useState<File>();
+    const [isImgUploaded, setIsImgUploaded] = useState(false);
+    const [showPopupImg, setShowPopupImg] = useState(false);
 
     const socket = useRef<Socket>();
 
@@ -25,18 +28,30 @@ const ChatScreen = () => {
     };
     // 功能：处理emoji点击
     const handleEmojiClick = (emoji: { native: string; }) => {
-        console.log("emoji clicked: ", emoji.native);
+        setMsg(inputValue + emoji.native);
         setInput(inputValue + emoji.native);
         setShowEmojiPicker(false);
     };
 
-    const sendPublic = () => {
-        socket.current!.send(JSON.stringify({ message: message, token: localStorage.getItem("token") }));
+    const sendPublic = (isImg?: boolean, isFile?: boolean) => {
+        socket.current!.send(JSON.stringify({ message: message, token: localStorage.getItem("token"), 
+        isImg: false, isFile: false }));
     };
 
     const cleanUp = () => {
         console.log("回收");
         socket.current?.destroy();
+    };
+
+    const sendPic = async (pic: File|undefined) => {
+        if(pic === undefined) {
+            alert("未检测到图片");
+            return;
+        }
+        const image_url = await uploadFile(pic);
+
+        socket.current!.send(JSON.stringify({ message: image_url, token: localStorage.getItem("token"), 
+        is_image: true}));        
     };
 
     function createLinkifiedMsgBody(msgBody: string) {
@@ -97,7 +112,9 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
+            
+            <div ref={chatBoxRef} id="msgdisplay" style={{display: "flex", flexDirection:"column"}}>
+                <div>{router.query.name}</div>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
@@ -105,29 +122,16 @@ const ChatScreen = () => {
                         </div>
                         <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
                             <p className="sendername">{msg.sender_name}</p>
-                            <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>
+                            {msg.is_image === true ? <img src={msg.msg_body}/> : 
+                                (msg.is_file === true ? <img src="" alt="file"/> : 
+                                    <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>)
+                            } 
+                            
                         </div>
                     </div>
                 ))}
             </div>
-            <div style = {{display: "flex", justifyContent: "flex-end"}}>
-                <button
-                    className="emoji-picker-button"
-                    onClick={()=>{ toggleEmojiPicker();}}
-                >😀</button>
-                {showEmojiPicker && (
-                    <div className="emoji-picker-container" > 
-                        <Picker 
-                            data = {data} 
-                            onSelect={(emoji:{native:string}) => {
-                                alert(emoji.native);
-                                handleEmojiClick(emoji)
-                            }}
-                        />
-                    </div>
-                )}
-            </div>
-            <div>
+            <div className="inputdisplay">
                 <input
                     className="msginput"
                     id="msginput"
@@ -144,13 +148,55 @@ const ChatScreen = () => {
                     }}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
-                <button
-                    className="msgbutton"
-                    onClick={() => { sendPublic(); setInput(""); }}
-                    style={{ display: "inline-block", verticalAlign: "middle" }}
-                > 发送 </button>
-                {/* add 发送emoji表情功能 */}
+                <div className="sendbuttons" style={{ display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", flexDirection: "row"}}>
+                        <button className="emojibutton" onClick={() => { toggleEmojiPicker(); }}>
+                        😊
+                        </button>
+                        <button className="filebutton"  onClick={() => { toggleEmojiPicker(); }}>
+                        🗣️
+                        </button>
+                        <button className="picbutton"  onClick={() => { setShowPopupImg(true); }}>
+                        🏞️
+                        </button>
+                        {showPopupImg && (
+                            <div className="popup">
+                                <form onSubmit={() => { sendPic(newimg); 
+                                    setIsImgUploaded(false);  
+                                    setShowPopupImg(false);  }}>
+                                    <input placeholder = "uploaded image" 
+                                    className="fileupload" type="file" 
+                                    name="avatar" accept="image/*" 
+                                    onChange={(event) => { 
+                                        setNewImg(event.target.files?.[0]); 
+                                        setIsImgUploaded(!!event.target.files?.[0]); 
+                                        }} />
+                                    <button type="submit" 
+                                    disabled={!isImgUploaded}>发送图片</button>
+                                </form>
+                                <button onClick={() => { setShowPopupImg(false); }}>取消</button>
+                            </div>
+                        )}
+                        <button className="filebutton"  onClick={() => { toggleEmojiPicker(); }}>
+                        📁
+                        </button>
+                    </div>
+                    <button
+                        className="msgbutton"
+                        onClick={() => { sendPublic(); setInput(""); }}
+                        style={{ display: "inline-block", verticalAlign: "middle" }}
+                    > 发送 </button>
+                </div>
             </div>
+            {showEmojiPicker && (
+                <div className="emoji-picker-container" >
+                    <Picker
+                        onEmojiSelect={(emoji: { native: string }) => {
+                            handleEmojiClick(emoji);
+                        }}
+                    />
+                </div>
+            )}
         </div>
     );
 };

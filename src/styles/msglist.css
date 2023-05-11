@@ -54,30 +54,67 @@
     margin: 20px 20px;
 }
 
-.msginput {
+.inputdisplay {
+    display: flex;
+    flex-direction: row;
     position: fixed;
-    display: inline;
-    margin-top: 0;
+    width: 80%;
+    height: 11%;
+    right: 0;
+    left: 20%;
     bottom: 0;
-    margin-left: 20%;
+    background-size: cover;
+    background-position: center;
+}
+
+.msginput {
+    float: right;
     text-align:left;
-    height: 15%;
-    width: 70%;
+    margin: 0;
+    height: 100%;
+    width: 85%;
     border-radius: 0;
     border: 1px solid #7d7d7d;
     color: rgb(0, 0, 0);
-    font-size:14px;
+    font-size:20px;
+}
+
+.sendbuttons {
+    float: right;
+    width: 18%;
+    height: 100%;
+    margin-left: 0;
+}
+
+.emojibutton {
+    width: 50%;
+    height: 100%;
+    margin: 0;/*margin指的是上下左右的外边距*/
+    font-size:30px;
+    border-radius: 0;
+    border: 1px solid #7d7d7d;
+}
+.picbutton {
+    width: 50%;
+    height: 100%;
+    margin: 0;/*margin指的是上下左右的外边距*/
+    font-size:30px;
+    border-radius: 0;
+    border: 1px solid #7d7d7d;
+}
+.filebutton {
+    width: 50%;
+    height: 100%;
+    margin: 0;/*margin指的是上下左右的外边距*/
+    font-size:30px;
+    border-radius: 0;
+    border: 1px solid #7d7d7d;
 }
 
 .msgbutton {
-    position: fixed;
-    display: inline;
-    float: right;
-    margin-top: 0;
-    bottom: 0;
-    right: 0;
-    width: 10%;
-    height: 15%;
+    width: 100%;
+    height: 50%;
+    margin: 0;
     font-size:30px;
     border-radius: 0;
     border: 1px solid #7d7d7d;
@@ -187,23 +224,9 @@
     overflow-y: auto;
 }
 
-.emoji-picker-button{
-    position: fixed;
-    display: inline;
-    float: right;
-    margin-top: 0;
-    bottom: 150px;
-    right: 0;
-    width: 10%;
-    height: 5%;
-    font-size:25px;
-    border-radius: 0;
-    border: 1px solid #80cbf9;
-}
 .emoji-picker-container{
     position: fixed;
-    float: right;
-    bottom: "50px";
-    right: "50px";
+    bottom: 30%;
+    right: 0;
     height: 40%;
 }
