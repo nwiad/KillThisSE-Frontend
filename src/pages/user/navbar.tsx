@@ -91,7 +91,7 @@ const Navbar = () => {
     };
 
     useEffect(() => {
-        console.log(groupMembers);
+        console.log("群聊成员:",groupMembers);
     }, [groupMembers]);
 
     const createGroupChat = async () => {
