@@ -1,11 +1,8 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import Navbar from "../navbar";
-import { ChatMetaData, GroupChatMetaData } from "../../../utils/type";
+import { ChatMetaData, GroupChatMetaData, Options } from "../../../utils/type";
 import { Socket } from "../../../utils/websocket";
-import { Options } from "../../../utils/type";
-import { cleanup } from "@testing-library/react";
-import { group } from "console";
+import Navbar from "../navbar";
 
 const MsgBar = () => {
     const [chatList, setChatList] = useState<ChatMetaData[]>();
@@ -61,7 +58,7 @@ const MsgBar = () => {
         chatList.forEach((chat) => {
             console.log("private");
             options.url = `ws://localhost:8000/ws/chat/${chat.id}/`;
-            //options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
+            // options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 console.log("new private msg");
@@ -83,8 +80,8 @@ const MsgBar = () => {
 
         groupChatList.forEach((chat) => {
             console.log("group");
-            // options.url = `ws://localhost:8000/ws/chat/${chat.id}/`;
-            options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
+            // options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
+            options.url = `ws://localhost:8000/ws/chat/${chat.id}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 console.log("new private msg");

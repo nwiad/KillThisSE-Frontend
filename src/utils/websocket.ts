@@ -81,7 +81,7 @@ export class Socket extends Heart {
             return;
         }
         this.ws!.onclose = (event) => {
-            console.log("WebSocket 已关闭");
+            console.log("WebSocket 已关闭" + " " + event.code + " " + event.reason + " " + event.wasClean);
             super.reset();
             !this.OPTIONS.isDestroy && this.onreconnect();
             if (typeof callback === "function") {
