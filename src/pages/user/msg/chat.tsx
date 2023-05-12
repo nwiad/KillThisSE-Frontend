@@ -16,9 +16,14 @@ const ChatScreen = () => {
     const router = useRouter();
     const query = router.query;
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    // image
     const [newimg, setNewImg] = useState<File>();
     const [isImgUploaded, setIsImgUploaded] = useState(false);
     const [showPopupImg, setShowPopupImg] = useState(false);
+    // file
+    const [newfile, setNewFile] = useState<File>();
+    const [isFileUploaded, setIsFileUploaded] = useState(false);
+    const [showPopupFile, setShowPopupFile] = useState(false);
 
     const socket = useRef<Socket>();
 
@@ -42,7 +47,7 @@ const ChatScreen = () => {
         console.log("回收");
         socket.current?.destroy();
     };
-
+    // 功能：发送图片
     const sendPic = async (pic: File|undefined) => {
         if(pic === undefined) {
             alert("未检测到图片");
@@ -53,7 +58,18 @@ const ChatScreen = () => {
         socket.current!.send(JSON.stringify({ message: image_url, token: localStorage.getItem("token"), 
             is_image: true}));        
     };
+    // 功能：发送文件
+    const sendFile = async (pic: File|undefined) => {
+        if(pic === undefined) {
+            alert("未检测到文件");
+            return;
+        }
+        const file_url = await uploadFile(pic);
 
+        socket.current!.send(JSON.stringify({ message: file_url, token: localStorage.getItem("token"), 
+            is_file: true}));        
+    };
+    // 功能：创建链接
     function createLinkifiedMsgBody(msgBody: string) {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         return msgBody.replace(urlRegex, (url) => {
@@ -66,8 +82,8 @@ const ChatScreen = () => {
             return;
         }
         const options: Options = {
-            // url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
-            url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
+            url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
+            // url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
             isReconnect: true, // 是否自动重连
@@ -123,7 +139,10 @@ const ChatScreen = () => {
                         <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
                             <p className="sendername">{msg.sender_name}</p>
                             {msg.is_image === true ? <img src={msg.msg_body}  style={{maxWidth: "100%", height:"auto"}}/> : 
-                                (msg.is_file === true ? <img src="" alt="file"/> : 
+                                (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
+                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B-%E6%A0%87%E5%87%86%E5%9B%BE-%E6%96%87%E4%BB%B6%E5%A4%B9.png" alt="file" 
+                                            style={{ width: "100%", height:"auto"}} />
+                                    </a> : 
                                     <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>)
                             } 
                         </div>
@@ -176,9 +195,27 @@ const ChatScreen = () => {
                                 <button onClick={() => { setShowPopupImg(false); }}>取消</button>
                             </div>
                         )}
-                        <button className="filebutton"  onClick={() => { toggleEmojiPicker(); }}>
+                        <button className="filebutton"  onClick={() => { setShowPopupFile(true); }}>
                         📁
                         </button>
+                        {showPopupFile && (
+                            <div className="popup">
+                                <form onSubmit={() => { sendFile(newfile); 
+                                    setIsFileUploaded(false);  
+                                    setShowPopupFile(false);  }}>
+                                    <input placeholder = "uploaded file" 
+                                        className="fileupload" type="file" 
+                                        name="avatar" accept="*"
+                                        onChange={(event) => { 
+                                            setNewFile(event.target.files?.[0]); 
+                                            setIsFileUploaded(!!event.target.files?.[0]); 
+                                        }} />
+                                    <button type="submit" 
+                                        disabled={!isFileUploaded}>发送文件</button>
+                                </form>
+                                <button onClick={() => { setShowPopupFile(false); }}>取消</button>
+                            </div>
+                        )}
                     </div>
                     <button
                         className="msgbutton"
