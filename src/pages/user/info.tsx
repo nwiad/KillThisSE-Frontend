@@ -11,12 +11,15 @@ const InitPage = () => {
     const [avatar, setAvatar] = useState<string>();
     const [newavatar, setNewAvatar] = useState<File>();
     const [password, setPassword] = useState<string>("");
+    const [newMail, setNewMail] = useState<string>("");
+    const [mail, setMail] = useState<string>("");
     const [newpassword, setNewPassword] = useState<string>("");
     const [nameLegal, setNameLegal] = useState<boolean>(false);
     const [passwordLegal, setPasswordLegal] = useState<boolean>(false);
     const [showPopupAvatar, setShowPopupAvatar] = useState(false);
     const [showPopupName, setShowPopupName] = useState(false);
     const [showPopupPwd, setShowPopupPwd] = useState(false);
+    const [showPopupMail, setShowPopupMail] = useState(false);
     const [isAvatarUploaded, setIsAvatarUploaded] = useState(false);
 
     const router = useRouter();
@@ -55,7 +58,40 @@ const InitPage = () => {
         setPasswordLegal(passwordValid(password_));
     };
 
+    function isEmail(input: string): boolean {
+        const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegExp.test(input);
+    }
+
     const resetName = async () => {
+        await fetch(
+            "/api/user/reset_name/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    name: newname,
+                    token: localStorage.getItem("token")
+                })
+            }
+        )
+            .then((res) => {
+                return res.json();
+            })
+            .then((res) => {
+                if (res.code === 0) {
+                    alert(`成功修改用户名为${newname}`);
+                    setName(newname);
+                } else {
+                    throw new Error(`${res.info}`);
+                }
+
+            })
+            .catch((err) => alert(err));
+        router.push("/user/info");
+    };
+
+    const resetMail = async () => {
         await fetch(
             "/api/user/reset_name/",
             {
@@ -111,14 +147,14 @@ const InitPage = () => {
         router.push("/user/info");
     };
 
-    const resetAvatar = async (pic: File|undefined) => {
-        if(pic === undefined) {
+    const resetAvatar = async (pic: File | undefined) => {
+        if (pic === undefined) {
             alert("未检测到图片");
             return;
         }
         const image_url = await uploadFile(pic);
 
-        await fetch(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+        await fetch(
             "/api/user/reset_avatar/",
             {
                 method: "POST",
@@ -167,7 +203,7 @@ const InitPage = () => {
 
     return (
         <div style={{ padding: 12 }}>
-            <Navbar/>
+            <Navbar />
             <div id="main" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
                 {avatar && (
                     <div
@@ -191,15 +227,15 @@ const InitPage = () => {
                 </button>
                 {showPopupAvatar && (
                     <div className="popup">
-                        <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false);  setShowPopupAvatar(false);  }}>
-                            <input placeholder = "uploaded image" className="fileupload" type="file" name="avatar" accept="image/*" 
+                        <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false); setShowPopupAvatar(false); }}>
+                            <input placeholder="uploaded image" className="fileupload" type="file" name="avatar" accept="image/*"
                                 onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
                             <button type="submit" disabled={!isAvatarUploaded}>上传头像</button>
                         </form>
                         <button onClick={() => { setShowPopupAvatar(false); }}>取消</button>
                     </div>
                 )}
-                <button className="resetName" onClick={() => { setShowPopupName(true); setNewName("");}}>
+                <button className="resetName" onClick={() => { setShowPopupName(true); setNewName(""); }}>
                     修改用户名
                 </button>
                 {showPopupName && (
@@ -211,7 +247,7 @@ const InitPage = () => {
                             placeholder="请输入新的用户名"
                             id="usernameinput" />
                         <span id={nameLegal ? "usernamelegaltip" : "usernameillegaltip"}>*用户名必须由3-16位字母、数字和下划线组成</span>
-                        <button onClick={() => { resetName(); setShowPopupName(false);}} disabled={!nameLegal}>保存</button>
+                        <button onClick={() => { resetName(); setShowPopupName(false); }} disabled={!nameLegal}>保存</button>
                         <button onClick={() => { setShowPopupName(false); }}>取消</button>
                     </div>
                 )}
@@ -223,11 +259,27 @@ const InitPage = () => {
                         <input type="password" value={password} onChange={(e) => { setPassword(e.target.value); }} placeholder="请输入原密码" />
                         <input type="password" value={newpassword} onChange={(e) => { checkNewPassword(e.target.value); }} placeholder="请输入新的密码" id="pwdinput" />
                         <span id={passwordLegal ? "pwdlegaltip" : "pwdillegaltip"}>*密码必须由6-16位字母、数字和下划线组成</span>
-                        <button onClick={() => { resetPassword();  setShowPopupPwd(false);  }}>保存</button>
+                        <button onClick={() => { resetPassword(); setShowPopupPwd(false); }}>保存</button>
                         <button onClick={() => { setShowPopupPwd(false); }}>取消</button>
                     </div>
                 )}
-                <button className="delete" onClick={() => {deleteUser();}}>
+                <button className="resetName" onClick={() => { setShowPopupMail(true); setMail(""); setNewMail(""); }}>
+                    修改邮箱
+                </button>
+                {showPopupMail && (
+                    <div className="popup">
+                        <input
+                            type="text"
+                            value={newMail}
+                            onChange={(e) => { setNewMail(e.target.value); }}
+                            placeholder="请输入新的邮箱"
+                            id="usernameinput" />
+                        <span id={isEmail(newMail) ? "usernamelegaltip" : "usernameillegaltip"}>*请输入正确的邮箱</span>
+                        <button onClick={() => { resetMail(); setShowPopupMail(false); }} disabled={!isEmail(newMail)}>保存</button>
+                        <button onClick={() => { setShowPopupMail(false); }}>取消</button>
+                    </div>
+                )}
+                <button className="delete" onClick={() => { deleteUser(); }}>
                     注销本用户
                 </button>
             </div>

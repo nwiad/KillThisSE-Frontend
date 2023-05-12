@@ -1,4 +1,5 @@
 import Link from "next/link";
+import React from "react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
@@ -6,7 +7,7 @@ import { translate } from "../utils/youdao";
 
 const str = "fuck you";
 
-const InitLoginPage = () => {
+const InitPage = () => {
     const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>(""); 
     const [nameLegal, setNameLegal] = useState<boolean>(false);
@@ -14,15 +15,40 @@ const InitLoginPage = () => {
 
     const router = useRouter();
 
-    const userLogin = () => {
+    const userLoginbyMail = () => {
         fetch(
-            "/api/user/login/",
+            "/api/user/login_with_email/",
             {
                 method:"POST",
                 credentials: "include",
                 body:JSON.stringify({
-                    name: name,
-                    password: password,
+                    email: name,
+                    code_input: password,
+                })
+            }
+        )
+            .then((res) => {return res.json();})
+            .then((res) => {
+                if(res.code === 0){
+                    console.log(res);
+                    localStorage.setItem("token", res.Token);
+                    router.push("/user");
+                    console.log("成功登录");
+                } else{
+                    throw new Error(`${res.info}`);
+                }
+            })
+            .catch((err) => {alert(err);});
+    };
+
+    const getPassword = () => {
+        fetch(
+            "/api/user/send_email_for_login/",
+            {
+                method:"POST",
+                credentials: "include",
+                body:JSON.stringify({
+                    email: name,
                 })
             }
         )
@@ -64,22 +90,25 @@ const InitLoginPage = () => {
                 <input
                     id="usernameinput"
                     type="text"
-                    placeholder="用户名"
+                    placeholder="邮箱"
                     value={name}
                     onChange={(e) => checkName(e.target.value)}
                 />
+                <button onClick={getPassword}>
+                    发送验证码
+                </button>
                 <input
                     id="pwdinput"
                     type="password"
-                    placeholder="密码"
+                    placeholder="验证码"
                     value={password}
                     onChange={(e) => {checkPassword(e.target.value);}}
                 />
-                <button onClick={userLogin} disabled={!nameLegal || !passwordLegal}>
+                <button onClick={userLoginbyMail} disabled={!password}>
                     登录
                 </button>
-                <button onClick={() => router.push("/maillogin")}>
-                    使用邮箱登录
+                <button onClick={() => router.push("/")} >
+                    使用密码登录
                 </button>
                 <button onClick={() => router.push("/register")}>
                     注册新用户
@@ -92,4 +121,4 @@ const InitLoginPage = () => {
     );
 };
 
-export default InitLoginPage;
+export default InitPage;
