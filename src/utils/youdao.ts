@@ -1,16 +1,5 @@
-// import { TranslationQuery } from "./type";
-// export interface TranslationQuery {
-//     q: string,
-//     from: string,
-//     to: string,
-//     appKey: string,
-//     salt: string,
-//     sign: string,
-//     signType: string,
-//     curtime: string
-// };
 import CryptoJS from "crypto-js";
-
+import $ from "jquery";
 
 const truncate = (str: string) => {
     const len = str.length;
@@ -20,44 +9,47 @@ const truncate = (str: string) => {
     return str.substring(0, 10) + len + str.substring(len-10, len);
 };
 
-export const translate = (queryString: string): string => {
+const isUTF8 = (str: string) => {
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+    const encoded = encoder.encode(str);
 
-    console.log("translating");
+    return decoder.decode(encoded) === str;
+};
+
+export const translate = async (queryString: string): Promise<string> => {
+
+    console.log("translation begins");
     // 检查是否utf-8格式
-
+    // console.log("检查格式", isUTF8(queryString));
+    if(!isUTF8(queryString)) {
+        return "[仅能翻译UTF-8格式的文本]";
+    }
     const appID = "263b55a60eb72468";
     const appKey = "gAHu7w50W9nXcReKEDfXQPorkbyExVH9";
-    const salt = (new Date).getTime();
+    const salt = (new Date).getTime().toString();
     const curtime = Math.round(new Date().getTime()/1000);
     const encodeStr = appID + truncate(queryString) + salt + curtime + appKey;
     const sign = CryptoJS.SHA256(encodeStr).toString(CryptoJS.enc.Hex);
-    const query = JSON.stringify({
-        q: queryString,
-        from: "auto",
-        to: "zh-CHS",
-        appKey: appID,
-        salt: salt,
-        sign: sign,
-        signType: "v3",
-        curtime: curtime
-    });
 
-    let output = "";
-
-    fetch(
-        "https://openapi.youdao.com/api",
-        {
-            method: "POST",
-            body: query
+    await $.ajax({
+        url: "https://openapi.youdao.com/api",
+        type: "post",
+        dataType: "jsonp",
+        data: {
+            q: queryString,
+            appKey: appID,
+            salt: salt,
+            from: "auto",
+            to: "zh-CHS",
+            sign: sign,
+            signType: "v3",
+            curtime: curtime,
+        },
+        success: function (data) {
+            console.log(data);
+            return data.translation[0];
         }
-    )
-        .then((res) => res.json())
-        .then((data) => {
-            output =  data.errCode + " " + data.translation;
-        })
-        .catch((err) => {
-            return err;
-        });
-    
-    return output;
+    });
+    return "[Unknown text]";
 };

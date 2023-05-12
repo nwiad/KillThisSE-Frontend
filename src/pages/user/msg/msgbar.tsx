@@ -33,7 +33,8 @@ const MsgBar = () => {
     useEffect(() => {
         console.log("私聊: ", chatList);
         console.log("群聊: ", groupChatList);
-        if (chatList === undefined || groupChatList === undefined) {
+        if (typeof chatList === "undefined" || typeof groupChatList === "undefined") {
+            console.log("列表不存在");
             return;
         }
         setChatInfo(Array(chatList.length + groupChatList.length).fill(""));
@@ -57,8 +58,8 @@ const MsgBar = () => {
 
         chatList.forEach((chat) => {
             console.log("private");
-            options.url = `ws://localhost:8000/ws/chat/${chat.id}/`;
-            // options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
+            // options.url = `ws://localhost:8000/ws/chat/${chat.id}/`;
+            options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 console.log("new private msg");
@@ -80,8 +81,8 @@ const MsgBar = () => {
 
         groupChatList.forEach((chat) => {
             console.log("group");
-            // options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
-            options.url = `ws://localhost:8000/ws/chat/${chat.id}/`;
+            options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
+            // options.url = `ws://localhost:8000/ws/chat/${chat.id}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 console.log("new private msg");
