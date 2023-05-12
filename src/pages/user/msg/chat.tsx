@@ -140,7 +140,7 @@ const ChatScreen = () => {
                             <p className="sendername">{msg.sender_name}</p>
                             {msg.is_image === true ? <img src={msg.msg_body}  style={{maxWidth: "100%", height:"auto"}}/> : 
                                 (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B-%E6%A0%87%E5%87%86%E5%9B%BE-%E6%96%87%E4%BB%B6%E5%A4%B9.png" alt="file" 
+                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="file" 
                                             style={{ width: "100%", height:"auto"}} />
                                     </a> : 
                                     <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>)
