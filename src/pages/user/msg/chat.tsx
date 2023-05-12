@@ -6,6 +6,8 @@ import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket } from "../../../utils/websocket";
 import Navbar from "../navbar";
 import MsgBar from "./msgbar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane, faFaceSmile } from "@fortawesome/free-solid-svg-icons";
 
 const ChatScreen = () => {
     const [inputValue, setInput] = useState<string>("");
@@ -51,8 +53,8 @@ const ChatScreen = () => {
             return;
         }
         const options: Options = {
-            // url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
-            url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
+            url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
+            //url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
             isReconnect: true, // 是否自动重连
@@ -97,8 +99,8 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            
-            <div ref={chatBoxRef} id="msgdisplay" style={{display: "flex", flexDirection:"column"}}>
+
+            <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 <div>{router.query.name}</div>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
@@ -106,7 +108,7 @@ const ChatScreen = () => {
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
                         <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
-                            <p className="sendername">{msg.sender_name}</p>
+                            <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
                             <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>
                         </div>
                     </div>
@@ -129,17 +131,15 @@ const ChatScreen = () => {
                     }}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
-                <div className="sendbuttons" style={{ display: "flex", flexDirection: "column" }}>
-                    <button
-                        className="emojibutton"
-                        onClick={() => { toggleEmojiPicker(); }}
-                    >😀</button>
-                    <button
-                        className="msgbutton"
-                        onClick={() => { sendPublic(); setInput(""); }}
-                        style={{ display: "inline-block", verticalAlign: "middle" }}
-                    > 发送 </button>
-                </div>
+                <button
+                    className="emojibutton"
+                    onClick={() => { toggleEmojiPicker(); }}
+                ><FontAwesomeIcon className="Icon" icon={faFaceSmile} /></button>
+                <button
+                    className="msgbutton"
+                    onClick={() => { sendPublic(); setInput(""); }}
+                    style={{ display: "inline-block", verticalAlign: "middle" }}
+                > <FontAwesomeIcon className="Icon" icon={faPaperPlane} /> </button>
             </div>
             {showEmojiPicker && (
                 <div className="emoji-picker-container" >

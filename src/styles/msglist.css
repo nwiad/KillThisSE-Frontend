@@ -46,12 +46,30 @@
     background-position: center;
     border: 2px solid #ccc;
     margin-left: 20px;
+    margin-right: 0;
     margin-top: 10px;
 }
 
-.msglist p{
-    float: left;
-    margin: 20px 20px;
+.msginfopv {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    margin-top: 0;
+    margin-left: 0;
+}
+
+.senderpv {
+    text-align: left;
+    margin-top: 10px;
+    margin-left: 0;
+}
+
+.msgpv {
+    text-align: left;
+    height: 50%;
+    margin-top: 10px;
+    font-size: 15px;
+    color: #888888;
 }
 
 .inputdisplay {
@@ -70,38 +88,44 @@
 .msginput {
     float: right;
     text-align:left;
-    margin: 0;
-    height: 100%;
+    margin-left: 20px;
+    margin-top: 50px;
+    height: 40%;
     width: 85%;
-    border-radius: 0;
+    border-radius: 15px;
     border: 1px solid #7d7d7d;
     color: rgb(0, 0, 0);
-    font-size:20px;
-}
-
-.sendbuttons {
-    float: right;
-    width: 15%;
-    height: 100%;
-    margin-left: 0;
+    font-size:15px;
 }
 
 .emojibutton {
-    width: 100%;
-    height: 50%;
+    width: 10%;
+    height: 100%;
     margin: 0;
+    margin-top: 10px;
     font-size:30px;
     border-radius: 0;
-    border: 1px solid #7d7d7d;
+    background-color: rgba(0,0,0,0);
+    border: 0px solid #7d7d7d;
+}
+
+.emojibutton .Icon {
+    color: #969696;
 }
 
 .msgbutton {
-    width: 100%;
-    height: 50%;
+    width: 10%;
+    height: 100%;
     margin: 0;
+    margin-top: 10px;
     font-size:30px;
     border-radius: 0;
-    border: 1px solid #7d7d7d;
+    background-color: rgba(0,0,0,0);
+    border: 0px solid #7d7d7d;
+}
+
+.msgbutton .Icon {
+    color: #0660e9;
 }
 
 .msgbox {
@@ -150,33 +174,45 @@
 }
 
 .mymsgmain {
-    display: inline;
+    display: flex;
+    flex-direction: column;
     float: right;
     margin-right: auto;
 }
 
 .msgmain {
-    display: inline;
+    display: flex;
+    flex-direction: column;
     float: left;
     margin-left: auto;
 }
 
 .msgbody {
+    float: left;
     display: block;
     border-radius: 5px;
     background-color: #b6b6b6;
-    width: auto;
+    max-width: 500px;
+    word-break: break-all;
+    word-wrap: break-word;
     padding: 12px;
     margin-bottom: 0;
+    margin-top: 0;
+    margin-left: 0;
 }
 
 .mymsgbody {
+    float: right;
     display: block;
     border-radius: 5px;
     background-color: #0660e9;
-    width: auto;
+    max-width: 500px;
+    word-break: break-all;
+    word-wrap: break-word;
     padding: 12px;
     margin-bottom: 0;
+    margin-top: 0;
+    margin-right: 0;
 }
 
 .msgbody a {
@@ -189,6 +225,12 @@
 
 .sendername {
     display: block;
+    font-size: 12px;
+}
+
+.mysendername {
+    float: right;
+    text-align: right;
     font-size: 12px;
 }
 
