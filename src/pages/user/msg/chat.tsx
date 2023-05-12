@@ -122,11 +122,10 @@ const ChatScreen = () => {
                         </div>
                         <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
                             <p className="sendername">{msg.sender_name}</p>
-                            {msg.is_image === true ? <img src={msg.msg_body}/> : 
+                            {msg.is_image === true ? <img src={msg.msg_body}  style={{maxWidth: '100%', height:'auto'}}/> : 
                                 (msg.is_file === true ? <img src="" alt="file"/> : 
                                     <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>)
                             } 
-                            
                         </div>
                     </div>
                 ))}
