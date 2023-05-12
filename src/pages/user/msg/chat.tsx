@@ -35,7 +35,7 @@ const ChatScreen = () => {
 
     const sendPublic = (isImg?: boolean, isFile?: boolean) => {
         socket.current!.send(JSON.stringify({ message: message, token: localStorage.getItem("token"), 
-        isImg: false, isFile: false }));
+            isImg: false, isFile: false }));
     };
 
     const cleanUp = () => {
@@ -51,7 +51,7 @@ const ChatScreen = () => {
         const image_url = await uploadFile(pic);
 
         socket.current!.send(JSON.stringify({ message: image_url, token: localStorage.getItem("token"), 
-        is_image: true}));        
+            is_image: true}));        
     };
 
     function createLinkifiedMsgBody(msgBody: string) {
@@ -122,7 +122,7 @@ const ChatScreen = () => {
                         </div>
                         <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
                             <p className="sendername">{msg.sender_name}</p>
-                            {msg.is_image === true ? <img src={msg.msg_body}  style={{maxWidth: '100%', height:'auto'}}/> : 
+                            {msg.is_image === true ? <img src={msg.msg_body}  style={{maxWidth: "100%", height:"auto"}}/> : 
                                 (msg.is_file === true ? <img src="" alt="file"/> : 
                                     <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>)
                             } 
@@ -164,14 +164,14 @@ const ChatScreen = () => {
                                     setIsImgUploaded(false);  
                                     setShowPopupImg(false);  }}>
                                     <input placeholder = "uploaded image" 
-                                    className="fileupload" type="file" 
-                                    name="avatar" accept="image/*" 
-                                    onChange={(event) => { 
-                                        setNewImg(event.target.files?.[0]); 
-                                        setIsImgUploaded(!!event.target.files?.[0]); 
+                                        className="fileupload" type="file" 
+                                        name="avatar" accept="image/*" 
+                                        onChange={(event) => { 
+                                            setNewImg(event.target.files?.[0]); 
+                                            setIsImgUploaded(!!event.target.files?.[0]); 
                                         }} />
                                     <button type="submit" 
-                                    disabled={!isImgUploaded}>发送图片</button>
+                                        disabled={!isImgUploaded}>发送图片</button>
                                 </form>
                                 <button onClick={() => { setShowPopupImg(false); }}>取消</button>
                             </div>
