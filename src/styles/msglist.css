@@ -114,12 +114,17 @@
     height: 25px;
 }
 
-.sendbutton:hover {
-    background-color: rgba(0,0,0,0);
+.picbutton {
+    width: 50%;
+    height: 100%;
+    margin: 0;/*margin指的是上下左右的外边距*/
+    font-size:30px;
+    border-radius: 0;
+    border: 1px solid #7d7d7d;
 }
 
-.msgbutton {
-    width: 10%;
+.filebutton {
+    width: 50%;
     height: 100%;
     margin-top: 10px;
     border-radius: 0;
@@ -234,7 +239,8 @@
 
 .sendername {
     display: block;
-    font-size: 12px;
+    font-size: 13px;
+    margin: 0;
 }
 
 .mysendername {

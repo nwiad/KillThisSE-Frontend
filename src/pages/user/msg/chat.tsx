@@ -1,15 +1,13 @@
 import Picker from "@emoji-mart/react";
+import { faFaceSmile, faFile, faImage, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
 import { uploadFile } from "../../../utils/oss";
 import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket } from "../../../utils/websocket";
 import Navbar from "../navbar";
 import MsgBar from "./msgbar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faFaceSmile, faFile, faImage, faMicrophone } from "@fortawesome/free-solid-svg-icons";
-import { translate } from "../../../utils/youdao";
-import { MouseEvent as ReactMouseEvent } from "react";
 
 
 const ChatScreen = () => {
@@ -188,6 +186,7 @@ const ChatScreen = () => {
                                 msgContextMenu(event, msg.msg_id, msg.msg_body);
                             }}>
                             <p className="sendername">{msg.sender_name}</p>
+                            <p className="sendername">{msg.create_time}</p>
                             {msg.is_image === true ? <img src={msg.msg_body} style={{ maxWidth: "100%", height: "auto" }} /> :
                                 (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
                                     <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="file"

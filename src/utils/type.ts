@@ -38,11 +38,12 @@ export interface GroupChatMetaData {
 }
 
 export interface MsgMetaData {
+    create_time: string,
     msg_id: number,
     msg_body: string,
     sender_id: number,
     sender_name: string,
     sender_avatar: string,
     is_image: boolean,
-    is_file: boolean
+    is_file: boolean,
 };
