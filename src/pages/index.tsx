@@ -1,10 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
-import { translate } from "../utils/youdao";
-
-const str = "fuck you";
 
 const InitLoginPage = () => {
     const [name, setName] = useState<string>("");
@@ -84,9 +81,7 @@ const InitLoginPage = () => {
                 <button onClick={() => router.push("/register")}>
                     注册新用户
                 </button>
-                <div>
-                    {translate(str)}
-                </div>
+
             </div>
         </div>
     );

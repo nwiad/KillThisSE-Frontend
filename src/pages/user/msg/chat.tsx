@@ -86,7 +86,7 @@ const ChatScreen = () => {
         });
     }
 
-    function msgContextMenu(event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number) {
+    function msgContextMenu(event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number, msg_body: string) {
         event.preventDefault();
 
         const contextMenu = document.createElement("ul");
@@ -106,7 +106,7 @@ const ChatScreen = () => {
         translateItem.className = "ContextMenuLi";
         translateItem.innerHTML = "翻译";
         translateItem.addEventListener("click", () => {
-            //TODO
+            
         });
         contextMenu.appendChild(translateItem);
 
@@ -183,7 +183,7 @@ const ChatScreen = () => {
                         </div>
                         <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
                             onContextMenu={(event) => {
-                                msgContextMenu(event, msg.msg_id);
+                                msgContextMenu(event, msg.msg_id, msg.msg_body);
                             }}>
                             <p className="sendername">{msg.sender_name}</p>
                             <p className="sendername">{msg.create_time}</p>
