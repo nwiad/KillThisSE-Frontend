@@ -94,6 +94,7 @@
     border-radius: 0;
     border: 1px solid #7d7d7d;
 }
+
 .picbutton {
     width: 50%;
     height: 100%;
@@ -102,6 +103,7 @@
     border-radius: 0;
     border: 1px solid #7d7d7d;
 }
+
 .filebutton {
     width: 50%;
     height: 100%;
@@ -205,7 +207,8 @@
 
 .sendername {
     display: block;
-    font-size: 12px;
+    font-size: 13px;
+    margin: 0;
 }
 
 #msgdisplay {

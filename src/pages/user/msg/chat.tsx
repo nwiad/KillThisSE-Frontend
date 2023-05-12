@@ -137,14 +137,17 @@ const ChatScreen = () => {
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
                         <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
-                            <p className="sendername">{msg.sender_name}</p>
-                            {msg.is_image === true ? <img src={msg.msg_body}  style={{maxWidth: "100%", height:"auto"}}/> : 
-                                (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="file" 
-                                            style={{ width: "100%", height:"auto"}} />
-                                    </a> : 
-                                    <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>)
-                            } 
+                            <div style={{ display: "flex", flexDirection: "column", gap:"0px"}}>
+                                <p className="sendername">{msg.sender_name}</p>
+                                <p className="sendername">{msg.create_time}</p>
+                                <div >{msg.is_image === true ? <img src={msg.msg_body} alt="图片加载失败" style={{maxWidth: "100%", height:"auto",margin: 3}}/> : 
+                                    (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
+                                            <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="file" 
+                                                style={{ width: "100%", height:"auto"}} />
+                                        </a> : 
+                                        <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>)
+                                } </div>
+                            </div>
                         </div>
                     </div>
                 ))}
