@@ -9,6 +9,8 @@ import MsgBar from "./msgbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faFaceSmile, faFile, faImage, faMicrophone } from "@fortawesome/free-solid-svg-icons";
 import { translate } from "../../../utils/youdao";
+import { MouseEvent as ReactMouseEvent } from "react";
+
 
 const ChatScreen = () => {
     const [inputValue, setInput] = useState<string>("");
@@ -86,6 +88,42 @@ const ChatScreen = () => {
         });
     }
 
+    function msgContextMenu(event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number) {
+        event.preventDefault();
+
+        const contextMenu = document.createElement("ul");
+        contextMenu.className = "msgContextMenu";
+        contextMenu.style.left = `${event.clientX}px`;
+        contextMenu.style.top = `${event.clientY}px`;
+
+        const deleteItem = document.createElement("li");
+        deleteItem.className = "ContextMenuLi";
+        deleteItem.innerHTML = "撤回";
+        deleteItem.addEventListener("click", () => {
+            //TODO
+        });
+        contextMenu.appendChild(deleteItem);
+
+        const translateItem = document.createElement("li");
+        translateItem.className = "ContextMenuLi";
+        translateItem.innerHTML = "翻译";
+        translateItem.addEventListener("click", () => {
+            //TODO
+        });
+        contextMenu.appendChild(translateItem);
+
+        document.body.appendChild(contextMenu);
+
+        function hideContextMenu() {
+            document.removeEventListener("mousedown", hideContextMenu);
+            document.removeEventListener("click", hideContextMenu);
+            document.body.removeChild(contextMenu);
+        }
+
+        document.addEventListener("mousedown", hideContextMenu);
+        document.addEventListener("click", hideContextMenu);
+    }
+
     useEffect(() => {
         if (!router.isReady) {
             return;
@@ -145,14 +183,20 @@ const ChatScreen = () => {
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
-                        <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
+                        <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
+                            onContextMenu={(event) => {
+                                msgContextMenu(event, msg.msg_id);
+                            }}>
                             <p className="sendername">{msg.sender_name}</p>
                             {msg.is_image === true ? <img src={msg.msg_body} style={{ maxWidth: "100%", height: "auto" }} /> :
                                 (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
                                     <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="file"
                                         style={{ width: "100%", height: "auto" }} />
                                 </a> :
-                                    <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>)
+                                    <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                        dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
+
+                                    ></p>)
                             }
                         </div>
                     </div>
