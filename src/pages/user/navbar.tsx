@@ -1,5 +1,8 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComment, faUsers, faUser, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+
 
 interface Friend {
     user_id: number;
@@ -14,7 +17,7 @@ const Navbar = () => {
     const [groupFriendList, setGroupFriendList] = useState<Friend[]>([]);
     const [groupName, setGroupName] = useState<string>("");
     const [groupMembers, setGroupMembers] = useState<number[]>([]);
-    
+
     const router = useRouter();
 
     const userLogout = () => {
@@ -22,7 +25,7 @@ const Navbar = () => {
         fetch(
             "/api/user/logout/",
             {
-                method:"POST",
+                method: "POST",
                 credentials: "include",
                 body: JSON.stringify({
                     token: localStorage.getItem("token")
@@ -30,9 +33,9 @@ const Navbar = () => {
             }
         )
             .then((res) => {
-                if(res.ok){
+                if (res.ok) {
                     router.push("/");
-                }   else {
+                } else {
                     throw new Error(`Request failed with status ${res.status}`);
                 }
             })
@@ -54,7 +57,7 @@ const Navbar = () => {
             .then((data) => {
                 setName(data.name);
                 setAvatar(data.avatar);
-    
+
             })
             .catch((err) => alert(err));
     });
@@ -91,7 +94,7 @@ const Navbar = () => {
     };
 
     useEffect(() => {
-        console.log("群聊成员:",groupMembers);
+        console.log("群聊成员:", groupMembers);
     }, [groupMembers]);
 
     const createGroupChat = async () => {
@@ -119,15 +122,18 @@ const Navbar = () => {
     };
 
     return (
-        <nav style={{padding: 12}}>
+        <nav style={{ padding: 12 }}>
             <ul className="navbar">
-                <li className="navbar_ele_r" onClick={() => {router.push("/user/");}}>
-                        消息
+                <li className="navbar_ele_r" onClick={() => { router.push("/user/"); }}>
+                    <FontAwesomeIcon className="Icon" icon={faComment} />
+                    消息
                 </li>
-                <li className="navbar_ele_r" onClick={() => {router.push("/user/friend/friendindex");}}>
-                        好友
+                <li className="navbar_ele_r" onClick={() => { router.push("/user/friend/friendindex"); }}>
+                    <FontAwesomeIcon className="Icon" icon={faUser} />
+                    好友
                 </li>
-                <li className="navbar_ele_r" onClick={() => {setShowPopUpFriendList(true); getFriendList();}}>
+                <li className="navbar_ele_r" onClick={() => { setShowPopUpFriendList(true); getFriendList(); }}>
+                    <FontAwesomeIcon className="Icon" icon={faUsers} />
                     创建群聊
                 </li>
                 {showPopUpFriendList && (
@@ -143,17 +149,20 @@ const Navbar = () => {
                                 <p style={{ color: "black" }}>{item.name}</p>
                             </li>
                         ))}
-                        <button onClick={() => {createGroupChat(); setGroupFriendList([]); setGroupMembers([]); 
-                            setShowPopUpFriendList(false);}} disabled={groupMembers.length === 0 || groupName.length === 0}>完成</button>
-                        <button onClick={() => {setGroupFriendList([]); setGroupMembers([]); setShowPopUpFriendList(false);}}>取消</button>
+                        <button onClick={() => {
+                            createGroupChat(); setGroupFriendList([]); setGroupMembers([]);
+                            setShowPopUpFriendList(false);
+                        }} disabled={groupMembers.length === 0 || groupName.length === 0}>完成</button>
+                        <button onClick={() => { setGroupFriendList([]); setGroupMembers([]); setShowPopUpFriendList(false); }}>取消</button>
                     </div>
                 )}
-                <li className="navbar_ele_info" onClick={() => {router.push("/user/info");}}>
-                    <p style={{display : "inline-block", verticalAlign: "middle"}}>{name}</p>
-                    <img className="navbarAvatar" src={`${avatar}`} style={{display : "inline-block", verticalAlign: "middle"}} alt="oops"/>
+                <li className="navbar_ele_info" onClick={() => { router.push("/user/info"); }}>
+                    <p style={{ display: "inline-block", verticalAlign: "middle" }}>{name}</p>
+                    <img className="navbarAvatar" src={`${avatar}`} style={{ display: "inline-block", verticalAlign: "middle" }} alt="oops" />
                 </li>
-                <li className="navbar_ele_l" onClick={() => {userLogout(); router.push("/");}}>
-                        登出
+                <li className="navbar_ele_l" onClick={() => { userLogout(); router.push("/"); }}>
+                    <FontAwesomeIcon className="Icon" icon={faRightFromBracket} />
+                    登出
                 </li>
             </ul>
         </nav>

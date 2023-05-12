@@ -1,11 +1,14 @@
 import Picker from "@emoji-mart/react";
+import { faFaceSmile, faFile, faImage, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
 import { uploadFile } from "../../../utils/oss";
 import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket } from "../../../utils/websocket";
 import Navbar from "../navbar";
 import MsgBar from "./msgbar";
+
 
 const ChatScreen = () => {
     const [inputValue, setInput] = useState<string>("");
@@ -39,8 +42,10 @@ const ChatScreen = () => {
     };
 
     const sendPublic = (isImg?: boolean, isFile?: boolean) => {
-        socket.current!.send(JSON.stringify({ message: message, token: localStorage.getItem("token"), 
-            isImg: false, isFile: false }));
+        socket.current!.send(JSON.stringify({
+            message: message, token: localStorage.getItem("token"),
+            isImg: false, isFile: false
+        }));
     };
 
     const cleanUp = () => {
@@ -48,26 +53,30 @@ const ChatScreen = () => {
         socket.current?.destroy();
     };
     // 功能：发送图片
-    const sendPic = async (pic: File|undefined) => {
-        if(pic === undefined) {
+    const sendPic = async (pic: File | undefined) => {
+        if (pic === undefined) {
             alert("未检测到图片");
             return;
         }
         const image_url = await uploadFile(pic);
 
-        socket.current!.send(JSON.stringify({ message: image_url, token: localStorage.getItem("token"), 
-            is_image: true}));        
+        socket.current!.send(JSON.stringify({
+            message: image_url, token: localStorage.getItem("token"),
+            is_image: true
+        }));
     };
     // 功能：发送文件
-    const sendFile = async (pic: File|undefined) => {
-        if(pic === undefined) {
+    const sendFile = async (pic: File | undefined) => {
+        if (pic === undefined) {
             alert("未检测到文件");
             return;
         }
         const file_url = await uploadFile(pic);
 
-        socket.current!.send(JSON.stringify({ message: file_url, token: localStorage.getItem("token"), 
-            is_file: true}));        
+        socket.current!.send(JSON.stringify({
+            message: file_url, token: localStorage.getItem("token"),
+            is_file: true
+        }));
     };
     // 功能：创建链接
     function createLinkifiedMsgBody(msgBody: string) {
@@ -75,6 +84,42 @@ const ChatScreen = () => {
         return msgBody.replace(urlRegex, (url) => {
             return `<a href="${url}" target="_blank">${url}</a>`;
         });
+    }
+
+    function msgContextMenu(event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number) {
+        event.preventDefault();
+
+        const contextMenu = document.createElement("ul");
+        contextMenu.className = "msgContextMenu";
+        contextMenu.style.left = `${event.clientX}px`;
+        contextMenu.style.top = `${event.clientY}px`;
+
+        const deleteItem = document.createElement("li");
+        deleteItem.className = "ContextMenuLi";
+        deleteItem.innerHTML = "撤回";
+        deleteItem.addEventListener("click", () => {
+            //TODO
+        });
+        contextMenu.appendChild(deleteItem);
+
+        const translateItem = document.createElement("li");
+        translateItem.className = "ContextMenuLi";
+        translateItem.innerHTML = "翻译";
+        translateItem.addEventListener("click", () => {
+            //TODO
+        });
+        contextMenu.appendChild(translateItem);
+
+        document.body.appendChild(contextMenu);
+
+        function hideContextMenu() {
+            document.removeEventListener("mousedown", hideContextMenu);
+            document.removeEventListener("click", hideContextMenu);
+            document.body.removeChild(contextMenu);
+        }
+
+        document.addEventListener("mousedown", hideContextMenu);
+        document.addEventListener("click", hideContextMenu);
     }
 
     useEffect(() => {
@@ -128,26 +173,30 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            
-            <div ref={chatBoxRef} id="msgdisplay" style={{display: "flex", flexDirection:"column"}}>
+
+            <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 <div>{router.query.name}</div>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
-                        <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
-                            <div style={{ display: "flex", flexDirection: "column", gap:"0px"}}>
-                                <p className="sendername">{msg.sender_name}</p>
-                                <p className="sendername">{msg.create_time}</p>
-                                <div >{msg.is_image === true ? <img src={msg.msg_body} alt="图片加载失败" style={{maxWidth: "100%", height:"auto",margin: 3}}/> : 
-                                    (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                            <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="file" 
-                                                style={{ width: "100%", height:"auto"}} />
-                                        </a> : 
-                                        <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}></p>)
-                                } </div>
-                            </div>
+                        <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
+                            onContextMenu={(event) => {
+                                msgContextMenu(event, msg.msg_id);
+                            }}>
+                            <p className="sendername">{msg.sender_name}</p>
+                            <p className="sendername">{msg.create_time}</p>
+                            {msg.is_image === true ? <img src={msg.msg_body} style={{ maxWidth: "100%", height: "auto" }} /> :
+                                (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
+                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="file"
+                                        style={{ width: "100%", height: "auto" }} />
+                                </a> :
+                                    <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                        dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
+
+                                    ></p>)
+                            }
                         </div>
                     </div>
                 ))}
@@ -169,63 +218,62 @@ const ChatScreen = () => {
                     }}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
-                <div className="sendbuttons" style={{ display: "flex", flexDirection: "column" }}>
-                    <div style={{ display: "flex", flexDirection: "row"}}>
-                        <button className="emojibutton" onClick={() => { toggleEmojiPicker(); }}>
-                        😊
-                        </button>
-                        <button className="filebutton"  onClick={() => { toggleEmojiPicker(); }}>
-                        🗣️
-                        </button>
-                        <button className="picbutton"  onClick={() => { setShowPopupImg(true); }}>
-                        🏞️
-                        </button>
-                        {showPopupImg && (
-                            <div className="popup">
-                                <form onSubmit={() => { sendPic(newimg); 
-                                    setIsImgUploaded(false);  
-                                    setShowPopupImg(false);  }}>
-                                    <input placeholder = "uploaded image" 
-                                        className="fileupload" type="file" 
-                                        name="avatar" accept="image/*" 
-                                        onChange={(event) => { 
-                                            setNewImg(event.target.files?.[0]); 
-                                            setIsImgUploaded(!!event.target.files?.[0]); 
-                                        }} />
-                                    <button type="submit" 
-                                        disabled={!isImgUploaded}>发送图片</button>
-                                </form>
-                                <button onClick={() => { setShowPopupImg(false); }}>取消</button>
-                            </div>
-                        )}
-                        <button className="filebutton"  onClick={() => { setShowPopupFile(true); }}>
-                        📁
-                        </button>
-                        {showPopupFile && (
-                            <div className="popup">
-                                <form onSubmit={() => { sendFile(newfile); 
-                                    setIsFileUploaded(false);  
-                                    setShowPopupFile(false);  }}>
-                                    <input placeholder = "uploaded file" 
-                                        className="fileupload" type="file" 
-                                        name="avatar" accept="*"
-                                        onChange={(event) => { 
-                                            setNewFile(event.target.files?.[0]); 
-                                            setIsFileUploaded(!!event.target.files?.[0]); 
-                                        }} />
-                                    <button type="submit" 
-                                        disabled={!isFileUploaded}>发送文件</button>
-                                </form>
-                                <button onClick={() => { setShowPopupFile(false); }}>取消</button>
-                            </div>
-                        )}
-                    </div>
-                    <button
-                        className="msgbutton"
-                        onClick={() => { sendPublic(); setInput(""); }}
-                        style={{ display: "inline-block", verticalAlign: "middle" }}
-                    > 发送 </button>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    <button className="sendbutton" onClick={() => { toggleEmojiPicker(); }}>
+                        <FontAwesomeIcon className="Icon" icon={faFaceSmile} />
+                    </button>
+                    <button className="sendbutton" onClick={() => { setShowPopupImg(true); }}>
+                        <FontAwesomeIcon className="Icon" icon={faImage} />
+                    </button>
+                    {showPopupImg && (
+                        <div className="popup">
+                            <form onSubmit={() => {
+                                sendPic(newimg);
+                                setIsImgUploaded(false);
+                                setShowPopupImg(false);
+                            }}>
+                                <input placeholder="uploaded image"
+                                    className="fileupload" type="file"
+                                    name="avatar" accept="image/*"
+                                    onChange={(event) => {
+                                        setNewImg(event.target.files?.[0]);
+                                        setIsImgUploaded(!!event.target.files?.[0]);
+                                    }} />
+                                <button type="submit"
+                                    disabled={!isImgUploaded}>发送图片</button>
+                            </form>
+                            <button onClick={() => { setShowPopupImg(false); }}>取消</button>
+                        </div>
+                    )}
+                    <button className="sendbutton" onClick={() => { setShowPopupFile(true); }}>
+                        <FontAwesomeIcon className="Icon" icon={faFile} />
+                    </button>
+                    {showPopupFile && (
+                        <div className="popup">
+                            <form onSubmit={() => {
+                                sendFile(newfile);
+                                setIsFileUploaded(false);
+                                setShowPopupFile(false);
+                            }}>
+                                <input placeholder="uploaded file"
+                                    className="fileupload" type="file"
+                                    name="avatar" accept="*"
+                                    onChange={(event) => {
+                                        setNewFile(event.target.files?.[0]);
+                                        setIsFileUploaded(!!event.target.files?.[0]);
+                                    }} />
+                                <button type="submit"
+                                    disabled={!isFileUploaded}>发送文件</button>
+                            </form>
+                            <button onClick={() => { setShowPopupFile(false); }}>取消</button>
+                        </div>
+                    )}
                 </div>
+                <button
+                    className="msgbutton"
+                    onClick={() => { sendPublic(); setInput(""); }}
+                    style={{ display: "inline-block", verticalAlign: "middle" }}
+                > <FontAwesomeIcon className="Icon" icon={faPaperPlane} /> </button>
             </div>
             {showEmojiPicker && (
                 <div className="emoji-picker-container" >

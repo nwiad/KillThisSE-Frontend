@@ -17,7 +17,7 @@ const MsgBar = () => {
     const sockets = useRef<Socket[]>([]);
 
     useEffect(() => {
-        if(!router.isReady) {
+        if (!router.isReady) {
             return;
         }
         fetchList();
@@ -33,16 +33,16 @@ const MsgBar = () => {
     useEffect(() => {
         console.log("私聊: ", chatList);
         console.log("群聊: ", groupChatList);
-        if(chatList === undefined || groupChatList === undefined) {
+        if (chatList === undefined || groupChatList === undefined) {
             return;
         }
         setChatInfo(Array(chatList.length + groupChatList.length).fill(""));
         const options: Options = {
             url: "",
-            // url: `ws://localhost:8000/ws/chat/${chat.id}/`,
+            //url: `ws://localhost:8000/ws/chat/${chat.id}/`,
             // url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`,
             heartTime: 5000, // 心跳时间间隔
-            heartMsg: JSON.stringify({message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true}),
+            heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
             isReconnect: true, // 是否自动重连
             isDestroy: false, // 是否销毁
             reconnectTime: 5000, // 重连时间间隔
@@ -50,7 +50,7 @@ const MsgBar = () => {
             openCb: () => { }, // 连接成功的回调
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
-                
+
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -63,15 +63,15 @@ const MsgBar = () => {
             socket.onmessage((event: MessageEvent) => {
                 console.log("new private msg");
                 setChatInfo((array) => {
-                    if(array === undefined){
+                    if (array === undefined) {
                         return [];
                     }
                     let newArray = [...array];
                     const index = JSON.parse(event.data).messages.length;
-                    if(index === 0) {
+                    if (index === 0) {
                         return [];
                     }
-                    newArray[chat.id] = JSON.parse(event.data).messages[index-1].msg_body;
+                    newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
                     return newArray;
                 });
             });
@@ -86,15 +86,15 @@ const MsgBar = () => {
             socket.onmessage((event: MessageEvent) => {
                 console.log("new private msg");
                 setChatInfo((array) => {
-                    if(array === undefined){
+                    if (array === undefined) {
                         return [];
                     }
                     let newArray = [...array];
                     const index = JSON.parse(event.data).messages.length;
-                    if(index === 0) {
+                    if (index === 0) {
                         return [];
                     }
-                    newArray[chat.id] = JSON.parse(event.data).messages[index-1].msg_body;
+                    newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
                     return newArray;
                 });
             });
@@ -120,13 +120,13 @@ const MsgBar = () => {
             .then((data) => {
                 console.log("获取私聊消息列表成功");
                 // console.log(data);
-                setChatList(data.conversations.map((val: any) => ({...val})));
+                setChatList(data.conversations.map((val: any) => ({ ...val })));
             })
             .catch((err) => {
-                alert(err); 
+                alert(err);
                 setRefreshing(false);
             });
-        
+
         await fetch(
             "/api/user/get_group_conversations/",
             {
@@ -141,11 +141,11 @@ const MsgBar = () => {
             .then((data) => {
                 console.log("获取群聊消息列表成功");
                 // console.log(data);
-                setGroupChatList(data.conversations.map((val: any) => ({...val})));
+                setGroupChatList(data.conversations.map((val: any) => ({ ...val })));
                 setRefreshing(false);
             })
             .catch((err) => {
-                alert(err); 
+                alert(err);
                 setRefreshing(false);
             });
     };
@@ -153,27 +153,31 @@ const MsgBar = () => {
     return refreshing ? (
         <p> Loading... </p>
     ) : (
-        <div style = {{ padding: 12 }}>
+        <div style={{ padding: 12 }}>
             <Navbar />
             {chatList!.length + groupChatList!.length === 0 ? (
                 <ul className="friendlist"> 当前没有会话 </ul>
             ) : (
                 <ul className="friendlist">
                     {chatList!.map((chat) => (
-                        <li key={chat.id} style={{display: "flex", flexDirection: "row"}} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}`)}>
-                            <img src={`${chat.friend_avatar}`} alt="oops"/>
-                            <p>{chat.friend_name}</p>
-                            <div>{chatInfo ? chatInfo[chat.id] : "nope"}</div>
+                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}`)}>
+                            <img src={`${chat.friend_avatar}`} alt="oops" />
+                            <div className="msginfopv">
+                                <div className="senderpv">{chat.friend_name.length > 6 ?`${chat.friend_name.slice(0,6)}...` : chat.friend_name}</div>
+                                <div className="msgpv">{chatInfo&&chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : "nope"}</div>
+                            </div>
                             {/* <div>{chat.time}</div>
                             <div>{chat.unreadMsg}</div>
                             <div>{chat.lastMsg.slice(10)}</div> */}
                         </li>
                     ))}
                     {groupChatList!.map((chat) => (
-                        <li key={chat.id} style={{display: "flex", flexDirection: "row"}} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}`)}>
-                            <img src={`${chat.avatar}`} alt="oops"/>
-                            <p>{chat.name}</p>
-                            <div>{chatInfo ? chatInfo[chat.id] : "nope"}</div>
+                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}`)}>
+                            <img src={`${chat.avatar}`} alt="oops" />
+                            <div className="msginfopv">
+                                <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0,6)}...` : chat.name}</div>
+                                <div className="msgpv">{chatInfo&&chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : "nope"}</div>
+                            </div>
                             {/* <div>{chat.time}</div>
                             <div>{chat.unreadMsg}</div>
                             <div>{chat.lastMsg.slice(10)}</div> */}
