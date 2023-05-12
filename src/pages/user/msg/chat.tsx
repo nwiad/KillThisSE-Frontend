@@ -220,13 +220,10 @@ const ChatScreen = () => {
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
                 <div style={{ display: "flex", flexDirection: "row" }}>
-                    <button className="emojibutton" onClick={() => { toggleEmojiPicker(); }}>
+                    <button className="sendbutton" onClick={() => { toggleEmojiPicker(); }}>
                         <FontAwesomeIcon className="Icon" icon={faFaceSmile} />
                     </button>
-                    <button className="filebutton" onClick={() => { toggleEmojiPicker(); }}>
-                        <FontAwesomeIcon className="Icon" icon={faMicrophone} />
-                    </button>
-                    <button className="picbutton" onClick={() => { setShowPopupImg(true); }}>
+                    <button className="sendbutton" onClick={() => { setShowPopupImg(true); }}>
                         <FontAwesomeIcon className="Icon" icon={faImage} />
                     </button>
                     {showPopupImg && (
@@ -249,7 +246,7 @@ const ChatScreen = () => {
                             <button onClick={() => { setShowPopupImg(false); }}>取消</button>
                         </div>
                     )}
-                    <button className="filebutton" onClick={() => { setShowPopupFile(true); }}>
+                    <button className="sendbutton" onClick={() => { setShowPopupFile(true); }}>
                         <FontAwesomeIcon className="Icon" icon={faFile} />
                     </button>
                     {showPopupFile && (

@@ -89,7 +89,7 @@
     float: right;
     text-align:left;
     margin-left: 20px;
-    margin-top: 50px;
+    margin-top: 40px;
     height: 40%;
     width: 80%;
     border-radius: 15px;
@@ -98,41 +98,24 @@
     font-size:15px;
 }
 
-.emojibutton {
-    width: 10%;
+.sendbutton {
+    width: 40px;
     height: 100%;
     margin-top: 10px;
-    border-radius: 0;
-    background-color: rgba(0,0,0,0);
-    border: 0px solid #7d7d7d;
-}
-.picbutton {
-    width: 10%;
-    height: 100%;
-    margin-top: 10px;
-    border-radius: 0;
-    background-color: rgba(0,0,0,0);
-    border: 0px solid #7d7d7d;
-}
-.filebutton {
-    width: 10%;
-    height: 100%;
-    margin-top: 10px;
+    margin-left: 10px;
     border-radius: 0;
     background-color: rgba(0,0,0,0);
     border: 0px solid #7d7d7d;
 }
 
-.emojibutton .Icon {
+.sendbutton .Icon {
     color: #969696;
+    width: 25px;
+    height: 25px;
 }
 
-.picbutton .Icon {
-    color: #969696;
-}
-
-.filebutton .Icon {
-    color: #969696;
+.sendbutton:hover {
+    background-color: rgba(0,0,0,0);
 }
 
 .msgbutton {
@@ -146,6 +129,12 @@
 
 .msgbutton .Icon {
     color: #0660e9;
+    width: 30px;
+    height: 30px;
+}
+
+.msgbutton:hover {
+    background-color: rgba(0,0,0,0);
 }
 
 .msgbox {
