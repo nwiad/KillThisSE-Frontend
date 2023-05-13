@@ -35,7 +35,7 @@ const ChatScreen = () => {
     const [recording, setRecording] = useState(false);
     const [audioURL, setAudioURL] = useState("");
     let mediaRecorder: MediaRecorder;
-    
+
     const socket = useRef<Socket>();
 
     // 功能：切换emoji显示
@@ -50,7 +50,7 @@ const ChatScreen = () => {
     };
 
     const sendPublic = (isImg?: boolean, isFile?: boolean, isVideo?: boolean) => {
-        if(message === "") {
+        if (message === "") {
             return;
         }
         socket.current!.send(JSON.stringify({
@@ -114,18 +114,42 @@ const ChatScreen = () => {
         });
     }
 
-
-
-    const startRecording = async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.start();
-        setRecording(true);
+    // 开始/停止录音
+    const handleRecording = async () => {
+        // 如果正在录音
+        if (recording) {
+            const audioURL = await stopRecording();
+            console.log("Recording stopped, audio URL:", audioURL);
+            setRecording(false);
+            sendAudio(audioURL);
+        } else {
+            startRecording();
+            setRecording(true);
+        }
     };
 
-    const stopRecording = async () => {
-        await new Promise(resolve => {
-            mediaRecorder.addEventListener("dataavailable", e => {
+    // 开始录音
+    const startRecording = async () => {
+        if (typeof MediaRecorder === "undefined") {
+            console.error("浏览器不支持 MediaRecorder API");
+            return;
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.start();
+            setRecording(true);
+        } catch (err) {
+            console.error("Failed to start recording: ", err);
+        }
+    };
+
+    // 停止录音
+    const stopRecording = async (): Promise<string> => {
+        return new Promise(resolve => {
+            mediaRecorder.addEventListener("dataavailable", function onDataAvailable(e) {
+                mediaRecorder.removeEventListener("dataavailable", onDataAvailable); // 移除之前的事件监听器
                 if (e.data && e.data.size > 0) {
                     const audioURL = URL.createObjectURL(e.data);
                     setAudioURL(audioURL);
@@ -134,36 +158,36 @@ const ChatScreen = () => {
             });
             mediaRecorder.stop();
         });
-        setRecording(false);
     };
 
+    // blob转file
     const blobToFile = (blob: Blob, name: string): File => {
         return new File([blob], name, { type: blob.type, lastModified: Date.now() });
     };
 
-    
-    const sendAudio = async () => {
-        const audioBlob = await (await fetch(audioURL)).blob();
-        const audioUrl = await uploadFile(blobToFile(audioBlob,"recording.ogg")); // 类型“Blob”的参数不能赋给类型“File”的参数。
-    
-        socket.current!.send(JSON.stringify({
-            message: audioUrl,
-            token: localStorage.getItem("token"),
-            is_audio: true
-        }));
-    };
-    
-    const handleRecording = async () => {
-        if (recording) {
-            const audioURL = await stopRecording();
-            console.log("Recording stopped, audio URL:", audioURL);
-            setRecording(false);
-        } else {
-            startRecording();
-            setRecording(true);
+    // 发送语音
+    const sendAudio = async (audioURL: string) => {
+        try {
+            const audioBlob = await (await fetch(audioURL)).blob();
+            const audioFile = blobToFile(audioBlob, "recording.mp3");
+            const audioUrl = await uploadFile(audioFile);
+
+            if (socket.current) {
+                socket.current.send(JSON.stringify({
+                    message: audioUrl,
+                    token: localStorage.getItem("token"),
+                    is_audio: true
+                }));
+            } else {
+                console.error("Socket is not connected.");
+            }
+        } catch (err) {
+            console.error("Failed to send audio: ", err);
         }
     };
-    
+
+
+
 
     // 功能：消息右键菜单
     function msgContextMenu(event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number, msg_body: string) {
@@ -186,7 +210,7 @@ const ChatScreen = () => {
         translateItem.className = "ContextMenuLi";
         translateItem.innerHTML = "翻译";
         translateItem.addEventListener("click", () => {
-            
+
         });
         contextMenu.appendChild(translateItem);
 
@@ -207,7 +231,7 @@ const ChatScreen = () => {
             return;
         }
         const options: Options = {
-            url: suffix+`${router.query.id}/`,
+            url: suffix + `${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
             isReconnect: true, // 是否自动重连
@@ -264,8 +288,7 @@ const ChatScreen = () => {
                             onContextMenu={(event) => {
                                 msgContextMenu(event, msg.msg_id, msg.msg_body);
                             }}>
-                            <p className="sendername">{msg.sender_name}</p>
-                            <p className="sendername">{msg.create_time}</p>
+                            <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
                             {msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
                                 (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
                                     <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
@@ -279,6 +302,7 @@ const ChatScreen = () => {
                                             dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
                                         ></p>))
                             }
+                            <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
                         </div>
                     </div>
                 ))}
@@ -374,14 +398,13 @@ const ChatScreen = () => {
                         </div>
                     )}
                     {/* 发送语音功能 */}
-                    <button className="sendbutton" onClick={() => {handleRecording();}}>
-                        <FontAwesomeIcon className="Icon" icon={faFileAudio} />
-                        {recording ? "Stop Recording" : "Start Recording"}
+                    <button className="sendbutton" onClick={() => { handleRecording(); }}>
+                        <FontAwesomeIcon className="Icon" id={recording ? "rcd" : "notrcd"} icon={faFileAudio} />
                     </button>
-                    <button className="send-button" onClick={sendAudio}>
-                        Send Audio!!!
-                    </button>
-                    <audio src={audioURL} controls />
+
+                    {audioURL && (
+                        <audio src={audioURL} controls />
+                    )}
 
                 </div>
                 <button

@@ -37,6 +37,10 @@
     background-color: #888888;
 }
 
+.friendinList {
+    background-color: #2f2f2f;
+}
+
 .friendlist img{
     float: left;
     width: 45px;

@@ -96,6 +96,7 @@
     border: 1px solid #7d7d7d;
     color: rgb(0, 0, 0);
     font-size:15px;
+    padding: 12;
 }
 
 .record-button{
@@ -124,8 +125,28 @@
     height: 25px;
 }
 
+.sendbutton #rcd {
+    color: #969696;
+    width: 25px;
+    height: 25px;
+}
+
+.sendbutton #notrcd {
+    color: #535353;
+    width: 25px;
+    height: 25px;
+}
+
 .sendbutton:hover {
     background-color: rgba(0,0,0,0);
+}
+
+.sendbutton:hover .Icon {
+    color: #535353;
+}
+
+.sendbutton:hover #rcd {
+    color: #535353;
 }
 
 .msgbutton {
@@ -146,6 +167,10 @@
 
 .msgbutton:hover {
     background-color: rgba(0,0,0,0);
+}
+
+.msgbutton:hover .Icon{
+    color: #003a92;
 }
 
 .msgbox {
@@ -213,6 +238,7 @@
     border-radius: 5px;
     background-color: #b6b6b6;
     max-width: 500px;
+    width: auto;
     word-break: break-all;
     word-wrap: break-word;
     padding: 12px;
@@ -227,12 +253,14 @@
     border-radius: 5px;
     background-color: #0660e9;
     max-width: 500px;
+    width: auto;
     word-break: break-all;
     word-wrap: break-word;
     padding: 12px;
     margin-bottom: 0;
     margin-top: 0;
     margin-right: 0;
+    color: #fefefe;
 }
 
 .msgbody a {
@@ -244,15 +272,31 @@
 }
 
 .sendername {
-    display: block;
-    font-size: 13px;
-    margin: 0;
+    text-align: left;
+    font-size: 15px;
+    margin-left: 0;
 }
 
 .mysendername {
-    float: right;
+    text-align: right;
+    font-size: 15px;
+    margin-right: 0;
+}
+
+.sendtime {
+    display: block;
+    font-size: 12px;
+    margin-top: 0;
+    margin: 0;
+    color: #7d7d7d;
+}
+
+.mysendtime {
     text-align: right;
     font-size: 12px;
+    margin-top: 0;
+    margin-right: 0;
+    color: #7d7d7d;
 }
 
 #msgdisplay {

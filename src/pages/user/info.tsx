@@ -248,7 +248,7 @@ const InitPage = () => {
 
     return (
         <div style={{ padding: 12 }}>
-            <Navbar />
+            <Navbar name={name} avatar={avatar}/>
             <div id="main" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
                 {avatar && (
                     <div
