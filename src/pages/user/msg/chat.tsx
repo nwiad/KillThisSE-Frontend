@@ -34,8 +34,10 @@ const ChatScreen = () => {
     // audio
     const [recording, setRecording] = useState(false);
     const [audioURL, setAudioURL] = useState("");
-    let mediaRecorder: MediaRecorder;
-
+    
+    // const [mediaRecorder,setmediaRecorder]= useRef<MediaRecorder>(new MediaRecorder(new MediaStream()));
+    const mediaRecorder = useRef<MediaRecorder | undefined>();
+    
     const socket = useRef<Socket>();
 
     // 功能：切换emoji显示
@@ -137,8 +139,13 @@ const ChatScreen = () => {
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.start();
+            if (!stream) {
+                console.error("Failed to obtain audio stream");
+                return;
+            }
+            mediaRecorder.current= new MediaRecorder(stream);
+            console.log("Created MediaRecorder", mediaRecorder, "with options", mediaRecorder.current!.stream);
+            mediaRecorder.current.start();
             setRecording(true);
         } catch (err) {
             console.error("Failed to start recording: ", err);
@@ -148,15 +155,26 @@ const ChatScreen = () => {
     // 停止录音
     const stopRecording = async (): Promise<string> => {
         return new Promise(resolve => {
-            mediaRecorder.addEventListener("dataavailable", function onDataAvailable(e) {
-                mediaRecorder.removeEventListener("dataavailable", onDataAvailable); // 移除之前的事件监听器
+            if (typeof MediaRecorder === "undefined") {
+                console.error("浏览器不支持 MediaRecorder API");
+                return;
+            }
+            if (!mediaRecorder) {
+                console.error("MediaRecorder is not initialized.");
+                return;
+            }
+            mediaRecorder.current.stop();
+            mediaRecorder.current.addEventListener("dataavailable", function onDataAvailable(e) {
+                mediaRecorder.current.removeEventListener("dataavailable", onDataAvailable); // 移除之前的事件监听器
                 if (e.data && e.data.size > 0) {
                     const audioURL = URL.createObjectURL(e.data);
                     setAudioURL(audioURL);
                     resolve(audioURL);
                 }
+                else{
+                    console.error("Failed to create audio URL from blob.");
+                }
             });
-            mediaRecorder.stop();
         });
     };
 
@@ -298,15 +316,24 @@ const ChatScreen = () => {
                                         <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
                                             style={{ width: "100%", height: "auto" }} />
                                     </a> :
-                                        <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
-                                            dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
-                                        ></p>))
+                                        (msg.is_audio === true ? <a>
+                                            { <audio src={msg.msg_body} controls /> }
+                                        </a>:
+                                            <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                                dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
+                                            ></p>)))
                             }
                             <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
                         </div>
                     </div>
                 ))}
             </div>
+            {recording && (
+                <div className="recorddisplay">
+                    <div>正在录音...</div>
+                </div>
+            )}
+
             <div className="inputdisplay">
                 <input
                     className="msginput"
@@ -401,11 +428,6 @@ const ChatScreen = () => {
                     <button className="sendbutton" onClick={() => { handleRecording(); }}>
                         <FontAwesomeIcon className="Icon" id={recording ? "rcd" : "notrcd"} icon={faFileAudio} />
                     </button>
-
-                    {audioURL && (
-                        <audio src={audioURL} controls />
-                    )}
-
                 </div>
                 <button
                     className="msgbutton"

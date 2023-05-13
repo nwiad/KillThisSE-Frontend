@@ -72,6 +72,19 @@
     color: #888888;
 }
 
+.recorddisplay {
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    width: 80%;
+    height: 11%;
+    right: 0;
+    left: 20%;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+}
+
 .inputdisplay {
     display: flex;
     flex-direction: row;
