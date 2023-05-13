@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
 
 const InitLoginPage = () => {
@@ -13,6 +13,22 @@ const InitLoginPage = () => {
     const [emailLegal, setEmailLegal] = useState<boolean>(false);
     const [emailCode, setEmailCode] = useState<string>("");
     const [emailCodeLegal, setEmailCodeLegal] = useState<boolean>(false);
+    const [wait, setWait] = useState<boolean>(false);
+    const [countDown, setCountDown] = useState<number>(60);
+
+    const timer = useRef<NodeJS.Timer | undefined>(undefined);
+
+    const setVerificationTimeout = () => {
+        setWait(true);
+        setCountDown(60);
+        timer.current = setInterval(() => {
+            setCountDown((countDown) => (countDown - 1));
+        }, 1000);
+        setTimeout(() => {
+            setWait(false);
+            clearInterval(timer.current);
+        }, 60000);
+    };
 
     const router = useRouter();
 
@@ -167,10 +183,18 @@ const InitLoginPage = () => {
                         value={emailCode}
                         onChange={(e) => {checkEmailCode(e.target.value);}}
                     />
-                    <button onClick={sendEmailVerificationCode} disabled={!emailLegal}>
-                        发送验证码
-                    </button>
-                    <button onClick={loginWithEmail} disabled={!emailCodeLegal}>
+                    {
+                        wait ? (
+                            <button disabled={true}>
+                                {`${countDown}秒后方可重新发送`}
+                            </button>
+                        ) : (
+                            <button onClick={() => { setVerificationTimeout(); sendEmailVerificationCode(); }} disabled={!emailLegal}>
+                                发送验证码
+                            </button>
+                        )
+                    }
+                    <button onClick={() => { loginWithEmail(); }} disabled={!emailCodeLegal}>
                         登录
                     </button>
                     <button onClick={() => router.push("/register")}>
@@ -178,7 +202,6 @@ const InitLoginPage = () => {
                     </button>
                 </div>
             )}   
-
         </div>
     );
 };
