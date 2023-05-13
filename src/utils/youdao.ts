@@ -17,6 +17,7 @@ const isUTF8 = (str: string) => {
     return decoder.decode(encoded) === str;
 };
 
+// 翻译
 export const translate = async (queryString: string): Promise<string> => {
 
     console.log("translation begins");
@@ -31,6 +32,8 @@ export const translate = async (queryString: string): Promise<string> => {
     const curtime = Math.round(new Date().getTime()/1000);
     const encodeStr = appID + truncate(queryString) + salt + curtime + appKey;
     const sign = CryptoJS.SHA256(encodeStr).toString(CryptoJS.enc.Hex);
+
+    let output = "[Unknown text]]";
 
     await $.ajax({
         url: "https://openapi.youdao.com/api",
@@ -47,8 +50,44 @@ export const translate = async (queryString: string): Promise<string> => {
             curtime: curtime,
         },
         success: function (data) {
+            console.log("success", data);
+            output =  data.translation[0];
+        }
+    });
+    return output;
+};
+
+// 语音转文字
+export const transform = async (queryString: string): Promise<string> => {
+
+    console.log("transform begins");
+    const appID = "3c60ebd01606a5ca";
+    const appKey = "RpS8mnChMx9pILX2TyhK69iyCPqnibrV";
+    const salt = (new Date).getTime().toString();
+    const curtime = Math.round(new Date().getTime()/1000);
+    const encodeStr = appID + truncate(queryString) + salt + curtime + appKey;
+    const sign = CryptoJS.SHA256(encodeStr).toString(CryptoJS.enc.Hex);
+
+    await $.ajax({
+        url: "https://openapi.youdao.com/asrapi",
+        type: "post",
+        dataType: "jsonp",
+        data: {
+            q: queryString,
+            langType: "zh-CHS",
+            appKey: appID,
+            salt: salt,
+            sign: sign,
+            signType: "v3",
+            curtime: curtime,
+            format: "mp3",
+            rate: 16000,
+            channel: 1,
+            type: "1",
+        },
+        success: function (data) {
             console.log(data);
-            return data.translation[0];
+            return data.result[0];
         }
     });
     return "[Unknown text]";

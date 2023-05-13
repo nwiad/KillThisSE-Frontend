@@ -1,9 +1,7 @@
 import Link from "next/link";
-import React from "react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
-import { translate } from "../utils/youdao";
 
 const str = "fuck you";
 
