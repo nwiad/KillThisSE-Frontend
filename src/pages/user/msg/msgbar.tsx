@@ -83,7 +83,6 @@ const MsgBar = () => {
             options.url = suffix+`${chat.id}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
-                console.log("new private msg");
                 setChatInfo((array) => {
                     if (array === undefined) {
                         return [];
@@ -155,7 +154,7 @@ const MsgBar = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             {chatList!.length + groupChatList!.length === 0 ? (
-                <ul className="friendlist"> 当前没有会话 </ul>
+                <ul className="friendlist" style={{color: "white", textAlign: "center"}}> 当前没有会话 </ul>
             ) : (
                 <ul className="friendlist">
                     {chatList!.map((chat) => (
@@ -165,9 +164,6 @@ const MsgBar = () => {
                                 <div className="senderpv">{chat.friend_name.length > 6 ?`${chat.friend_name.slice(0,6)}...` : chat.friend_name}</div>
                                 <div className="msgpv">{chatInfo&&chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : "nope"}</div>
                             </div>
-                            {/* <div>{chat.time}</div>
-                            <div>{chat.unreadMsg}</div>
-                            <div>{chat.lastMsg.slice(10)}</div> */}
                         </li>
                     ))}
                     {groupChatList!.map((chat) => (
@@ -177,9 +173,6 @@ const MsgBar = () => {
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0,6)}...` : chat.name}</div>
                                 <div className="msgpv">{chatInfo&&chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : "nope"}</div>
                             </div>
-                            {/* <div>{chat.time}</div>
-                            <div>{chat.unreadMsg}</div>
-                            <div>{chat.lastMsg.slice(10)}</div> */}
                         </li>
                     ))}
                 </ul>

@@ -10,7 +10,12 @@ interface Friend {
     avatar: string;
 }
 
-const Navbar = () => {
+interface infoProps {
+    name?: string,
+    avatar?: string
+}
+
+const Navbar = (props: infoProps) => {
     const [name, setName] = useState<string>("");
     const [avatar, setAvatar] = useState<string>();
     const [showPopUpFriendList, setShowPopUpFriendList] = useState<boolean>(false);
@@ -60,7 +65,7 @@ const Navbar = () => {
 
             })
             .catch((err) => alert(err));
-    });
+    }, []);
 
     const getFriendList = async () => {
         await fetch(
@@ -142,9 +147,8 @@ const Navbar = () => {
                         <input onChange={(e) => setGroupName(e.target.value)} />
                         {groupFriendList?.map((item: Friend) => (
                             <li key={item.user_id}
-                                className="friendinList"
                                 onClick={() => { addGroupMember(item.user_id); }}
-                                style={{ display: "flex", width: "100%" }}>
+                                style={{ display: "flex" }}>
                                 <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
                                 <p style={{ color: "black" }}>{item.name}</p>
                             </li>
@@ -157,8 +161,8 @@ const Navbar = () => {
                     </div>
                 )}
                 <li className="navbar_ele_info" onClick={() => { router.push("/user/info"); }}>
-                    <p style={{ display: "inline-block", verticalAlign: "middle" }}>{name}</p>
-                    <img className="navbarAvatar" src={`${avatar}`} style={{ display: "inline-block", verticalAlign: "middle" }} alt="oops" />
+                    <p style={{ display: "inline-block", verticalAlign: "middle" }}>{props.name ? props.name : name}</p>
+                    <img className="navbarAvatar" src={`${props.avatar ? props.avatar : avatar}`} style={{ display: "inline-block", verticalAlign: "middle" }} alt="oops" />
                 </li>
                 <li className="navbar_ele_l" onClick={() => { userLogout(); router.push("/"); }}>
                     <FontAwesomeIcon className="Icon" icon={faRightFromBracket} />

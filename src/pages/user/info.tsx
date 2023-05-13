@@ -212,7 +212,7 @@ const InitPage = () => {
 
     return (
         <div style={{ padding: 12 }}>
-            <Navbar/>
+            <Navbar name={name} avatar={avatar}/>
             <div id="main" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
                 {avatar && (
                     <div
@@ -258,7 +258,7 @@ const InitPage = () => {
                             placeholder="请输入新的用户名"
                             id="usernameinput" />
                         <span id={nameLegal ? "usernamelegaltip" : "usernameillegaltip"}>*用户名必须由3-16位字母、数字和下划线组成</span>
-                        <button onClick={() => { resetName(); setShowPopupName(false);}} disabled={!nameLegal}>保存</button>
+                        <button onClick={() => { resetName(); setShowPopupName(false); }} disabled={!nameLegal}>保存</button>
                         <button onClick={() => { setShowPopupName(false); }}>取消</button>
                     </div>
                 )}

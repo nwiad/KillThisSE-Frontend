@@ -280,7 +280,7 @@ const FriendBar = () => {
                         <li key={item.user_id}
                             className="friendinList"
                             onClick={() => { router.push(`/user/friend/friendinfo?id=${item.user_id}`); }}
-                            style={{ display: `${allCollapsed ? "block" : "none"}`, width: "80%" }}>
+                            style={{ display: `${allCollapsed ? "block" : "none"}` }}>
                             <img className="friendavatar" src={`${item.avatar}`} alt="oops" />
                             <p>{item.name}</p>
                         </li>
@@ -302,7 +302,7 @@ const FriendBar = () => {
                                 <li key={friend.user_id}
                                     className="friendinList"
                                     onClick={() => { router.push(`/user/friend/friendinfo?id=${friend.user_id}`); }}
-                                    style={{ display: `${item.collapsed ? "block" : "none"}`, width: "80%" }}
+                                    style={{ display: `${item.collapsed ? "block" : "none"}` }}
                                     onContextMenu={ (event) => {
                                         removeFriendContextMenu(event, item.group_id, friend.user_id);
                                     }}>
