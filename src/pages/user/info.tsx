@@ -18,6 +18,11 @@ const InitPage = () => {
     const [showPopupName, setShowPopupName] = useState(false);
     const [showPopupPwd, setShowPopupPwd] = useState(false);
     const [isAvatarUploaded, setIsAvatarUploaded] = useState(false);
+    const [showPopUpEmail, setShowPopUpEmail] = useState<boolean>(false);
+    const [email, setEmail] = useState<string>("");
+    const [emailLegal, setEmailLegal] = useState<boolean>(false);
+    const [pwd4Verify, setPwd4Verify] = useState<string>("");
+    const [legalVerify, setLegalVerify] = useState<boolean>(false);
 
     const router = useRouter();
 
@@ -145,6 +150,46 @@ const InitPage = () => {
         router.push("/user/info");
     };
 
+    const checkEmail = (address: string) => {
+        setEmail(address);
+        const legalAddress: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        setEmailLegal(legalAddress.test(address));
+    };
+
+    const checkPwd4Verify = (pwd: string) => {
+        setPwd4Verify(pwd);
+        setLegalVerify(passwordValid(pwd));
+    };
+
+    const bindEmail = async () => {
+        if(!emailLegal) {
+            alert("邮箱不合法");
+            return;
+        }
+        await fetch(
+            "/api/user/reset_email/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    password: pwd4Verify,
+                    email: email
+                })
+            }                
+        )
+            .then((res) => res.json())
+            .then((res) => {
+                if(res.code === 0) {
+                    alert(`成功绑定邮箱: ${email}`);
+                }
+                else {
+                    throw new Error(`${res.info}`);
+                }
+            })
+            .catch((err) => alert(err));
+    };
+
     useEffect(() => {
         fetch(
             "/api/user/get_profile/",
@@ -191,6 +236,7 @@ const InitPage = () => {
                 </button>
                 {showPopupAvatar && (
                     <div className="popup">
+                        <div>修改头像</div>
                         <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false);  setShowPopupAvatar(false);  }}>
                             <input placeholder = "uploaded image" className="fileupload" type="file" name="avatar" accept="image/*" 
                                 onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
@@ -204,6 +250,7 @@ const InitPage = () => {
                 </button>
                 {showPopupName && (
                     <div className="popup">
+                        <p>修改用户名</p>
                         <input
                             type="text"
                             value={newname}
@@ -220,11 +267,26 @@ const InitPage = () => {
                 </button>
                 {showPopupPwd && (
                     <div className="popuppwd">
+                        <p>修改密码</p>
                         <input type="password" value={password} onChange={(e) => { setPassword(e.target.value); }} placeholder="请输入原密码" />
                         <input type="password" value={newpassword} onChange={(e) => { checkNewPassword(e.target.value); }} placeholder="请输入新的密码" id="pwdinput" />
                         <span id={passwordLegal ? "pwdlegaltip" : "pwdillegaltip"}>*密码必须由6-16位字母、数字和下划线组成</span>
                         <button onClick={() => { resetPassword();  setShowPopupPwd(false);  }}>保存</button>
                         <button onClick={() => { setShowPopupPwd(false); }}>取消</button>
+                    </div>
+                )}
+                <button className="resetName" onClick={() => { setEmail(""); setEmailLegal(false); 
+                    setPwd4Verify(""); setLegalVerify(false); setShowPopUpEmail(true); }}>
+                    邮箱绑定
+                </button>
+                {showPopUpEmail && (
+                    <div className="popuppwd">
+                        <p>邮箱绑定</p>
+                        <input type="resetname" value={email} onChange={(e) => { checkEmail(e.target.value); }} placeholder="请输入邮箱" />
+                        <span id={emailLegal ? "pwdlegaltip" : "pwdillegaltip"}>*请输入合法邮箱</span>
+                        <input type="password" value={pwd4Verify} onChange={(e) => { checkPwd4Verify(e.target.value); }} placeholder="请输入密码" id="pwdinput" />
+                        <button onClick={() => { bindEmail();  setShowPopUpEmail(false); }} disabled={!emailLegal || !legalVerify}>绑定</button>
+                        <button onClick={() => { setShowPopUpEmail(false); }}>取消</button>
                     </div>
                 )}
                 <button className="delete" onClick={() => {deleteUser();}}>

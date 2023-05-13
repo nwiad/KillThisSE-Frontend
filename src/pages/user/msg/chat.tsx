@@ -1,5 +1,5 @@
 import Picker from "@emoji-mart/react";
-import { faFaceSmile, faFile, faImage, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
@@ -50,6 +50,9 @@ const ChatScreen = () => {
     };
 
     const sendPublic = (isImg?: boolean, isFile?: boolean, isVideo?: boolean) => {
+        if(message === "") {
+            return;
+        }
         socket.current!.send(JSON.stringify({
             message: message, token: localStorage.getItem("token"),
             isImg: false, isFile: false, isVideo: false
@@ -134,9 +137,14 @@ const ChatScreen = () => {
         setRecording(false);
     };
 
+    const blobToFile = (blob: Blob, name: string): File => {
+        return new File([blob], name, { type: blob.type, lastModified: Date.now() });
+    }
+
+    
     const sendAudio = async () => {
         const audioBlob = await (await fetch(audioURL)).blob();
-        const audioUrl = await uploadFile(audioBlob); // 你可能需要修改这个函数以支持blob类型的文件
+        const audioUrl = await uploadFile(blobToFile(audioBlob,"recording.ogg")); // 类型“Blob”的参数不能赋给类型“File”的参数。
     
         socket.current!.send(JSON.stringify({
             message: audioUrl,
@@ -367,7 +375,8 @@ const ChatScreen = () => {
                         </div>
                     )}
                     {/* 发送语音功能 */}
-                    <button className="record-button" onClick={handleRecording}>
+                    <button className="sendbutton" onClick={() => {handleRecording()}}>
+                        <FontAwesomeIcon className="Icon" icon={faFileAudio} />
                         {recording ? "Stop Recording" : "Start Recording"}
                     </button>
                     <button className="send-button" onClick={sendAudio}>
