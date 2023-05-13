@@ -158,7 +158,7 @@ const MsgBar = () => {
             ) : (
                 <ul className="friendlist">
                     {chatList!.map((chat) => (
-                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}`)}>
+                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0`)}>
                             <img src={`${chat.friend_avatar}`} alt="oops" />
                             <div className="msginfopv">
                                 <div className="senderpv">{chat.friend_name.length > 6 ?`${chat.friend_name.slice(0,6)}...` : chat.friend_name}</div>
@@ -167,7 +167,7 @@ const MsgBar = () => {
                         </li>
                     ))}
                     {groupChatList!.map((chat) => (
-                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}`)}>
+                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1`)}>
                             <img src={`${chat.avatar}`} alt="oops" />
                             <div className="msginfopv">
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0,6)}...` : chat.name}</div>

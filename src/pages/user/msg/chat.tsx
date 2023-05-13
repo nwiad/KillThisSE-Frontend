@@ -8,6 +8,7 @@ import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
 import MsgBar from "./msgbar";
+import ChatBar from "./chatbar";
 
 
 const ChatScreen = () => {
@@ -159,13 +160,13 @@ const ChatScreen = () => {
                 console.error("浏览器不支持 MediaRecorder API");
                 return;
             }
-            if (!mediaRecorder) {
+            if (!mediaRecorder.current) {
                 console.error("MediaRecorder is not initialized.");
                 return;
             }
             mediaRecorder.current.stop();
             mediaRecorder.current.addEventListener("dataavailable", function onDataAvailable(e) {
-                mediaRecorder.current.removeEventListener("dataavailable", onDataAvailable); // 移除之前的事件监听器
+                mediaRecorder.current!.removeEventListener("dataavailable", onDataAvailable); // 移除之前的事件监听器
                 if (e.data && e.data.size > 0) {
                     const audioURL = URL.createObjectURL(e.data);
                     setAudioURL(audioURL);
@@ -203,10 +204,7 @@ const ChatScreen = () => {
             console.error("Failed to send audio: ", err);
         }
     };
-
-
-
-
+    
     // 功能：消息右键菜单
     function msgContextMenu(event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number, msg_body: string) {
         event.preventDefault();
@@ -300,9 +298,8 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
-                <div>{router.query.name}</div>
+                <ChatBar my_id={myID} name={query.name as string} chat_id={query.id as string} is_group={ query.group === "1" }/>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
