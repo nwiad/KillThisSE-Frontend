@@ -162,7 +162,7 @@ const InitLoginPage = () => {
                     />
                     <input
                         id="pwdinput"
-                        type="password"
+                        type="usernameinput"
                         placeholder="验证码"
                         value={emailCode}
                         onChange={(e) => {checkEmailCode(e.target.value);}}
