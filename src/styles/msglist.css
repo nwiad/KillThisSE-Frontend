@@ -79,10 +79,12 @@
     width: 80%;
     height: 11%;
     right: 0;
-    left: 20%;
+    left: 90%;
     bottom: 0;
     background-size: cover;
     background-position: center;
+    font-size: 20px;
+    font-family: "KaiTi"
 }
 
 .inputdisplay {
@@ -374,3 +376,26 @@
     margin-top: 0;
     margin-left: 0;
 }
+
+
+
+
+.popuprecord {
+    display: flex;
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    height: 10%; /* 设置弹窗高度为视口高度 */
+}
+  
+.popup-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 24px;
+    font-family: KaiTi;
+    background-color: #ccc; /* 设置底色为灰色 */
+    border-radius: 10px; /* 设置圆角矩形的半径 */
+    padding: 10px; /* 可选：设置内边距 */
+  }
+  

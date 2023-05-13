@@ -159,12 +159,16 @@ const ChatScreen = () => {
                 console.error("浏览器不支持 MediaRecorder API");
                 return;
             }
-            if (!mediaRecorder) {
+            if (!mediaRecorder.current) {
                 console.error("MediaRecorder is not initialized.");
                 return;
             }
             mediaRecorder.current.stop();
             mediaRecorder.current.addEventListener("dataavailable", function onDataAvailable(e) {
+                if (!mediaRecorder.current) {
+                    console.error("MediaRecorder is not initialized.");
+                    return;
+                }
                 mediaRecorder.current.removeEventListener("dataavailable", onDataAvailable); // 移除之前的事件监听器
                 if (e.data && e.data.size > 0) {
                     const audioURL = URL.createObjectURL(e.data);
@@ -335,8 +339,10 @@ const ChatScreen = () => {
                 ))}
             </div>
             {recording && (
-                <div className="recorddisplay">
-                    <div>正在录音...</div>
+                <div className="popuprecord">
+                    <div className="popup-title">
+                        &nbsp;&nbsp;正在录音......&nbsp;&nbsp;
+                    </div>
                 </div>
             )}
 
