@@ -210,7 +210,13 @@ const ChatScreen = () => {
         translateItem.className = "ContextMenuLi";
         translateItem.innerHTML = "翻译";
         translateItem.addEventListener("click", () => {
-
+            event.stopPropagation();
+            const target = document.getElementById(`msg${msg_id}`);
+            const newElement = document.createElement("p");
+            newElement.className="translate";
+            newElement.innerHTML = "这是一个新元素";
+            target?.insertAdjacentElement("beforeend", newElement);
+            hideContextMenu();
         });
         contextMenu.appendChild(translateItem);
 
@@ -222,7 +228,7 @@ const ChatScreen = () => {
             document.body.removeChild(contextMenu);
         }
 
-        document.addEventListener("mousedown", hideContextMenu);
+        //document.addEventListener("mousedown", hideContextMenu);
         document.addEventListener("click", hideContextMenu);
     }
 
@@ -284,7 +290,7 @@ const ChatScreen = () => {
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
-                        <div className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
+                        <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
                             onContextMenu={(event) => {
                                 msgContextMenu(event, msg.msg_id, msg.msg_body);
                             }}>
