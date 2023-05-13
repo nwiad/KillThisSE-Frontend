@@ -359,3 +359,18 @@
     border: 1px solid #a8a8a8;
     list-style-type: none;
 }
+
+.translate {
+    float: left;
+    display: block;
+    border-radius: 5px;
+    background-color: #dedede;
+    max-width: 500px;
+    width: auto;
+    word-break: break-all;
+    word-wrap: break-word;
+    padding: 12px;
+    margin-bottom: 0;
+    margin-top: 0;
+    margin-left: 0;
+}
