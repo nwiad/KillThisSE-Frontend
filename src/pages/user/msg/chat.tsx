@@ -46,6 +46,9 @@ const ChatScreen = () => {
     };
 
     const sendPublic = (isImg?: boolean, isFile?: boolean) => {
+        if(message === "") {
+            return;
+        }
         socket.current!.send(JSON.stringify({
             message: message, token: localStorage.getItem("token"),
             isImg: false, isFile: false
