@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { ChatMetaData, GroupChatMetaData, Options } from "../../../utils/type";
-import { Socket } from "../../../utils/websocket";
+import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
 
 const MsgBar = () => {
@@ -40,8 +40,6 @@ const MsgBar = () => {
         setChatInfo(Array(chatList.length + groupChatList.length).fill(""));
         const options: Options = {
             url: "",
-            //url: `ws://localhost:8000/ws/chat/${chat.id}/`,
-            // url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
             isReconnect: true, // 是否自动重连
@@ -58,8 +56,7 @@ const MsgBar = () => {
 
         chatList.forEach((chat) => {
             console.log("private");
-            // options.url = `ws://localhost:8000/ws/chat/${chat.id}/`;
-            options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
+            options.url = suffix+`${chat.id}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 console.log("new private msg");
@@ -81,8 +78,9 @@ const MsgBar = () => {
 
         groupChatList.forEach((chat) => {
             console.log("group");
-            options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
+            // options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
             // options.url = `ws://localhost:8000/ws/chat/${chat.id}/`;
+            options.url = suffix+`${chat.id}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 console.log("new private msg");
