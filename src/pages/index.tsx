@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
+import { translate } from "../utils/youdao";
+
+const test = async () => {
+    translate("hello")
+        .then((res) => console.log(res))
+        .catch((err) => alert(err));
+};
 
 const InitLoginPage = () => {
     const [name, setName] = useState<string>("");

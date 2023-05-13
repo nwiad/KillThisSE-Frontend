@@ -212,7 +212,7 @@ const ChatScreen = () => {
 
 
     // 功能：消息右键菜单
-    function msgContextMenu(event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number, msg_body: string) {
+    const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number, msg_body: string) => {
         event.preventDefault();
 
         const contextMenu = document.createElement("ul");
@@ -231,14 +231,23 @@ const ChatScreen = () => {
         const translateItem = document.createElement("li");
         translateItem.className = "ContextMenuLi";
         translateItem.innerHTML = "翻译";
-        translateItem.addEventListener("click", () => {
+        translateItem.addEventListener("click", async (event) => {
             event.stopPropagation();
             const target = document.getElementById(`msg${msg_id}`);
+            console.log(target!.getElementsByTagName("p").length);
+            console.log(target!.getElementsByClassName("translate")[0])
+            if (target!.getElementsByClassName("translate")[0]) {
+                console.log("已经有翻译结果了");
+                return;
+            }
             const newElement = document.createElement("p");
             newElement.className="translate";
-            newElement.innerHTML = "这是一个新元素";
+            // newElement.innerHTML = await translate(msg_body);  翻译次数有限！！！
+            newElement.innerHTML = "翻译结果";
             target?.insertAdjacentElement("beforeend", newElement);
             hideContextMenu();
+            console.log(target!.getElementsByClassName("translate").length);
+
         });
         contextMenu.appendChild(translateItem);
 
@@ -250,9 +259,9 @@ const ChatScreen = () => {
             document.body.removeChild(contextMenu);
         }
 
-        //document.addEventListener("mousedown", hideContextMenu);
+        // document.addEventListener("mousedown", hideContextMenu);
         document.addEventListener("click", hideContextMenu);
-    }
+    };
 
     useEffect(() => {
         if (!router.isReady) {
