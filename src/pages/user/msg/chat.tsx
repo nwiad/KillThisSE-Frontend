@@ -114,18 +114,42 @@ const ChatScreen = () => {
         });
     }
 
-
-
-    const startRecording = async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.start();
-        setRecording(true);
+    // 开始/停止录音
+    const handleRecording = async () => {
+        // 如果正在录音
+        if (recording) {
+            const audioURL= await stopRecording();
+            console.log("Recording stopped, audio URL:", audioURL);
+            setRecording(false);
+            sendAudio(audioURL);
+        } else {
+            startRecording();
+            setRecording(true);
+        }
     };
 
-    const stopRecording = async () => {
-        await new Promise(resolve => {
-            mediaRecorder.addEventListener("dataavailable", e => {
+    // 开始录音
+    const startRecording = async () => {
+        if (typeof MediaRecorder === 'undefined') {
+            console.error('浏览器不支持 MediaRecorder API');
+            return;
+        }
+        
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.start();
+            setRecording(true);
+        } catch (err) {
+            console.error("Failed to start recording: ", err);
+        }
+    };
+
+    // 停止录音
+    const stopRecording = async ():Promise<string> => {
+        return new Promise(resolve => {
+            mediaRecorder.addEventListener("dataavailable", function onDataAvailable(e) {
+                mediaRecorder.removeEventListener("dataavailable", onDataAvailable); // 移除之前的事件监听器
                 if (e.data && e.data.size > 0) {
                     const audioURL = URL.createObjectURL(e.data);
                     setAudioURL(audioURL);
@@ -134,35 +158,35 @@ const ChatScreen = () => {
             });
             mediaRecorder.stop();
         });
-        setRecording(false);
     };
 
+    // blob转file
     const blobToFile = (blob: Blob, name: string): File => {
         return new File([blob], name, { type: blob.type, lastModified: Date.now() });
     };
 
+    // 发送语音
+    const sendAudio = async (audioURL:string) => {
+        try {
+            const audioBlob = await (await fetch(audioURL)).blob();
+            const audioFile = blobToFile(audioBlob, "recording.mp3");
+            const audioUrl = await uploadFile(audioFile);
     
-    const sendAudio = async () => {
-        const audioBlob = await (await fetch(audioURL)).blob();
-        const audioUrl = await uploadFile(blobToFile(audioBlob,"recording.ogg")); // 类型“Blob”的参数不能赋给类型“File”的参数。
-    
-        socket.current!.send(JSON.stringify({
-            message: audioUrl,
-            token: localStorage.getItem("token"),
-            is_audio: true
-        }));
-    };
-    
-    const handleRecording = async () => {
-        if (recording) {
-            const audioURL = await stopRecording();
-            console.log("Recording stopped, audio URL:", audioURL);
-            setRecording(false);
-        } else {
-            startRecording();
-            setRecording(true);
+            if (socket.current) {
+                socket.current.send(JSON.stringify({
+                    message: audioUrl,
+                    token: localStorage.getItem("token"),
+                    is_audio: true
+                }));
+            } else {
+                console.error("Socket is not connected.");
+            }
+        } catch (err) {
+            console.error("Failed to send audio: ", err);
         }
     };
+    
+
     
 
     // 功能：消息右键菜单
@@ -378,10 +402,10 @@ const ChatScreen = () => {
                         <FontAwesomeIcon className="Icon" icon={faFileAudio} />
                         {recording ? "Stop Recording" : "Start Recording"}
                     </button>
-                    <button className="send-button" onClick={sendAudio}>
-                        Send Audio!!!
-                    </button>
-                    <audio src={audioURL} controls />
+
+                    {audioURL && (
+                            <audio src={audioURL} controls />
+                    )}
 
                 </div>
                 <button
