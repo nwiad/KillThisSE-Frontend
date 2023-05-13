@@ -272,14 +272,9 @@ const InitPage = () => {
                 </button>
                 {showPopupAvatar && (
                     <div className="popup">
-<<<<<<< HEAD
-                        <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false); setShowPopupAvatar(false); }}>
-                            <input placeholder="uploaded image" className="fileupload" type="file" name="avatar" accept="image/*"
-=======
                         <div>修改头像</div>
                         <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false);  setShowPopupAvatar(false);  }}>
                             <input placeholder = "uploaded image" className="fileupload" type="file" name="avatar" accept="image/*" 
->>>>>>> 5fc196571971d88b3d1bda7e0cb04129ffdb802b
                                 onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
                             <button type="submit" disabled={!isAvatarUploaded}>上传头像</button>
                         </form>
@@ -316,25 +311,6 @@ const InitPage = () => {
                         <button onClick={() => { setShowPopupPwd(false); }}>取消</button>
                     </div>
                 )}
-<<<<<<< HEAD
-                <button className="resetName" onClick={() => { setShowPopupMail(true); setMail(""); setNewMail(""); }}>
-                    修改邮箱
-                </button>
-                {showPopupMail && (
-                    <div className="popup">
-                        <input
-                            type="text"
-                            value={newMail}
-                            onChange={(e) => { setNewMail(e.target.value); }}
-                            placeholder="请输入新的邮箱"
-                            id="usernameinput" />
-                        <span id={isEmail(newMail) ? "usernamelegaltip" : "usernameillegaltip"}>*请输入正确的邮箱</span>
-                        <button onClick={() => { resetMail(); setShowPopupMail(false); }} disabled={!isEmail(newMail)}>保存</button>
-                        <button onClick={() => { setShowPopupMail(false); }}>取消</button>
-                    </div>
-                )}
-                <button className="delete" onClick={() => { deleteUser(); }}>
-=======
                 <button className="resetName" onClick={() => { setEmail(""); setEmailLegal(false); 
                     setPwd4Verify(""); setLegalVerify(false); setShowPopUpEmail(true); }}>
                     邮箱绑定
@@ -350,7 +326,6 @@ const InitPage = () => {
                     </div>
                 )}
                 <button className="delete" onClick={() => {deleteUser();}}>
->>>>>>> 5fc196571971d88b3d1bda7e0cb04129ffdb802b
                     注销本用户
                 </button>
             </div>

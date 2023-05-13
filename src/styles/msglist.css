@@ -114,19 +114,15 @@
     height: 25px;
 }
 
-.picbutton {
-    width: 50%;
-    height: 100%;
-    margin: 0;/*margin指的是上下左右的外边距*/
-    font-size:30px;
-    border-radius: 0;
-    border: 1px solid #7d7d7d;
+.sendbutton:hover {
+    background-color: rgba(0,0,0,0);
 }
 
-.filebutton {
-    width: 50%;
+.msgbutton {
+    width: 50px;
     height: 100%;
     margin-top: 10px;
+    margin-left: 10px;
     border-radius: 0;
     background-color: rgba(0,0,0,0);
     border: 0px solid #7d7d7d;
