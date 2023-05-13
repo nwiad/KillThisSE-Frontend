@@ -46,4 +46,5 @@ export interface MsgMetaData {
     sender_avatar: string,
     is_image: boolean,
     is_file: boolean,
+    is_video: boolean,
 };

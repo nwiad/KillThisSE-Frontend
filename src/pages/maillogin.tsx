@@ -113,9 +113,6 @@ const InitPage = () => {
                 <button onClick={() => router.push("/register")}>
                     注册新用户
                 </button>
-                <div>
-                    {translate(str)}
-                </div>
             </div>
         </div>
     );

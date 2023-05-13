@@ -1,5 +1,5 @@
 import Picker from "@emoji-mart/react";
-import { faFaceSmile, faFile, faImage, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faFaceSmile, faFile, faImage, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
@@ -23,6 +23,10 @@ const ChatScreen = () => {
     const [newimg, setNewImg] = useState<File>();
     const [isImgUploaded, setIsImgUploaded] = useState(false);
     const [showPopupImg, setShowPopupImg] = useState(false);
+    // video
+    const [newvideo, setNewVideo] = useState<File>();
+    const [isVideoUploaded, setIsVideoUploaded] = useState(false);
+    const [showPopupVideo, setShowPopupVideo] = useState(false);
     // file
     const [newfile, setNewFile] = useState<File>();
     const [isFileUploaded, setIsFileUploaded] = useState(false);
@@ -42,6 +46,9 @@ const ChatScreen = () => {
     };
 
     const sendPublic = (isImg?: boolean, isFile?: boolean) => {
+        if(message === "") {
+            return;
+        }
         socket.current!.send(JSON.stringify({
             message: message, token: localStorage.getItem("token"),
             isImg: false, isFile: false
@@ -52,6 +59,7 @@ const ChatScreen = () => {
         console.log("回收");
         socket.current?.destroy();
     };
+
     // 功能：发送图片
     const sendPic = async (pic: File | undefined) => {
         if (pic === undefined) {
@@ -65,6 +73,21 @@ const ChatScreen = () => {
             is_image: true
         }));
     };
+
+    // 功能：发送图片
+    const sendVideo = async (pic: File | undefined) => {
+        if (pic === undefined) {
+            alert("未检测到视频文件");
+            return;
+        }
+        const video_url = await uploadFile(pic);
+
+        socket.current!.send(JSON.stringify({
+            message: video_url, token: localStorage.getItem("token"),
+            is_video: true
+        }));
+    };
+
     // 功能：发送文件
     const sendFile = async (pic: File | undefined) => {
         if (pic === undefined) {
@@ -78,6 +101,7 @@ const ChatScreen = () => {
             is_file: true
         }));
     };
+
     // 功能：创建链接
     function createLinkifiedMsgBody(msgBody: string) {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -127,8 +151,8 @@ const ChatScreen = () => {
             return;
         }
         const options: Options = {
-            url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
-            // url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
+            // url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
+            url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
             isReconnect: true, // 是否自动重连
@@ -188,14 +212,17 @@ const ChatScreen = () => {
                             <p className="sendername">{msg.sender_name}</p>
                             <p className="sendername">{msg.create_time}</p>
                             {msg.is_image === true ? <img src={msg.msg_body} style={{ maxWidth: "100%", height: "auto" }} /> :
-                                (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="file"
+                                (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
+                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="file"
                                         style={{ width: "100%", height: "auto" }} />
                                 </a> :
-                                    <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
-                                        dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
-
-                                    ></p>)
+                                    (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
+                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="file"
+                                            style={{ width: "100%", height: "auto" }} />
+                                    </a> :
+                                        <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                            dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
+                                        ></p>))
                             }
                         </div>
                     </div>
@@ -243,6 +270,29 @@ const ChatScreen = () => {
                                     disabled={!isImgUploaded}>发送图片</button>
                             </form>
                             <button onClick={() => { setShowPopupImg(false); }}>取消</button>
+                        </div>
+                    )}
+                    <button className="sendbutton" onClick={() => { setShowPopupVideo(true); }}>
+                        <FontAwesomeIcon className="Icon" icon={faVideo} />
+                    </button>
+                    {showPopupVideo && (
+                        <div className="popup">
+                            <form onSubmit={() => {
+                                sendVideo(newvideo);
+                                setIsVideoUploaded(false);
+                                setShowPopupVideo(false);
+                            }}>
+                                <input placeholder="uploaded video"
+                                    className="fileupload" type="file"
+                                    name="avatar" accept="video/*"
+                                    onChange={(event) => {
+                                        setNewVideo(event.target.files?.[0]);
+                                        setIsVideoUploaded(!!event.target.files?.[0]);
+                                    }} />
+                                <button type="submit"
+                                    disabled={!isVideoUploaded}>发送视频</button>
+                            </form>
+                            <button onClick={() => { setShowPopupVideo(false); }}>取消</button>
                         </div>
                     )}
                     <button className="sendbutton" onClick={() => { setShowPopupFile(true); }}>
