@@ -31,7 +31,11 @@ const ChatScreen = () => {
     const [newfile, setNewFile] = useState<File>();
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const [showPopupFile, setShowPopupFile] = useState(false);
-
+    // audio
+    const [recording, setRecording] = useState(false);
+    const [audioURL, setAudioURL] = useState("");
+    let mediaRecorder: MediaRecorder;
+    
     const socket = useRef<Socket>();
 
     // 功能：切换emoji显示
@@ -45,10 +49,10 @@ const ChatScreen = () => {
         setShowEmojiPicker(false);
     };
 
-    const sendPublic = (isImg?: boolean, isFile?: boolean) => {
+    const sendPublic = (isImg?: boolean, isFile?: boolean, isVideo?: boolean) => {
         socket.current!.send(JSON.stringify({
             message: message, token: localStorage.getItem("token"),
-            isImg: false, isFile: false
+            isImg: false, isFile: false, isVideo: false
         }));
     };
 
@@ -71,7 +75,7 @@ const ChatScreen = () => {
         }));
     };
 
-    // 功能：发送图片
+    // 功能：发送视频
     const sendVideo = async (pic: File | undefined) => {
         if (pic === undefined) {
             alert("未检测到视频文件");
@@ -107,6 +111,53 @@ const ChatScreen = () => {
         });
     }
 
+
+
+    const startRecording = async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
+        setRecording(true);
+    };
+
+    const stopRecording = async () => {
+        await new Promise(resolve => {
+            mediaRecorder.addEventListener("dataavailable", e => {
+                if (e.data && e.data.size > 0) {
+                    const audioURL = URL.createObjectURL(e.data);
+                    setAudioURL(audioURL);
+                    resolve(audioURL);
+                }
+            });
+            mediaRecorder.stop();
+        });
+        setRecording(false);
+    };
+
+    const sendAudio = async () => {
+        const audioBlob = await (await fetch(audioURL)).blob();
+        const audioUrl = await uploadFile(audioBlob); // 你可能需要修改这个函数以支持blob类型的文件
+    
+        socket.current!.send(JSON.stringify({
+            message: audioUrl,
+            token: localStorage.getItem("token"),
+            is_audio: true
+        }));
+    };
+    
+    const handleRecording = async () => {
+        if (recording) {
+            const audioURL = await stopRecording();
+            console.log("Recording stopped, audio URL:", audioURL);
+            setRecording(false);
+        } else {
+            startRecording();
+            setRecording(true);
+        }
+    };
+    
+
+    // 功能：消息右键菜单
     function msgContextMenu(event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number, msg_body: string) {
         event.preventDefault();
 
@@ -148,8 +199,8 @@ const ChatScreen = () => {
             return;
         }
         const options: Options = {
-            // url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
-            url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
+            url: `ws://localhost:8000/ws/chat/${router.query.id}/`,
+            // url: `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
             isReconnect: true, // 是否自动重连
@@ -208,13 +259,13 @@ const ChatScreen = () => {
                             }}>
                             <p className="sendername">{msg.sender_name}</p>
                             <p className="sendername">{msg.create_time}</p>
-                            {msg.is_image === true ? <img src={msg.msg_body} style={{ maxWidth: "100%", height: "auto" }} /> :
+                            {msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
                                 (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
-                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="file"
+                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
                                         style={{ width: "100%", height: "auto" }} />
                                 </a> :
                                     (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="file"
+                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
                                             style={{ width: "100%", height: "auto" }} />
                                     </a> :
                                         <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
@@ -315,6 +366,15 @@ const ChatScreen = () => {
                             <button onClick={() => { setShowPopupFile(false); }}>取消</button>
                         </div>
                     )}
+                    {/* 发送语音功能 */}
+                    <button className="record-button" onClick={handleRecording}>
+                        {recording ? "Stop Recording" : "Start Recording"}
+                    </button>
+                    <button className="send-button" onClick={sendAudio}>
+                        Send Audio!!!
+                    </button>
+                    <audio src={audioURL} controls />
+
                 </div>
                 <button
                     className="msgbutton"

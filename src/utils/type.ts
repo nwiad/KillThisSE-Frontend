@@ -47,4 +47,5 @@ export interface MsgMetaData {
     is_image: boolean,
     is_file: boolean,
     is_video: boolean,
+    is_audio: boolean,
 };
