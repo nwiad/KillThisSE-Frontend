@@ -34,21 +34,21 @@ const InitPage = () => {
             const img = new Image();
             const reader = new FileReader();
             reader.onload = function (e) {
-                img.onload = function () {
-                    const canvas = document.createElement("canvas");
-                    const ctx = canvas.getContext("2d");
-                    const size = Math.min(img.width, img.height);
-                    const x = (img.width - size) / 2;
-                    const y = (img.height - size) / 2;
-                    canvas.width = size;
-                    canvas.height = size;
-                    ctx?.drawImage(img, x, y, size, size, 0, 0, size, size);
-                    canvas.toBlob(blob => {
-                        const croppedFile = new File([blob], imageFile.name, { type: imageFile.type });
-                        resolve(croppedFile);
-                    }, imageFile.type);
-                };
-                img.src = e.target?.result;
+                // img.onload = function () {
+                //     const canvas = document.createElement("canvas");
+                //     const ctx = canvas.getContext("2d");
+                //     const size = Math.min(img.width, img.height);
+                //     const x = (img.width - size) / 2;
+                //     const y = (img.height - size) / 2;
+                //     canvas.width = size;
+                //     canvas.height = size;
+                //     ctx?.drawImage(img, x, y, size, size, 0, 0, size, size);
+                //     canvas.toBlob(blob => {
+                //         const croppedFile = new File([blob], imageFile.name, { type: imageFile.type });
+                //         resolve(croppedFile);
+                //     }, imageFile.type);
+                // };
+                // img.src = e.target?.result;
             };
             reader.onerror = reject;
             reader.readAsDataURL(imageFile);
