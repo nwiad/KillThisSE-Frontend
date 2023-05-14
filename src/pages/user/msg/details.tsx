@@ -21,6 +21,7 @@ const DetailsPage = () => {
     const [isGroup, setIsGroup] = useState<string>();
     const [refreshing, setRefreshing] = useState<boolean>(true);
     const [myID, setID] = useState<string>();
+    const [hasPermit, setHasPermit] = useState<boolean>();
 
     const [owner, setOwner] = useState<memberMetaData>();
     const [admins, setAdmins] = useState<memberMetaData[]>();
@@ -140,14 +141,26 @@ const DetailsPage = () => {
     }, [chatID, chatName, isGroup, myID]);
 
     useEffect(() => {
+        const checkPermission = () => {
+            if(owner?.id.toString() === myID) {
+                return true;
+            }
+            admins?.forEach((admin) => {
+                if(admin.id.toString() === myID) {
+                    return true;
+                }
+            });
+            return false;
+        };
         if (isGroup === "1" && owner !== undefined && admins !== undefined && members !== undefined) {
             console.log("聊天详情刷新");
+            setHasPermit(checkPermission());
             setRefreshing(false);
         }
         else if (isGroup === "0") {
             setRefreshing(false);
         }
-    }, [owner, admins, members, isGroup]);
+    }, [owner, admins, members, isGroup, myID]);
 
     const closeNoticeBoard = () => {
         setShowPopUpNoticeBoard(false);
@@ -188,10 +201,29 @@ const DetailsPage = () => {
             <MsgBar />
             <div id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 <button className="detailback" onClick={() => { router.push(`/user/msg/chat?id=${chatID}&name=${chatName}&group=${isGroup}`); }}><FontAwesomeIcon className="Icon" icon={faArrowLeft} /></button>
+                <p className="notice">{chatName}</p>
+                <p className="notice" style={{display: "flex", flexDirection: "row"}}>
+                    <div key={0} >
+                        <img className="sender_avatar" src={`${owner!.avatar}`} alt="oops" />
+                        <p style={{ color: "black" }}>{owner!.name}（群主）</p>
+                    </div>
+                    {admins?.map((admin) => (
+                        <div key={admin.id}>
+                            <img className="sender_avatar" src={`${admin!.avatar}`} alt="oops" />
+                            <p style={{ color: "black" }}>{admin!.name}</p>       
+                        </div>
+                    ))}
+                    {members?.map((member) => (
+                        <div key={member.id}>
+                            <img className="sender_avatar" src={`${member!.avatar}`} alt="oops" />
+                            <p style={{ color: "black" }}>{member!.name}</p>
+                        </div>
+                    ))}
+                </p>
                 <p className="notice"> 群公告: {notice} </p>
                 {
-                    (myID === owner!.id.toString()) ? (
-                        <button disabled={myID !== owner!.id.toString()} onClick={() => { setShowPopUpNoticeBoard(true); }}>
+                    (hasPermit === true) ? (
+                        <button disabled={!hasPermit} onClick={() => { setShowPopUpNoticeBoard(true); }}>
                             设置/修改群公告
                         </button>
                     ) : (
@@ -222,6 +254,7 @@ const DetailsPage = () => {
             <MsgBar />
             <div id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 <button className="detailback" onClick={() => { router.push(`/user/msg/chat?id=${chatID}&name=${chatName}&group=${isGroup}`); }}><FontAwesomeIcon className="Icon" icon={faArrowLeft} /></button>
+                <p className="notice">{chatName}</p>
             </div>
         </div>
     ));

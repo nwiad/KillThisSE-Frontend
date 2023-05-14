@@ -3,13 +3,6 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment, faUsers, faUser, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
-
-interface Friend {
-    user_id: number;
-    name: string;
-    avatar: string;
-}
-
 interface infoProps {
     name?: string,
     avatar?: string,
