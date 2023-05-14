@@ -12,7 +12,8 @@ interface Friend {
 
 interface infoProps {
     name?: string,
-    avatar?: string
+    avatar?: string,
+    chat_name?: string,
 }
 
 const Navbar = (props: infoProps) => {
@@ -127,7 +128,7 @@ const Navbar = (props: infoProps) => {
     };
 
     return (
-        <nav style={{ padding: 12 }}>
+        <nav style={{ padding: 12, zIndex: 9999, position: "fixed" }}>
             <ul className="navbar">
                 <li className="navbar_ele_r" onClick={() => { router.push("/user/"); }}>
                     <FontAwesomeIcon className="Icon" icon={faComment} />
@@ -144,11 +145,11 @@ const Navbar = (props: infoProps) => {
                 {showPopUpFriendList && (
                     <div className="popup">
                         <div>发起群聊</div>
-                        <input onChange={(e) => setGroupName(e.target.value)} />
+                        <input onChange={(e) => setGroupName(e.target.value)} style={{zIndex: 10000, position: "relative"}}/>
                         {groupFriendList?.map((item: Friend) => (
                             <li key={item.user_id}
                                 onClick={() => { addGroupMember(item.user_id); }}
-                                style={{ display: "flex" }}>
+                                style={{ display: "flex", width: "100%" }}>
                                 <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
                                 <p style={{ color: "black" }}>{item.name}</p>
                             </li>

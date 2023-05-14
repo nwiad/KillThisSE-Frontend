@@ -7,6 +7,7 @@ import { uploadFile } from "../../../utils/oss";
 import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
+import ChatBar from "./chatbar";
 import MsgBar from "./msgbar";
 
 const ChatScreen = () => {
@@ -206,10 +207,7 @@ const ChatScreen = () => {
             console.error("Failed to send audio: ", err);
         }
     };
-
-
-
-
+    
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number, msg_body: string, msg_is_audio: boolean) => {
         event.preventDefault();
@@ -344,11 +342,10 @@ const ChatScreen = () => {
 
     return (
         <div style={{ padding: 12 }}>
-            <Navbar />
+            <Navbar chat_name={query.name as string}/>
             <MsgBar />
-
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
-                <div>{router.query.name}</div>
+                <ChatBar my_id={myID} name={query.name as string} chat_id={query.id as string} is_group={ query.group === "1" }/>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>

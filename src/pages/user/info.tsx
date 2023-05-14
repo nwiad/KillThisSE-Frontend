@@ -29,7 +29,6 @@ const InitPage = () => {
 
     const router = useRouter();
 
-
     const cropImageToSquare = async (imageFile:File):Promise<File> => {
         return new Promise((resolve, reject) => {
             const img = new Image();
