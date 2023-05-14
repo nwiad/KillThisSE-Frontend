@@ -9,7 +9,6 @@ import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
 import MsgBar from "./msgbar";
 
-
 const ChatScreen = () => {
     const [inputValue, setInput] = useState<string>("");
     const [message, setMsg] = useState<string>("");
@@ -212,7 +211,7 @@ const ChatScreen = () => {
 
 
     // 功能：消息右键菜单
-    const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number, msg_body: string) => {
+    const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number, msg_body: string, msg_is_audio: boolean) => {
         event.preventDefault();
 
         const contextMenu = document.createElement("ul");
@@ -220,37 +219,71 @@ const ChatScreen = () => {
         contextMenu.style.left = `${event.clientX}px`;
         contextMenu.style.top = `${event.clientY}px`;
 
-        const deleteItem = document.createElement("li");
-        deleteItem.className = "ContextMenuLi";
-        deleteItem.innerHTML = "撤回";
-        deleteItem.addEventListener("click", () => {
-            //TODO
-        });
-        contextMenu.appendChild(deleteItem);
+        if(!msg_is_audio)
+        {
+            const deleteItem = document.createElement("li");
+            deleteItem.className = "ContextMenuLi";
+            deleteItem.innerHTML = "撤回";
+            deleteItem.addEventListener("click", () => {
+                //TODO
+            });
+            contextMenu.appendChild(deleteItem);
+    
+            const translateItem = document.createElement("li");
+            translateItem.className = "ContextMenuLi";
+            translateItem.innerHTML = "翻译";
+            translateItem.addEventListener("click", async (event) => {
+                event.stopPropagation();
+                const target = document.getElementById(`msg${msg_id}`);
+                console.log(target!.getElementsByTagName("p").length);
+                console.log(target!.getElementsByClassName("translate")[0]);
+                if (target!.getElementsByClassName("translate")[0]) {
+                    console.log("已经有翻译结果了");
+                    return;
+                }
+                const newElement = document.createElement("p");
+                newElement.className="translate";
+                // newElement.innerHTML = await translate(msg_body);  翻译次数有限！！！
+                newElement.innerHTML = "翻译结果";
+                target?.insertAdjacentElement("beforeend", newElement);
+                hideContextMenu();
+                console.log(target!.getElementsByClassName("translate").length);
+    
+            });
+            contextMenu.appendChild(translateItem);
 
-        const translateItem = document.createElement("li");
-        translateItem.className = "ContextMenuLi";
-        translateItem.innerHTML = "翻译";
-        translateItem.addEventListener("click", async (event) => {
-            event.stopPropagation();
-            const target = document.getElementById(`msg${msg_id}`);
-            console.log(target!.getElementsByTagName("p").length);
-            console.log(target!.getElementsByClassName("translate")[0])
-            if (target!.getElementsByClassName("translate")[0]) {
-                console.log("已经有翻译结果了");
-                return;
-            }
-            const newElement = document.createElement("p");
-            newElement.className="translate";
-            // newElement.innerHTML = await translate(msg_body);  翻译次数有限！！！
-            newElement.innerHTML = "翻译结果";
-            target?.insertAdjacentElement("beforeend", newElement);
-            hideContextMenu();
-            console.log(target!.getElementsByClassName("translate").length);
+        }
+        else // 语音消息只能转文字
+        {
+            console.log("语音消息");
+            console.log(msg_body);
+            const transformItem = document.createElement("li");
+            transformItem.className = "ContextMenuLi";
+            transformItem.innerHTML = "语音转文字";
+            
+            transformItem.addEventListener("click", async (event) => {
+                event.stopPropagation();
+                const target = document.getElementById(`msg${msg_id}`);
+                console.log(target!.getElementsByTagName("p").length);
+                console.log(target!.getElementsByClassName("transform")[0]);
+                
+                if (target!.getElementsByClassName("transform")[0]) {
+                    console.log("已经转换过了");
+                    return;
+                }
+                const newElement = document.createElement("p");
+                newElement.className="transform";
+                // newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
+                newElement.innerHTML = "转文字结果";
+                target?.insertAdjacentElement("beforeend", newElement);
+                hideContextMenu();
+                console.log("转换结果："+newElement.innerHTML);
+                console.log(target!.getElementsByClassName("transform").length);
 
-        });
-        contextMenu.appendChild(translateItem);
-
+            });
+            contextMenu.appendChild(transformItem);
+        }
+        
         document.body.appendChild(contextMenu);
 
         function hideContextMenu() {
@@ -323,7 +356,7 @@ const ChatScreen = () => {
                         </div>
                         <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
                             onContextMenu={(event) => {
-                                msgContextMenu(event, msg.msg_id, msg.msg_body);
+                                msgContextMenu(event, msg.msg_id, msg.msg_body, msg.is_audio);
                             }}>
                             <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
                             {msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :

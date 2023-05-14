@@ -67,7 +67,9 @@ export const transform = async (queryString: string): Promise<string> => {
     const curtime = Math.round(new Date().getTime()/1000);
     const encodeStr = appID + truncate(queryString) + salt + curtime + appKey;
     const sign = CryptoJS.SHA256(encodeStr).toString(CryptoJS.enc.Hex);
-
+    let output = "[Unknown text]]";
+    console.log("queryString", queryString);
+    console.log("即将进入await！！！");
     await $.ajax({
         url: "https://openapi.youdao.com/asrapi",
         type: "post",
@@ -87,8 +89,8 @@ export const transform = async (queryString: string): Promise<string> => {
         },
         success: function (data) {
             console.log(data);
-            return data.result[0];
+            output = data.result[0];
         }
     });
-    return "[Unknown text]";
+    return output;
 };
