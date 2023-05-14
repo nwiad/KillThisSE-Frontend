@@ -11,6 +11,9 @@ import MsgBar from "./msgbar";
 
 const ChatScreen = () => {
     const inputRef = useRef<HTMLInputElement>(null);
+    const [cursorPosStart, setCursorPosStart] = useState<number | null>(null);
+    const [cursorPosEnd, setCursorPosEnd] = useState<number | null>(null);
+
     const [inputValue, setInput] = useState<string>("");
     const [message, setMsg] = useState<string>("");
     const [msgList, setMsgList] = useState<MsgMetaData[]>([]);
@@ -216,6 +219,7 @@ const ChatScreen = () => {
     };
 
     const handleMention = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        event.preventDefault();
         const input = event.target as HTMLElement;
         const inputRect = input.getBoundingClientRect();
         const popupX = inputRect.left + window.scrollX;
@@ -224,13 +228,11 @@ const ChatScreen = () => {
         setPopupMentionPosition({ x: popupX, y: popupY });
     };
 
-    function insertAtCursor(input: HTMLInputElement, textToInsert: string) {
-        const startPos = input.selectionStart;
-        const endPos = input.selectionEnd;
-        const currentValue = input.value;
-        if (startPos && endPos) {
-            input.value = currentValue.substring(0, startPos) + textToInsert + currentValue.substring(endPos);
-            input.setSelectionRange(startPos + textToInsert.length, startPos + textToInsert.length);
+    function insertAtCursor(inputBase: HTMLElement | null, textToInsert: string) {
+        const input = inputBase as HTMLInputElement;
+        const currentValue = input?.value;
+        if (cursorPosStart !== null && cursorPosEnd !== null) {
+            setInput(currentValue.substring(0, cursorPosStart) + textToInsert + currentValue.substring(cursorPosEnd));
         }
     }
 
@@ -433,8 +435,14 @@ const ChatScreen = () => {
                     ref={inputRef}
                     placeholder="请输入内容"
                     value={inputValue}
-                    onChange={(e) => { setInput(e.target.value); setMsg(e.target.value); }}
-                    onKeyDown={(event) => {
+                    onChange={(e) => {
+                        if (inputRef.current !== null) {
+                            setCursorPosStart(inputRef.current.selectionStart);
+                            setCursorPosEnd(inputRef.current.selectionEnd);
+                        }
+                        setInput(e.target.value); setMsg(e.target.value);
+                    }}
+                    onKeyDown={async (event) => {
                         if (event.key === "Enter") {
                             event.preventDefault();
                             sendPublic();
@@ -442,10 +450,17 @@ const ChatScreen = () => {
                         };
                         if (event.key === "@") {
                             //TODO:验证是否为群聊
-                            event.preventDefault();
-                            if(inputRef.current)
-                                insertAtCursor(inputRef.current,"@");
-                            handleMention(event);
+                            if (inputRef.current !== null) {
+                                const startPos = inputRef.current.selectionStart;
+                                const endPos = inputRef.current.selectionEnd;
+                                Promise.resolve().then(async () => {
+                                    await setCursorPosStart(startPos);
+                                    await setCursorPosEnd(endPos);
+                                    //insertAtCursor(inputRef.current, "@");
+                                    setMsg(inputValue);
+                                    handleMention(event);
+                                });
+                            }
                         }
                         else {
                             setShowPopupMention(false);
@@ -456,7 +471,12 @@ const ChatScreen = () => {
                 {showPopupMention && (
                     <div className="msgContextMenu">
                         TODO:遍历群内好友
-                        <li className="ContextMenuLi" onClick={() => { setInput(inputValue + "准备@的好友"); setMsg(message + "准备@的好友"); setShowPopupMention(false); }}>
+                        <li className="ContextMenuLi" onClick={() => {
+                            if (document.getElementById("msginput"))
+                                insertAtCursor(document.getElementById("msginput"), "你说的对");
+                            setMsg(inputValue);
+                            setShowPopupMention(false);
+                        }}>
                             准备@的好友
                         </li>
                     </div>
