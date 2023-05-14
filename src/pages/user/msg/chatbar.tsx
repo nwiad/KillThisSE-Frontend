@@ -177,7 +177,6 @@ const ChatBar = (props: chatBarProps) => {
                                     </button>
                                 )
                             }
-
                         </div>}
                 </div>
             )}

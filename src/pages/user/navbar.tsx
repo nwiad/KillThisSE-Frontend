@@ -13,7 +13,6 @@ interface Friend {
 interface infoProps {
     name?: string,
     avatar?: string,
-    chat_name?: string,
 }
 
 const Navbar = (props: infoProps) => {

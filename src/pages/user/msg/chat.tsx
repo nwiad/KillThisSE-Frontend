@@ -2,7 +2,7 @@ import Picker from "@emoji-mart/react";
 import { faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
-import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
+import { MouseEvent as ReactMouseEvent, use, useEffect, useRef, useState } from "react";
 import { uploadFile } from "../../../utils/oss";
 import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
@@ -14,7 +14,7 @@ const ChatScreen = () => {
     const [inputValue, setInput] = useState<string>("");
     const [message, setMsg] = useState<string>("");
     const [msgList, setMsgList] = useState<MsgMetaData[]>([]);
-    const [myID, setID] = useState<number>(-1);
+    const [myID, setID] = useState<number>();
     const chatBoxRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
     const query = router.query;
@@ -39,6 +39,11 @@ const ChatScreen = () => {
     const mediaRecorder = useRef<MediaRecorder | undefined>();
     
     const socket = useRef<Socket>();
+
+    const [chatID, setChatID] = useState<string>();
+    const [chatName, setChatName] = useState<string>();
+    const [isGroup, setIsGroup] = useState<string>();
+    const [refreshing, setRefreshing] = useState<boolean>(true);
 
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
@@ -298,6 +303,10 @@ const ChatScreen = () => {
         if (!router.isReady) {
             return;
         }
+        setChatID(query.id as string);
+        setChatName(query.name as string);
+        setIsGroup(query.group as string);
+
         const options: Options = {
             url: suffix + `${router.query.id}/`,
             heartTime: 5000, // 心跳时间间隔
@@ -340,12 +349,24 @@ const ChatScreen = () => {
             .catch((err) => alert(err));
     }, []);
 
-    return (
+    useEffect(() => {
+        if(chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
+            console.log("聊天视窗刷新");
+            setRefreshing(false);
+        }
+    }, [chatID, chatName, isGroup, myID]);
+
+    return refreshing ? (
+        <p>Loading...</p>
+    ) : (
         <div style={{ padding: 12 }}>
-            <Navbar chat_name={query.name as string}/>
+            <Navbar />
             <MsgBar />
-            <ChatBar my_id={myID} name={query.name as string} chat_id={query.id as string} is_group={ query.group === "1" }/>
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", flexDirection: "row", float: "right" }}>
+                    <div>{chatName}</div>
+                    <button onClick={() => { router.push(`/user/msg/details?id=${chatID}&name=${chatName}&group=${isGroup}&myID=${myID}`); }}>...</button>
+                </div>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
