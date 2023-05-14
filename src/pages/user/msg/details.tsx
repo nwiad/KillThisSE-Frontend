@@ -37,6 +37,7 @@ const DetailsPage = () => {
     }, [router, query]);
 
     useEffect(() => {
+        console.log("group?",isGroup);
         if(chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
             if(isGroup === "1") {
                 // 获取群成员
@@ -130,14 +131,20 @@ const DetailsPage = () => {
                     .catch((err) => alert(err));
             }
         }
+        else if(isGroup === "0"){
+            setRefreshing(false);
+        }
     }, [chatID, chatName, isGroup, myID]);
 
     useEffect(() => {
-        if(owner !== undefined && admins !== undefined && members !== undefined) {
+        if(isGroup === "1" && owner !== undefined && admins !== undefined && members !== undefined) {
             console.log("聊天详情刷新");
             setRefreshing(false);
         }
-    }, [owner, admins, members]);
+        else if(isGroup === "0") {
+            setRefreshing(false);
+        }
+    }, [owner, admins, members, isGroup]);
 
     const closeNoticeBoard = () => {
         setShowPopUpNoticeBoard(false); 

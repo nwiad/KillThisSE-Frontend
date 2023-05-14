@@ -7,8 +7,8 @@ import { uploadFile } from "../../../utils/oss";
 import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
-import ChatBar from "./chatbar";
 import MsgBar from "./msgbar";
+import { faCircleInfo} from "@fortawesome/free-solid-svg-icons";
 
 const ChatScreen = () => {
     const [inputValue, setInput] = useState<string>("");
@@ -362,11 +362,11 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
+            <div className="chatname">{chatName}</div>
+            <button className="chatinfobutton" onClick={() => { router.push(`/user/msg/details?id=${chatID}&name=${chatName}&group=${isGroup}&myID=${myID}`); }}>
+                <FontAwesomeIcon className="Icon" icon={faCircleInfo} />
+            </button>
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
-                <div style={{ display: "flex", flexDirection: "row", float: "right" }}>
-                    <div>{chatName}</div>
-                    <button onClick={() => { router.push(`/user/msg/details?id=${chatID}&name=${chatName}&group=${isGroup}&myID=${myID}`); }}>...</button>
-                </div>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
