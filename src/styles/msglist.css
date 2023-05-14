@@ -397,9 +397,18 @@
 
 .popuprecord {
     display: flex;
+    flex-direction: row;
+    position: fixed;
+    width: 80%;
+    height: 11%;
+    right: 0;
+    left: 20%;
+    bottom: 75%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
     align-items: center; /* 垂直居中 */
     justify-content: center; /* 水平居中 */
-    height: 10%; /* 设置弹窗高度为视口高度 */
 }
   
 .popup-title {

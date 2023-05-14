@@ -56,37 +56,42 @@ export const translate = async (queryString: string): Promise<string> => {
     });
     return output;
 };
-
+  
 // 语音转文字
 export const transform = async (queryString: string): Promise<string> => {
-
+    // 转成base64
+    const base64Data = Buffer.from(queryString).toString("base64");
     console.log("transform begins");
     const appID = "3c60ebd01606a5ca";
     const appKey = "RpS8mnChMx9pILX2TyhK69iyCPqnibrV";
     const salt = (new Date).getTime().toString();
     const curtime = Math.round(new Date().getTime()/1000);
-    const encodeStr = appID + truncate(queryString) + salt + curtime + appKey;
+    const encodeStr = appID + truncate(base64Data) + salt + curtime + appKey;
     const sign = CryptoJS.SHA256(encodeStr).toString(CryptoJS.enc.Hex);
     let output = "[Unknown text]]";
-    console.log("queryString", queryString);
+    console.log("queryString", base64Data);
     console.log("即将进入await！！！");
+    let data = {
+        q: base64Data,
+        langType: "zh-CHS",
+        appKey: appID,
+        salt: salt,
+        sign: sign,
+        signType: "v3",
+        curtime: curtime,
+        format: "mp3",
+        rate: 16000,
+        channel: 1,
+        type: "1",
+    };
+    let encodeData = $.param(data);
     await $.ajax({
         url: "https://openapi.youdao.com/asrapi",
         type: "post",
         dataType: "jsonp",
-        data: {
-            q: queryString,
-            langType: "zh-CHS",
-            appKey: appID,
-            salt: salt,
-            sign: sign,
-            signType: "v3",
-            curtime: curtime,
-            format: "mp3",
-            rate: 16000,
-            channel: 1,
-            type: "1",
-        },
+        data: JSON.stringify(encodeData),
+        contentType: "application/x-www-form-urlencoded",
+        processData: false,
         success: function (data) {
             console.log(data);
             output = data.result[0];

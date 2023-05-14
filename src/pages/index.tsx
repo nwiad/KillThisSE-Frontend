@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
 import { transform } from "../utils/youdao";
 
@@ -38,9 +38,9 @@ const InitLoginPage = () => {
     };
 
     const router = useRouter();
-    useEffect(() => {
-        test();
-    },[]);
+    // useEffect(() => {
+    //     test();
+    // },[]);
 
     const userLogin = () => {
         fetch(
