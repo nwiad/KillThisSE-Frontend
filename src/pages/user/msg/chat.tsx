@@ -1,14 +1,13 @@
 import Picker from "@emoji-mart/react";
-import { faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo, faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
-import { MouseEvent as ReactMouseEvent, use, useEffect, useRef, useState } from "react";
+import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
 import { uploadFile } from "../../../utils/oss";
 import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
 import MsgBar from "./msgbar";
-import { faCircleInfo} from "@fortawesome/free-solid-svg-icons";
 
 const ChatScreen = () => {
     const [inputValue, setInput] = useState<string>("");
@@ -405,7 +404,6 @@ const ChatScreen = () => {
                     </div>
                 </div>
             )}
-
             <div className="inputdisplay">
                 <input
                     className="msginput"
