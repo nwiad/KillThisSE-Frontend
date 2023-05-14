@@ -52,7 +52,7 @@ const GroupStarter = () => {
 
     const addOrRemoveGroupMember = (id: number) => {
         const index = groupMembers.indexOf(id);
-        if(index !== -1) {
+        if (index !== -1) {
             let newArray = [...groupMembers];
             newArray.splice(index, 1);
             setGroupMembers(newArray);
@@ -92,26 +92,29 @@ const GroupStarter = () => {
 
     return (
         <div style={{ padding: 12 }}>
-            <Navbar/>
+            <Navbar />
             <div id="main" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
-                <div>发起群聊</div>
-                <input onChange={(e) => setGroupName(e.target.value)}/>
-                {groupFriendList?.map((item: Friend) => (
-                    <ul key={item.user_id} style={{ display: "flex", flexDirection: "row"}}>
-                        <input 
-                            type="checkbox" 
-                            className="navbar_ele_info"
-                            onClick={() => { addOrRemoveGroupMember(item.user_id); }}
-                        />
-                        <li 
-                            className="navbar_ele_info"
-                            style={{ display: "flex", width: "100%" }}>
-                            <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
-                            <p style={{ color: "black" }}>{item.name}</p>
-                        </li>
-                    </ul>
+                <div className="startgrouptitle">发起群聊</div>
+                <input onChange={(e) => setGroupName(e.target.value)} placeholder="群聊名称" />
+                <div className="startgroupfriends">请选择需要邀请的好友</div>
+                <ul className="startgroupchoice">
+                    {groupFriendList?.map((item: Friend) => (
+                        <div className="startgroupchoicebox" key={item.user_id} style={{ display: "flex", flexDirection: "row" }}>
+                            <input
+                                type="checkbox"
+                                className="startgroupcheckbox"
+                                onClick={() => { addOrRemoveGroupMember(item.user_id); }}
+                            />
+                            <li
+                                className="navbar_ele_info"
+                                style={{ display: "flex", width: "100%" }}>
+                                <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
+                                <p style={{ color: "black" }}>{item.name}</p>
+                            </li>
+                        </div>
+                    ))}
+                </ul>
 
-                ))}
                 <button onClick={() => {
                     createGroupChat(); setGroupFriendList([]); setGroupMembers([]);
                     router.push("/user");

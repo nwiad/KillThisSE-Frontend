@@ -42,13 +42,13 @@ const InitPage = () => {
                     const y = (img.height - size) / 2;
                     canvas.width = size;
                     canvas.height = size;
-                    ctx.drawImage(img, x, y, size, size, 0, 0, size, size);
+                    ctx?.drawImage(img, x, y, size, size, 0, 0, size, size);
                     canvas.toBlob(blob => {
                         const croppedFile = new File([blob], imageFile.name, { type: imageFile.type });
                         resolve(croppedFile);
                     }, imageFile.type);
                 };
-                img.src = e.target.result;
+                img.src = e.target?.result;
             };
             reader.onerror = reject;
             reader.readAsDataURL(imageFile);

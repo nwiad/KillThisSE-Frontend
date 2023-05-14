@@ -1,0 +1,43 @@
+.chatname {
+    position: fixed;
+    width: 80%;
+    height: 50px;
+    right: 0;
+    margin-left: 20%;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 500;
+    top: 65px;
+    bottom: 20%;
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0);
+    float: right;
+}
+
+.chatinfobutton {
+    position: fixed;
+    top: 65px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    margin-top: 10px;
+    margin-left: 10px;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    border: 0px solid #7d7d7d;
+}
+
+.chatinfobutton .Icon {
+    color: #969696;
+    width: 35px;
+    height: 35px;
+}
+
+.chatinfobutton:hover {
+    background-color: rgba(0,0,0,0);
+}
+
+.chatinfobutton:hover .Icon {
+    color: #535353;
+}

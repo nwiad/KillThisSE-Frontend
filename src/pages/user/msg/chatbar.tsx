@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
+import { faCircleInfo} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface chatBarProps {
     name: string,
     chat_id: string,
     is_group: boolean,
     my_id: number
-} 
+}
 
 interface memberMetaData {
     id: number,
@@ -26,7 +28,7 @@ const ChatBar = (props: chatBarProps) => {
     const [newNotice, setNewNOtice] = useState<string>("");
 
     useEffect(() => {
-        if(props.is_group === true) {
+        if (props.is_group === true) {
             // 获取群成员
             fetch(
                 "/api/user/get_group_members/",
@@ -41,8 +43,8 @@ const ChatBar = (props: chatBarProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
-                        setMemers( data.members.map( (member: any) => ({...member}) ) );
+                    if (data.code === 0) {
+                        setMemers(data.members.map((member: any) => ({ ...member })));
                     }
                     else {
                         throw new Error(`${data.info}`);
@@ -63,8 +65,8 @@ const ChatBar = (props: chatBarProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
-                        setAdmins( data.administrators.map( (admin: any) => ({...admin}) ) );
+                    if (data.code === 0) {
+                        setAdmins(data.administrators.map((admin: any) => ({ ...admin })));
                     }
                     else {
                         throw new Error(`${data.info}`);
@@ -86,7 +88,7 @@ const ChatBar = (props: chatBarProps) => {
                 .then((res) => res.json())
                 .then((data) => {
                     console.log(data);
-                    if(data.code === 0) {
+                    if (data.code === 0) {
                         setOwner(data.owner);
                     }
                     else {
@@ -109,7 +111,7 @@ const ChatBar = (props: chatBarProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
+                    if (data.code === 0) {
                         setNotice(data.Announcement);
                     }
                     else {
@@ -137,30 +139,32 @@ const ChatBar = (props: chatBarProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     alert("设置群公告成功");
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));   
+            .catch((err) => alert(err));
     };
 
     const closeNoticeBoard = () => {
-        setShowPopUpNoticeBoard(false); 
+        setShowPopUpNoticeBoard(false);
         setNewNOtice("");
     };
 
     return (
         <div style={{ display: "flex", flexDirection: "row", float: "right" }}>
-            <div>{props.name}</div>
-            <button onClick={() => { setShowPopUpInfo(true); }}>...</button>
+            <div className="chatname">{props.name}</div>
+            <button className="chatinfobutton" onClick={() => { setShowPopUpInfo(true); }}>
+                <FontAwesomeIcon className="Icon" icon={faCircleInfo} />
+            </button>
             {showPopUpInfo && (
                 <div className="popup">
                     <button onClick={() => { setShowPopUpInfo(false); closeNoticeBoard(); }}>返回</button>
-                    {props.is_group && 
-                        <div> 
+                    {props.is_group &&
+                        <div>
                             <p> 群公告: {notice} </p>
                             {
                                 (props.my_id === owner!.id) ? (
@@ -183,7 +187,7 @@ const ChatBar = (props: chatBarProps) => {
                         placeholder="输入群公告"
                         onChange={(e) => { setNewNOtice(e.target.value); }}
                     />
-                    <button onClick={() => {closeNoticeBoard();}}>
+                    <button onClick={() => { closeNoticeBoard(); }}>
                         取消
                     </button>
                     <button onClick={() => { submitNotice(); setNotice(newNotice); closeNoticeBoard(); }} disabled={newNotice.length === 0}>

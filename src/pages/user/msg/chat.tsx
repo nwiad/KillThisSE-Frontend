@@ -344,8 +344,8 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar chat_name={query.name as string}/>
             <MsgBar />
+            <ChatBar my_id={myID} name={query.name as string} chat_id={query.id as string} is_group={ query.group === "1" }/>
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
-                <ChatBar my_id={myID} name={query.name as string} chat_id={query.id as string} is_group={ query.group === "1" }/>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
