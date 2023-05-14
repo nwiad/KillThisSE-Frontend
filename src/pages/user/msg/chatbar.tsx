@@ -153,7 +153,7 @@ const ChatBar = (props: chatBarProps) => {
     };
 
     return (
-        <div>
+        <div style={{ display: "flex", flexDirection: "row", float: "right" }}>
             <div>{props.name}</div>
             <button onClick={() => { setShowPopUpInfo(true); }}>...</button>
             {showPopUpInfo && (
@@ -178,7 +178,7 @@ const ChatBar = (props: chatBarProps) => {
                 </div>
             )}
             {showPopUpNoticeBoard && (
-                <div>
+                <div className="popup">
                     <input
                         placeholder="输入群公告"
                         onChange={(e) => { setNewNOtice(e.target.value); }}
@@ -190,7 +190,6 @@ const ChatBar = (props: chatBarProps) => {
                         完成
                     </button>
                 </div>
-
             )}
         </div>
     );
