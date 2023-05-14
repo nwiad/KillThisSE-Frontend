@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "./navbar";
 import { useRouter } from "next/router";
+import { assert } from "console";
 
 interface Friend {
     user_id: number;
@@ -49,6 +50,18 @@ const GroupStarter = () => {
         getFriendList();
     }, []);
 
+    const addOrRemoveGroupMember = (id: number) => {
+        const index = groupMembers.indexOf(id);
+        if(index !== -1) {
+            let newArray = [...groupMembers];
+            newArray.splice(index, 1);
+            setGroupMembers(newArray);
+        }
+        else {
+            setGroupMembers((memeberList) => [...memeberList, id]);
+        }
+    };
+
     const addGroupMember = (id: number) => {
         setGroupMembers((memeberList) => [...memeberList, id]);
     };
@@ -88,7 +101,7 @@ const GroupStarter = () => {
                         <input 
                             type="checkbox" 
                             className="navbar_ele_info"
-                            onClick={() => { addGroupMember(item.user_id); }}
+                            onClick={() => { addOrRemoveGroupMember(item.user_id); }}
                         />
                         <li 
                             className="navbar_ele_info"
