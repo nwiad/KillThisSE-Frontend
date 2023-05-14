@@ -10,6 +10,7 @@ import Navbar from "../navbar";
 import MsgBar from "./msgbar";
 
 const ChatScreen = () => {
+    const inputRef = useRef<HTMLInputElement>(null);
     const [inputValue, setInput] = useState<string>("");
     const [message, setMsg] = useState<string>("");
     const [msgList, setMsgList] = useState<MsgMetaData[]>([]);
@@ -33,16 +34,18 @@ const ChatScreen = () => {
     // audio
     const [recording, setRecording] = useState(false);
     const [audioURL, setAudioURL] = useState("");
-    
+
     // const [mediaRecorder,setmediaRecorder]= useRef<MediaRecorder>(new MediaRecorder(new MediaStream()));
     const mediaRecorder = useRef<MediaRecorder | undefined>();
-    
+
     const socket = useRef<Socket>();
 
     const [chatID, setChatID] = useState<string>();
     const [chatName, setChatName] = useState<string>();
     const [isGroup, setIsGroup] = useState<string>();
     const [refreshing, setRefreshing] = useState<boolean>(true);
+    const [showPopupMention, setShowPopupMention] = useState(false);
+    const [popupMentionPosition, setPopupMentionPosition] = useState({ x: 0, y: 0 });
 
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
@@ -147,7 +150,7 @@ const ChatScreen = () => {
                 console.error("Failed to obtain audio stream");
                 return;
             }
-            mediaRecorder.current= new MediaRecorder(stream);
+            mediaRecorder.current = new MediaRecorder(stream);
             console.log("Created MediaRecorder", mediaRecorder, "with options", mediaRecorder.current!.stream);
             mediaRecorder.current.start();
             setRecording(true);
@@ -179,7 +182,7 @@ const ChatScreen = () => {
                     setAudioURL(audioURL);
                     resolve(audioURL);
                 }
-                else{
+                else {
                     console.error("Failed to create audio URL from blob.");
                 }
             });
@@ -211,7 +214,26 @@ const ChatScreen = () => {
             console.error("Failed to send audio: ", err);
         }
     };
-    
+
+    const handleMention = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        const input = event.target as HTMLElement;
+        const inputRect = input.getBoundingClientRect();
+        const popupX = inputRect.left + window.scrollX;
+        const popupY = inputRect.bottom + window.scrollY;
+        setShowPopupMention(true);
+        setPopupMentionPosition({ x: popupX, y: popupY });
+    };
+
+    function insertAtCursor(input: HTMLInputElement, textToInsert: string) {
+        const startPos = input.selectionStart;
+        const endPos = input.selectionEnd;
+        const currentValue = input.value;
+        if (startPos && endPos) {
+            input.value = currentValue.substring(0, startPos) + textToInsert + currentValue.substring(endPos);
+            input.setSelectionRange(startPos + textToInsert.length, startPos + textToInsert.length);
+        }
+    }
+
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number, msg_body: string, msg_is_audio: boolean) => {
         event.preventDefault();
@@ -221,8 +243,7 @@ const ChatScreen = () => {
         contextMenu.style.left = `${event.clientX}px`;
         contextMenu.style.top = `${event.clientY}px`;
 
-        if(!msg_is_audio)
-        {
+        if (!msg_is_audio) {
             const deleteItem = document.createElement("li");
             deleteItem.className = "ContextMenuLi";
             deleteItem.innerHTML = "撤回";
@@ -230,7 +251,7 @@ const ChatScreen = () => {
                 //TODO
             });
             contextMenu.appendChild(deleteItem);
-    
+
             const translateItem = document.createElement("li");
             translateItem.className = "ContextMenuLi";
             translateItem.innerHTML = "翻译";
@@ -244,13 +265,13 @@ const ChatScreen = () => {
                     return;
                 }
                 const newElement = document.createElement("p");
-                newElement.className="translate";
+                newElement.className = "translate";
                 // newElement.innerHTML = await translate(msg_body);  翻译次数有限！！！
                 newElement.innerHTML = "翻译结果";
                 target?.insertAdjacentElement("beforeend", newElement);
                 hideContextMenu();
                 console.log(target!.getElementsByClassName("translate").length);
-    
+
             });
             contextMenu.appendChild(translateItem);
 
@@ -262,30 +283,30 @@ const ChatScreen = () => {
             const transformItem = document.createElement("li");
             transformItem.className = "ContextMenuLi";
             transformItem.innerHTML = "语音转文字";
-            
+
             transformItem.addEventListener("click", async (event) => {
                 event.stopPropagation();
                 const target = document.getElementById(`msg${msg_id}`);
                 console.log(target!.getElementsByTagName("p").length);
                 console.log(target!.getElementsByClassName("transform")[0]);
-                
+
                 if (target!.getElementsByClassName("transform")[0]) {
                     console.log("已经转换过了");
                     return;
                 }
                 const newElement = document.createElement("p");
-                newElement.className="transform";
+                newElement.className = "transform";
                 // newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
                 newElement.innerHTML = "转文字结果";
                 target?.insertAdjacentElement("beforeend", newElement);
                 hideContextMenu();
-                console.log("转换结果："+newElement.innerHTML);
+                console.log("转换结果：" + newElement.innerHTML);
                 console.log(target!.getElementsByClassName("transform").length);
 
             });
             contextMenu.appendChild(transformItem);
         }
-        
+
         document.body.appendChild(contextMenu);
 
         function hideContextMenu() {
@@ -349,7 +370,7 @@ const ChatScreen = () => {
     }, []);
 
     useEffect(() => {
-        if(chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
+        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
             console.log("聊天视窗刷新");
             setRefreshing(false);
         }
@@ -386,8 +407,8 @@ const ChatScreen = () => {
                                             style={{ width: "100%", height: "auto" }} />
                                     </a> :
                                         (msg.is_audio === true ? <a>
-                                            { <audio src={msg.msg_body} controls /> }
-                                        </a>:
+                                            {<audio src={msg.msg_body} controls />}
+                                        </a> :
                                             <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
                                                 dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
                                             ></p>)))
@@ -409,6 +430,7 @@ const ChatScreen = () => {
                     className="msginput"
                     id="msginput"
                     type="text"
+                    ref={inputRef}
                     placeholder="请输入内容"
                     value={inputValue}
                     onChange={(e) => { setInput(e.target.value); setMsg(e.target.value); }}
@@ -417,10 +439,28 @@ const ChatScreen = () => {
                             event.preventDefault();
                             sendPublic();
                             setInput("");
+                        };
+                        if (event.key === "@") {
+                            //TODO:验证是否为群聊
+                            event.preventDefault();
+                            if(inputRef.current)
+                                insertAtCursor(inputRef.current,"@");
+                            handleMention(event);
+                        }
+                        else {
+                            setShowPopupMention(false);
                         }
                     }}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
+                {showPopupMention && (
+                    <div className="msgContextMenu">
+                        TODO:遍历群内好友
+                        <li className="ContextMenuLi" onClick={() => { setInput(inputValue + "准备@的好友"); setMsg(message + "准备@的好友"); setShowPopupMention(false); }}>
+                            准备@的好友
+                        </li>
+                    </div>
+                )}
                 <div style={{ display: "flex", flexDirection: "row" }}>
                     <button className="sendbutton" onClick={() => { toggleEmojiPicker(); }}>
                         <FontAwesomeIcon className="Icon" icon={faFaceSmile} />
