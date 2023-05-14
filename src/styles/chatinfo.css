@@ -41,3 +41,40 @@
 .chatinfobutton:hover .Icon {
     color: #535353;
 }
+
+.notice {
+    font-size: 300;
+    text-align: center;
+    background-color: #d5d5d5;
+    width: 300px;
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.detailback {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    top: 70px;
+    margin-left: 10px;
+    border-radius: 0;
+    background-color: rgba(0,0,0,0);
+    border: 0px solid #7d7d7d;
+}
+
+.detailback .Icon {
+    color: #969696;
+    width: 25px;
+    height: 25px;
+    margin: 0;
+}
+
+.detailback:hover {
+    background-color: rgba(0,0,0,0);
+}
+
+.detailback:hover .Icon {
+    color: #535353;
+}

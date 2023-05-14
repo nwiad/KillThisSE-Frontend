@@ -1,6 +1,9 @@
 import { useRouter } from "next/router";
 import Navbar from "../navbar";
 import { useEffect, useState } from "react";
+import MsgBar from "./msgbar";
+import { faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface memberMetaData {
     id: number,
@@ -18,6 +21,7 @@ const DetailsPage = () => {
     const [isGroup, setIsGroup] = useState<string>();
     const [refreshing, setRefreshing] = useState<boolean>(true);
     const [myID, setID] = useState<string>();
+    const [hasPermit, setHasPermit] = useState<boolean>();
 
     const [owner, setOwner] = useState<memberMetaData>();
     const [admins, setAdmins] = useState<memberMetaData[]>();
@@ -25,9 +29,9 @@ const DetailsPage = () => {
     const [notice, setNotice] = useState<string>("");
     const [showPopUpNoticeBoard, setShowPopUpNoticeBoard] = useState<boolean>(false);
     const [newNotice, setNewNOtice] = useState<string>("");
-    
+
     useEffect(() => {
-        if(!router.isReady) {
+        if (!router.isReady) {
             return;
         }
         setChatID(query.id as string);
@@ -37,9 +41,9 @@ const DetailsPage = () => {
     }, [router, query]);
 
     useEffect(() => {
-        console.log("group?",isGroup);
-        if(chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
-            if(isGroup === "1") {
+        console.log("group?", isGroup);
+        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
+            if (isGroup === "1") {
                 // 获取群成员
                 fetch(
                     "/api/user/get_group_members/",
@@ -54,8 +58,8 @@ const DetailsPage = () => {
                 )
                     .then((res) => res.json())
                     .then((data) => {
-                        if(data.code === 0) {
-                            setMemers( data.members.map( (member: any) => ({...member}) ) );
+                        if (data.code === 0) {
+                            setMemers(data.members.map((member: any) => ({ ...member })));
                         }
                         else {
                             throw new Error(`${data.info}`);
@@ -76,8 +80,8 @@ const DetailsPage = () => {
                 )
                     .then((res) => res.json())
                     .then((data) => {
-                        if(data.code === 0) {
-                            setAdmins( data.administrators.map( (admin: any) => ({...admin}) ) );
+                        if (data.code === 0) {
+                            setAdmins(data.administrators.map((admin: any) => ({ ...admin })));
                         }
                         else {
                             throw new Error(`${data.info}`);
@@ -98,7 +102,7 @@ const DetailsPage = () => {
                 )
                     .then((res) => res.json())
                     .then((data) => {
-                        if(data.code === 0) {
+                        if (data.code === 0) {
                             setOwner(data.owner);
                         }
                         else {
@@ -121,7 +125,7 @@ const DetailsPage = () => {
                 )
                     .then((res) => res.json())
                     .then((data) => {
-                        if(data.code === 0) {
+                        if (data.code === 0) {
                             setNotice(data.Announcement);
                         }
                         else {
@@ -131,23 +135,35 @@ const DetailsPage = () => {
                     .catch((err) => alert(err));
             }
         }
-        else if(isGroup === "0"){
+        else if (isGroup === "0") {
             setRefreshing(false);
         }
     }, [chatID, chatName, isGroup, myID]);
 
     useEffect(() => {
-        if(isGroup === "1" && owner !== undefined && admins !== undefined && members !== undefined) {
+        const checkPermission = () => {
+            if(owner?.id.toString() === myID) {
+                return true;
+            }
+            admins?.forEach((admin) => {
+                if(admin.id.toString() === myID) {
+                    return true;
+                }
+            });
+            return false;
+        };
+        if (isGroup === "1" && owner !== undefined && admins !== undefined && members !== undefined) {
             console.log("聊天详情刷新");
+            setHasPermit(checkPermission());
             setRefreshing(false);
         }
-        else if(isGroup === "0") {
+        else if (isGroup === "0") {
             setRefreshing(false);
         }
-    }, [owner, admins, members, isGroup]);
+    }, [owner, admins, members, isGroup, myID]);
 
     const closeNoticeBoard = () => {
-        setShowPopUpNoticeBoard(false); 
+        setShowPopUpNoticeBoard(false);
         setNewNOtice("");
     };
 
@@ -167,54 +183,79 @@ const DetailsPage = () => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     alert("设置群公告成功");
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));   
+            .catch((err) => alert(err));
     };
 
     return refreshing ? (
         <p>Loading...</p>
-    ) : ( isGroup === "1" ?  (
+    ) : (isGroup === "1" ? (
         <div style={{ padding: 12 }}>
             <Navbar />
-            <button onClick={() => { router.push(`/user/msg/chat?id=${chatID}&name=${chatName}&group=${isGroup}`); }}>返回</button>
-            <p> 群公告: {notice} </p>
-            {
-                (myID === owner!.id.toString()) ? (
-                    <button disabled={myID !== owner!.id.toString()} onClick={() => { setShowPopUpNoticeBoard(true); }}>
-                        设置/修改群公告
-                    </button>
-                ) : (
-                    <button disabled={true} onClick={() => { setShowPopUpNoticeBoard(true); }}>
-                        仅群主和管理员可设置/修改群公告
-                    </button>
-                )
-            }
-            {showPopUpNoticeBoard && (
-                <div className="popup">
-                    <input
-                        placeholder="输入群公告"
-                        onChange={(e) => { setNewNOtice(e.target.value); }}
-                    />
-                    <button onClick={() => {closeNoticeBoard();}}>
-                        取消
-                    </button>
-                    <button onClick={() => { submitNotice(); setNotice(newNotice); closeNoticeBoard(); }} disabled={newNotice.length === 0}>
-                        完成
-                    </button>
-                </div>
-            )}
+            <MsgBar />
+            <div id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
+                <button className="detailback" onClick={() => { router.push(`/user/msg/chat?id=${chatID}&name=${chatName}&group=${isGroup}`); }}><FontAwesomeIcon className="Icon" icon={faArrowLeft} /></button>
+                <p className="notice">{chatName}</p>
+                <p className="notice" style={{display: "flex", flexDirection: "row"}}>
+                    <div key={0} >
+                        <img className="sender_avatar" src={`${owner!.avatar}`} alt="oops" />
+                        <p style={{ color: "black" }}>{owner!.name}（群主）</p>
+                    </div>
+                    {admins?.map((admin) => (
+                        <div key={admin.id}>
+                            <img className="sender_avatar" src={`${admin!.avatar}`} alt="oops" />
+                            <p style={{ color: "black" }}>{admin!.name}</p>       
+                        </div>
+                    ))}
+                    {members?.map((member) => (
+                        <div key={member.id}>
+                            <img className="sender_avatar" src={`${member!.avatar}`} alt="oops" />
+                            <p style={{ color: "black" }}>{member!.name}</p>
+                        </div>
+                    ))}
+                </p>
+                <p className="notice"> 群公告: {notice} </p>
+                {
+                    (hasPermit === true) ? (
+                        <button disabled={!hasPermit} onClick={() => { setShowPopUpNoticeBoard(true); }}>
+                            设置/修改群公告
+                        </button>
+                    ) : (
+                        <button disabled={true} onClick={() => { setShowPopUpNoticeBoard(true); }}>
+                            仅群主和管理员可设置/修改群公告
+                        </button>
+                    )
+                }
+                {showPopUpNoticeBoard && (
+                    <div className="popup">
+                        <input
+                            placeholder="输入群公告"
+                            onChange={(e) => { setNewNOtice(e.target.value); }}
+                        />
+                        <button onClick={() => { closeNoticeBoard(); }}>
+                            取消
+                        </button>
+                        <button onClick={() => { submitNotice(); setNotice(newNotice); closeNoticeBoard(); }} disabled={newNotice.length === 0}>
+                            完成
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     ) : (
         <div style={{ padding: 12 }}>
             <Navbar />
-            <button onClick={() => { router.push(`/user/msg/chat?id=${chatID}&name=${chatName}&group=${isGroup}`); }}>返回</button>
-            
+            <MsgBar />
+            <div id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
+                <button className="detailback" onClick={() => { router.push(`/user/msg/chat?id=${chatID}&name=${chatName}&group=${isGroup}`); }}><FontAwesomeIcon className="Icon" icon={faArrowLeft} /></button>
+                <p className="notice">{chatName}</p>
+            </div>
         </div>
     ));
 };
