@@ -8,6 +8,7 @@ export interface Options {
     url: string, // 链接的通道的地址
     heartTime: number, // 心跳时间间隔
     heartMsg: string, // 心跳信息,默认为"ping"
+    sayHi?: boolean,
     isReconnect: boolean, // 是否自动重连
     isDestroy: boolean, // 是否销毁
     reconnectTime: number, // 重连时间间隔

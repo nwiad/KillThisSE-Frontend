@@ -38,9 +38,9 @@ const InitLoginPage = () => {
     };
 
     const router = useRouter();
-    useEffect(() => {
-        test();
-    },[]);
+    // useEffect(() => {
+    //     test();
+    // },[]);
 
     const userLogin = () => {
         fetch(
