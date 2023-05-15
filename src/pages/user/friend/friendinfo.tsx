@@ -133,7 +133,7 @@ const InitPage = () => {
 
     useEffect(() => {
         if (chatID !== undefined && friendName !== undefined) {
-            router.push(`/user/msg/chat?id=${chatID}&name=${friendName}&group=0`);
+            router.push(`/user/msg/chat?id=${chatID}&name=${friendName}&group=0&sticked=0`);
         }
     }, [chatID, friendName, router]);
 

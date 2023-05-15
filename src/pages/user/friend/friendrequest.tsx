@@ -91,7 +91,7 @@ const InitPage = () => {
                                         errorCb: () => { } // 错误的回调
                                     }
                                 );
-                                router.push(`/user/msg/chat?id=${chatID}&name=${name}&group=0`);
+                                router.push(`/user/msg/chat?id=${chatID}&name=${name}&group=0&sticked=0`);
                             }
                             else {
                                 throw new Error(`${data.info}`);
