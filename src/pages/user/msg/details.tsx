@@ -161,7 +161,6 @@ const DetailsPage = (props: detailProps) => {
         else if (props.group === "0") {
             setRefreshing(false);
         }
-        getOtherFriends();
     }, [props]);
 
     useEffect(() => {
@@ -178,6 +177,7 @@ const DetailsPage = (props: detailProps) => {
         };
         if (props.group === "1" && owner !== undefined && admins !== undefined && members !== undefined) {
             console.log("聊天详情刷新");
+            getOtherFriends();
             setHasPermit(checkPermission());
             setRefreshing(false);
         }
@@ -254,9 +254,6 @@ const DetailsPage = (props: detailProps) => {
 
     // 筛选不在群里的好友
     const alreadyInGroup = (friend_id: number): boolean => {
-        if(admins === undefined) {
-            alert("fuck");
-        }
         if (owner?.id === friend_id) {
             return true;
         }
