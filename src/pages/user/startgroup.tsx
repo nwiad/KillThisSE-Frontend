@@ -62,10 +62,6 @@ const GroupStarter = () => {
         }
     };
 
-    const addGroupMember = (id: number) => {
-        setGroupMembers((memeberList) => [...memeberList, id]);
-    };
-
     const createGroupChat = async () => {
         await fetch(
             "/api/user/create_group_conversation/",

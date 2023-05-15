@@ -269,10 +269,15 @@ const ChatScreen = () => {
                     )
                         .then((res) => res.json())
                         .then((data) => {
-                            socket.current!.send(JSON.stringify({
-                                message: msg_body, token: localStorage.getItem("token"),
-                                withdraw_msg_id: msg_id
-                            }));
+                            if(data.code === 0) {
+                                socket.current!.send(JSON.stringify({
+                                    message: msg_body, token: localStorage.getItem("token"),
+                                    withdraw_msg_id: msg_id
+                                }));
+                            }
+                            else {
+                                throw new Error(`${data.info}`);
+                            }
                         })
                         .catch((err) => alert(err));
                 });
@@ -365,7 +370,31 @@ const ChatScreen = () => {
             openCb: () => { }, // 连接成功的回调
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
-                setMsgList(JSON.parse(event.data).messages.map((val: any) => ({ ...val })));
+                const data = JSON.parse(event.data);
+                setMsgList(data.messages.map((val: any) => ({ ...val })));
+                const last_id = data.messages.length === 0 ? -1 : data.messages.at(-1).msg_id;
+                fetch(
+                    "/api/user/set_read_message/",
+                    {
+                        method:"POST",
+                        credentials:"include",
+                        body: JSON.stringify({
+                            token: localStorage.getItem("token"),
+                            conversation: router.query.id,
+                            msg_id: last_id
+                        })
+                    }
+                )
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if(data.code === 0) {
+                            console.log("设置已读消息成功:", last_id);
+                        }
+                        else {
+                            throw new Error(`${data.info}`);
+                        }
+                    })
+                    .catch((err) => alert(err));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -412,7 +441,7 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!}  />
+            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} />
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
