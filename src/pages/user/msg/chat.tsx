@@ -369,13 +369,12 @@ const ChatScreen = () => {
 
     useEffect(() => {
         console.log("!!!!!!!!!刷新");
-        if (!router.isReady) {
+        if (!router.isReady || myID === undefined) {
             return;
         }
         setChatID(query.id as string);
         setChatName(query.name as string);
         setIsGroup(query.group as string);
-
 
         const options: Options = {
             url: suffix + `${router.query.id}/`,
@@ -402,7 +401,7 @@ const ChatScreen = () => {
         };
         socket.current = new Socket(options);
         return cleanUp;
-    }, [router, query]);
+    }, [router, query, myID]);
 
     useEffect(() => {
         const msgs = document.getElementById("msgdisplay");
