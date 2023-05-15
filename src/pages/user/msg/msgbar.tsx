@@ -162,7 +162,7 @@ const MsgBar = () => {
                             <img src={`${chat.friend_avatar}`} alt="oops" />
                             <div className="msginfopv">
                                 <div className="senderpv">{chat.friend_name.length > 6 ?`${chat.friend_name.slice(0,6)}...` : chat.friend_name}</div>
-                                <div className="msgpv">{chatInfo&&chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : "nope"}</div>
+                                <div className="msgpv">{chatInfo&&chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
                             </div>
                         </li>
                     ))}
@@ -171,7 +171,7 @@ const MsgBar = () => {
                             <img src={`${chat.avatar}`} alt="oops" />
                             <div className="msginfopv">
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0,6)}...` : chat.name}</div>
-                                <div className="msgpv">{chatInfo&&chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : "nope"}</div>
+                                <div className="msgpv">{chatInfo&&chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
                             </div>
                         </li>
                     ))}
