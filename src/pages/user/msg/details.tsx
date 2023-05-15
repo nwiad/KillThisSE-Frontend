@@ -30,6 +30,8 @@ const DetailsPage = () => {
     const [showPopUpMembers, setShowPopUpMembers] = useState<boolean>(false);
     const [showPopUpNoticeBoard, setShowPopUpNoticeBoard] = useState<boolean>(false);
     const [showPopUpNotice, setShowPopUpNotice] = useState<boolean>(false);
+    const [remind, setRemind] = useState<boolean>(false);
+    const [top, setTop] = useState<boolean>(false);
     const [newNotice, setNewNOtice] = useState<string>("");
 
     const [friend, setFriend] = useState<memberMetaData>();
@@ -215,9 +217,9 @@ const DetailsPage = () => {
                         <FontAwesomeIcon className="adminicon" icon={faKey} />
                         <p className="admininfo">二级密码</p>
                     </div>
-                    <div className="adminbutton">
+                    <div className="adminbutton" onClick={()=>{setRemind(!remind);}}>
                         <FontAwesomeIcon className="adminicon" icon={faBellSlash} />
-                        <p className="admininfo">免打扰</p>
+                        <p className="admininfo">{remind? "解除免打扰" : "免打扰"}</p>
                     </div>
                     <div className="adminbutton">
                         <FontAwesomeIcon className="adminicon" icon={faArrowsUpToLine} />
