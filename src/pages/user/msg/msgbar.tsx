@@ -10,6 +10,7 @@ const MsgBar = () => {
     const [chatList, setChatList] = useState<ChatMetaData[]>();
     const [groupChatList, setGroupChatList] = useState<GroupChatMetaData[]>();
     const [refreshing, setRefreshing] = useState<boolean>(true);
+    const [myID, setMyID] = useState<number>();
 
     const [chatInfo, setChatInfo] = useState<string[]>();
 
@@ -22,6 +23,26 @@ const MsgBar = () => {
         if (!router.isReady) {
             return;
         }
+        fetch(
+            "/api/user/get_profile/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    setMyID(data.user_id);
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert(err));
         fetchList();
     }, [router, query]);
 
@@ -39,7 +60,10 @@ const MsgBar = () => {
             console.log("列表不存在");
             return;
         }
-        setChatInfo(Array(chatList.length + groupChatList.length).fill(""));
+        if(myID === undefined) {
+            return;
+        }
+        setChatInfo(Array(chatList.length + groupChatList.length + stickedPrivate.length + stickedGroup.length).fill(""));
         const options: Options = {
             url: "",
             heartTime: 5000, // 心跳时间间隔
@@ -58,7 +82,7 @@ const MsgBar = () => {
 
         stickedPrivate.forEach((chat) => {
             console.log("sticked private");
-            options.url = suffix + `${chat.id}/`;
+            options.url = suffix + `${chat.id}/${myID}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 setChatInfo((array) => {
@@ -102,7 +126,7 @@ const MsgBar = () => {
 
         stickedGroup.forEach((chat) => {
             console.log("private");
-            options.url = suffix + `${chat.id}/`;
+            options.url = suffix + `${chat.id}/${myID}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 setChatInfo((array) => {
@@ -146,7 +170,7 @@ const MsgBar = () => {
 
         chatList.forEach((chat) => {
             console.log("private");
-            options.url = suffix + `${chat.id}/`;
+            options.url = suffix + `${chat.id}/${myID}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 setChatInfo((array) => {
@@ -192,7 +216,7 @@ const MsgBar = () => {
             console.log("group");
             // options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
             // options.url = `ws://localhost:8000/ws/chat/${chat.id}/`;
-            options.url = suffix + `${chat.id}/`;
+            options.url = suffix + `${chat.id}/${myID}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 setChatInfo((array) => {
@@ -235,7 +259,7 @@ const MsgBar = () => {
         });
 
         return cleanUp;
-    }, [chatList, groupChatList, stickedPrivate, stickedGroup]);
+    }, [chatList, groupChatList, stickedPrivate, stickedGroup, myID]);
 
     const fetchList = async () => {
         setRefreshing(true);

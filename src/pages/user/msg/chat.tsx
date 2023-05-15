@@ -439,7 +439,7 @@ const ChatScreen = () => {
         setSticked(query.sticked as string);
 
         const options: Options = {
-            url: suffix + `${router.query.id}/`,
+            url: suffix + `${router.query.id}/${myID}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
             isReconnect: true, // 是否自动重连
