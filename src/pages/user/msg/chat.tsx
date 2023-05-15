@@ -5,7 +5,7 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
 import { uploadFile } from "../../../utils/oss";
-import { MsgMetaData, Options } from "../../../utils/type";
+import { MemberMetaData, MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import { transform } from "../../../utils/youdao";
 import Navbar from "../navbar";
@@ -20,6 +20,7 @@ const ChatScreen = () => {
     const [inputValue, setInput] = useState<string>("");
     const [message, setMsg] = useState<string>("");
     const [msgList, setMsgList] = useState<MsgMetaData[]>([]);
+    const [memberList, setmemberList] = useState<MemberMetaData[]>([]);
     const [myID, setID] = useState<number>();
     const chatBoxRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
@@ -68,9 +69,32 @@ const ChatScreen = () => {
         if (message === "") {
             return;
         }
+
+        // 创建一个空数组来存储成员的名字
+        let names = [];
+        for (let member of memberList) {
+            // 将每个成员的名字添加到names数组
+            names.push(member.user_name);
+        }
+
+        // 表示该条消息提及了谁
+        let mentioned_members = [];
+        // message表示消息内容 从中提取是否有@name
+        // 如果有，提取出来，然后发送消息
+        
+        // 遍历用户列表
+        for (let user in names){
+            // 检查消息中是否包含用户名
+            if (message.includes(`@${user}`)) {
+                // 如果包含，将用户名添加到提及成员的数组中
+                mentioned_members.push(user);
+            }
+        }
+
         socket.current!.send(JSON.stringify({
             message: message, token: localStorage.getItem("token"),
-            isImg: false, isFile: false, isVideo: false
+            isImg: false, isFile: false, isVideo: false,
+            mentioned_members: []
         }));
     };
 
@@ -192,6 +216,7 @@ const ChatScreen = () => {
                     console.error("Failed to create audio URL from blob.");
                 }
             });
+            // 关闭录音
         });
     };
 
@@ -235,10 +260,19 @@ const ChatScreen = () => {
         const input = inputBase as HTMLInputElement;
         const currentValue = input?.value;
         if (cursorPosStart !== null && cursorPosEnd !== null) {
-            setInput(currentValue.substring(0, cursorPosStart) + textToInsert + currentValue.substring(cursorPosEnd));
+            setInput(currentValue.substring(0, cursorPosStart) + "@"+ textToInsert + currentValue.substring(cursorPosEnd));
         }
     }
 
+    // This could be a button click event or something similar
+    // async function forwardMessages() {
+    //     // Here you would implement the forwarding of the messages
+    //     // This will depend on your application's specific API or mechanism for forwarding messages
+    //     // After forwarding, clear the selection
+    //     selectedMessages = [];
+    //     // And also remove the 'selected' class from the forwarded messages
+    //     document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+    // }
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string) => {
         event.preventDefault();
@@ -250,6 +284,7 @@ const ChatScreen = () => {
 
         // user_id指当前登录的用户
         // msg_owner指消息的发送者
+        // 语音消息不能转发
         if (!msg_is_audio) {
             // 只有自己能撤回自己的消息
             if(user_id==msg_owner) {
@@ -307,6 +342,30 @@ const ChatScreen = () => {
             });
             contextMenu.appendChild(translateItem);
 
+            // 多选
+            const multiselectItem = document.createElement("li");
+            multiselectItem.className = "ContextMenuLi";
+            multiselectItem.innerHTML = "多选";
+            // 被选中的消息
+            let selectedMessages = [];
+            multiselectItem.addEventListener("click", async (event) => {
+                event.stopPropagation();
+                const target = document.getElementById(`msg${msg_id}`);
+                // // Toggle the selected state of the message
+                // if (selectedMessages.includes(msg_id)) {
+                //     // Remove the message from the selection if it's already selected
+                //     selectedMessages = selectedMessages.filter(id => id !== msg_id);
+                //     target.classList.remove('selected');
+                // } else {
+                //     // Add the message to the selection if it's not selected
+                //     selectedMessages.push(msg_id);
+                //     target.classList.add('selected');
+                // }
+
+                // // For debugging
+                // console.log(selectedMessages);
+            });
+            contextMenu.appendChild(multiselectItem);
         }
         else // 语音消息只能转文字
         {
@@ -390,12 +449,16 @@ const ChatScreen = () => {
                 let currentUserid = myID;
                 console.log("当前用户id: ", currentUserid);
                 const messages = JSON.parse(event.data).messages;
-                console.log(messages);
-                // 如果这个人的id在删除列表里，就不显示消息
+                // 消息列表
                 setMsgList(messages
+                    // 如果这个人的id在删除列表里，就不显示消息
                     .filter((val: any) => !val.delete_members?.some((user: any) => user === currentUserid))
                     .map((val: any) => ({ ...val }))
                 );
+                // 群里面的其他人 指可能被@的对象
+                const members = JSON.parse(event.data).members;
+                setmemberList(members.map((val: any) => ({ ...val })));
+                
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -525,16 +588,24 @@ const ChatScreen = () => {
                 />
                 {showPopupMention && (
                     <div className="msgContextMenu">
-                        TODO:遍历群内好友
-                        <li className="ContextMenuLi" onClick={() => {
-                            if (document.getElementById("msginput"))
-                                insertAtCursor(document.getElementById("msginput"), "你说的对");
-                            setMsg(inputValue);
-                            setShowPopupMention(false);
-                        }}>
-                            准备@的好友
-                        </li>
+                        {/* TODO:遍历群内好友 */}
+                        {memberList.map((member) => (
+                            <div key = {member.user_id} className="msg">
+                                <li className="ContextMenuLi" onClick={() => {
+                                    if (document.getElementById("msginput"))
+                                        insertAtCursor(document.getElementById("msginput"), member.user_name);
+                                    setMsg(inputValue);
+                                    setShowPopupMention(false);
+                                }}>
+                                    <li>{member.user_name}</li>
+                                </li>
+                                <li className="ContextMenuLi">
+                                    准备@的好友
+                                </li>        
+                            </div>
+                        ))}
                     </div>
+                    
                 )}
                 <div style={{ display: "flex", flexDirection: "row" }}>
                     <button className="sendbutton" onClick={() => { toggleEmojiPicker(); }}>

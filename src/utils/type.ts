@@ -51,3 +51,9 @@ export interface MsgMetaData {
     is_audio: boolean,
     msg_to_withdraw: number
 };
+
+export interface MemberMetaData {
+    user_id: number,
+    user_name: string,
+    user_avatar: string,
+};

@@ -362,6 +362,8 @@
     border-radius: 5px;
     border: 1px solid #a8a8a8;
     list-style-type: none;
+    overflow-y: auto;
+    max-height: 80px;
 }
 
 .translate {
