@@ -288,6 +288,7 @@ const DetailsPage = (props: detailProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     alert("已发送邀请");
+                    console.log("邀请：", invitees);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -302,6 +303,7 @@ const DetailsPage = (props: detailProps) => {
 
     const closeRemove = () => {
         setShowRemove(false);
+        setRemoved([]);
     };
 
     const addOrRemoveGroupMember = (id: number) => {
@@ -316,19 +318,45 @@ const DetailsPage = (props: detailProps) => {
         }
     };
 
+    const addOrRemoveSuckers = (id: number) => {
+        console.log("被选中移除的", removed);
+        const index = removed.indexOf(id);
+        if (index !== -1) {
+            let newArray = [...removed];
+            newArray.splice(index, 1);
+            setRemoved(newArray);
+        }
+        else {
+            setRemoved((memeberList) => [...memeberList, id]);
+        }
+    };
+
     const remove = () => {
-        // TODO
+        console.log("members", members);
+        console.log("removed", removed);
         fetch(
-            "/api",
+            "/api/user/remove_member_from_group/",
             {
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify({
                     token: localStorage.getItem("token"),
                     group: props.chatID,
+                    members: removed
                 })
             }
-        );
+        )
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                if (data.code === 0) {
+                    alert("已移除成员");
+                    console.log("移除：", removed);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}`);
+                } else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert(err));
     };
 
     return refreshing ? (
@@ -431,6 +459,7 @@ const DetailsPage = (props: detailProps) => {
                     </button>
                 </div>
             )}
+            {/* 邀请 */}
             {showInvite && (
                 <div className="popup">
                     <ul className="startgroupchoice">
@@ -458,16 +487,17 @@ const DetailsPage = (props: detailProps) => {
                     </button>
                 </div>
             )}
-            {showRemove && (
+            {/* 踢人 */}
+            {(hasPermit && showRemove) && (
                 <div className="popup">
-                    {props.myID === owner!.id.toString()}
-                    {
-                        otherFriends?.map((item) => (
-                            <div className="startgroupchoicebox" key={item.user_id} style={{ display: "flex", flexDirection: "row" }}>
+                    <ul className="startgroupchoice">
+                        {/* 只有群主可以移除管理员 */}
+                        {(props.myID === owner?.id.toString()) && admins?.map((item) => ((
+                            <div className="startgroupchoicebox" key={item.id} style={{ display: "flex", flexDirection: "row" }}>
                                 <input
                                     type="checkbox"
                                     className="startgroupcheckbox"
-                                    onClick={() => { addOrRemoveGroupMember(item.user_id); }}
+                                    onClick={() => { addOrRemoveSuckers(item.id); }}
                                 />
                                 <li
                                     className="navbar_ele_info"
@@ -476,11 +506,28 @@ const DetailsPage = (props: detailProps) => {
                                     <p style={{ color: "black" }}>{item.name}</p>
                                 </li>
                             </div>
-                        ))}
+                        )))}
+                        {/* 管理员和群主都可以移除其他成员 */}
+                        {members?.map((item) => ((
+                            <div className="startgroupchoicebox" key={item.id} style={{ display: "flex", flexDirection: "row" }}>
+                                <input
+                                    type="checkbox"
+                                    className="startgroupcheckbox"
+                                    onClick={() => { addOrRemoveSuckers(item.id); }}
+                                />
+                                <li
+                                    className="navbar_ele_info"
+                                    style={{ display: "flex", width: "100%" }}>
+                                    <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
+                                    <p style={{ color: "black" }}>{item.name}</p>
+                                </li>
+                            </div>
+                        )))}
+                    </ul>
                     <button onClick={() => { closeRemove(); }}>
                         取消
                     </button>
-                    <button onClick={() => { remove(); closeRemove(); }} disabled={removed.length === 0}>
+                    <button onClick={() => { remove(); closeRemove(); }} disabled={removed.length === 0 }>
                         完成
                     </button>
                 </div>

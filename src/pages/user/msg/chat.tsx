@@ -248,27 +248,24 @@ const ChatScreen = () => {
         contextMenu.style.left = `${event.clientX}px`;
         contextMenu.style.top = `${event.clientY}px`;
 
+        // user_id指当前登录的用户
+        // msg_owner指消息的发送者
         if (!msg_is_audio) {
+            // 只有自己能撤回自己的消息
             if(user_id==msg_owner) {
-                const deleteItem = document.createElement("li");
-                deleteItem.className = "ContextMenuLi";
-                deleteItem.innerHTML = "撤回";
-                deleteItem.addEventListener("click", () => {
+                const withdrawItem = document.createElement("li");
+                withdrawItem.className = "ContextMenuLi";
+                withdrawItem.innerHTML = "撤回";
+                withdrawItem.addEventListener("click", () => {
                     //TODO
                     // 如果现在时间减去消息时间少于5分钟，可以撤回
                     event.stopPropagation();
                     const now_time_str = new Date();
-                    
-                    console.log("当前时间");
-                    console.log(now_time_str);
-                    // Mon May 15 2023 18:34:08 GMT+0800
-                    
-                    console.log(msg_time);
-                    // 将输入的时间字符串转化为 moment 对象
+
                     let now_time_use = moment(now_time_str, "ddd MMM DD YYYY HH:mm:ss Z");
                     let msg_time_use = moment(msg_time, "MM-DD HH:mm");
 
-                    // 因为 msg_time 没有年份，我们需要给它加上
+                    // 因为 msg_time 没有年份，需要给它加上
                     msg_time_use.year(now_time_use.year());
 
                     // 计算时间差，单位为分钟
@@ -277,34 +274,16 @@ const ChatScreen = () => {
                         alert("该消息发送超过5分钟，不能撤回");
                         return;
                     }
-
-                    fetch(
-                        "/api/msg/withdraw_msg/",
-                        {
-                            method: "POST",
-                            credentials: "include",
-                            body: JSON.stringify({
-                                token: localStorage.getItem("token"),
-                                msg: msg_id
-                            })
-                        }
-                    )
-                        .then((res) => res.json())
-                        .then((data) => {
-                            if(data.code === 0) {
-                                socket.current!.send(JSON.stringify({
-                                    message: msg_body, token: localStorage.getItem("token"),
-                                    withdraw_msg_id: msg_id
-                                }));
-                            }
-                            else {
-                                throw new Error(`${data.info}`);
-                            }
-                        })
-                        .catch((err) => alert(err));
+                    socket.current!.send(JSON.stringify({
+                        message: msg_body, token: localStorage.getItem("token"),
+                        withdraw_msg_id: msg_id
+                    }));
                 });
-                contextMenu.appendChild(deleteItem);
+                contextMenu.appendChild(withdrawItem);
             }
+
+
+            // 翻译按钮
             const translateItem = document.createElement("li");
             translateItem.className = "ContextMenuLi";
             translateItem.innerHTML = "翻译";
@@ -361,6 +340,21 @@ const ChatScreen = () => {
             contextMenu.appendChild(transformItem);
         }
 
+        
+        // 删除消息记录按钮
+        const deleteItem = document.createElement("li");
+        deleteItem.className = "ContextMenuLi";
+        deleteItem.innerHTML = "删除";
+        deleteItem.addEventListener("click", () => {
+            event.stopPropagation();
+            socket.current!.send(JSON.stringify({
+                message: msg_body, token: localStorage.getItem("token"),
+                deleted_msg_id: msg_id
+            }));
+        });
+        contextMenu.appendChild(deleteItem);
+
+
         document.body.appendChild(contextMenu);
 
         function hideContextMenu() {
@@ -374,12 +368,14 @@ const ChatScreen = () => {
     };
 
     useEffect(() => {
+        console.log("!!!!!!!!!刷新");
         if (!router.isReady) {
             return;
         }
         setChatID(query.id as string);
         setChatName(query.name as string);
         setIsGroup(query.group as string);
+
 
         const options: Options = {
             url: suffix + `${router.query.id}/`,
@@ -392,31 +388,15 @@ const ChatScreen = () => {
             openCb: () => { }, // 连接成功的回调
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
-                const data = JSON.parse(event.data);
-                setMsgList(data.messages.map((val: any) => ({ ...val })));
-                const last_id = data.messages.length === 0 ? -1 : data.messages.at(-1).msg_id;
-                fetch(
-                    "/api/user/set_read_message/",
-                    {
-                        method:"POST",
-                        credentials:"include",
-                        body: JSON.stringify({
-                            token: localStorage.getItem("token"),
-                            conversation: router.query.id,
-                            msg_id: last_id
-                        })
-                    }
-                )
-                    .then((res) => res.json())
-                    .then((data) => {
-                        if(data.code === 0) {
-                            console.log("设置已读消息成功:", last_id);
-                        }
-                        else {
-                            throw new Error(`${data.info}`);
-                        }
-                    })
-                    .catch((err) => alert(err));
+                let currentUserid = myID;
+                console.log("当前用户id: ", currentUserid);
+                const messages = JSON.parse(event.data).messages;
+                console.log(messages);
+                // 如果这个人的id在删除列表里，就不显示消息
+                setMsgList(messages
+                    .filter((val: any) => !val.delete_members?.some((user: any) => user === currentUserid))
+                    .map((val: any) => ({ ...val }))
+                );
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
