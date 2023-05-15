@@ -15,17 +15,19 @@ const InitPage = () => {
     // const id = router.query.id;
     const [friendID, setFriendID] = useState<string>();
     const [friendName, setFriendName] = useState<string>();
+    const [friendAvatar, setFriendAvatar] = useState<string>();
     const [showPopupGrouptoAdd, setShowPopupGrouptoAdd] = useState(false);
     const [groupsList, setGroupsList] = useState<Group[]>([]);
     const [chatID, setChatID] = useState<number>();
     const [refreshing, setRefreshing] = useState<boolean>(true);
 
     useEffect(() => {
-        if(!router.isReady) {
+        if (!router.isReady) {
             return;
         }
         setFriendID(router.query.id as string);
         setFriendName(router.query.name as string);
+        setFriendAvatar(router.query.avatar as string);
     }, [router, query]);
 
     useEffect(() => {
@@ -131,48 +133,52 @@ const InitPage = () => {
 
     useEffect(() => {
         if (chatID !== undefined && friendName !== undefined) {
-            router.push(`/user/msg/chat?id=${chatID}&name=${friendName}&group=0`);
+            router.push(`/user/msg/chat?id=${chatID}&name=${friendName}&group=0&sticked=0`);
         }
     }, [chatID, friendName, router]);
 
     useEffect(() => {
         console.log(friendID, friendName);
-        if(friendID !== undefined && friendName !== undefined) {
+        if (friendID !== undefined && friendName !== undefined) {
             setRefreshing(false);
         }
     }, [friendID, friendName]);
 
-    return  refreshing ? (
+    return refreshing ? (
         <p>正在加载好友信息</p>
     ) : (
         <div>
             <FriendBar />
-            <button className="deleteFriend" style={{ backgroundColor: "blue" }} onClick={() => { startChat(); }}>
-                发消息
-            </button>
-            <button className="addtoGroup" onClick={() => { setShowPopupGrouptoAdd(true); }}>
-                加入分组
-            </button>
-            {showPopupGrouptoAdd && (
-                <div className="popupGrouptoAdd">
-                    <ul>
-                        <li id="title">
-                            请选择需要加入的分组
-                        </li>
-                        {groupsList?.map((item: Group) => (
-                            <li key={item.group_id} onClick={() => { addtoGroup(item.group_id); }}>
-                                {item.group_name}
+            <div className="friendinfodisplay">
+                <img className="friendinfoavatar" src={`${friendAvatar}`} alt="oops" />
+                <p className="friendinfoname">{friendName}</p>
+                <button onClick={() => { startChat(); }}>
+                    发消息
+                </button>
+                <button className="addtoGroup" onClick={() => { setShowPopupGrouptoAdd(true); }}>
+                    加入分组
+                </button>
+                {showPopupGrouptoAdd && (
+                    <div className="popupGrouptoAdd">
+                        <ul>
+                            <li id="title">
+                                请选择需要加入的分组
                             </li>
-                        ))}
-                        <li onClick={() => { setShowPopupGrouptoAdd(false); }}>
-                            取消
-                        </li>
-                    </ul>
-                </div>
-            )}
-            <button className="deleteFriend" onClick={() => { sendDelete(); }}>
-                删除此好友
-            </button>
+                            {groupsList?.map((item: Group) => (
+                                <li key={item.group_id} onClick={() => { addtoGroup(item.group_id); }}>
+                                    {item.group_name}
+                                </li>
+                            ))}
+                            <li onClick={() => { setShowPopupGrouptoAdd(false); }}>
+                                取消
+                            </li>
+                        </ul>
+                    </div>
+                )}
+                <button className="deleteFriend" onClick={() => { sendDelete(); }}>
+                    删除此好友
+                </button>
+            </div>
         </div>
     );
 };

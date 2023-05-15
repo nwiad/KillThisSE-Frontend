@@ -4,6 +4,7 @@
     left: 40%;
     width: 50%;
     display: inline-block;
+    border-radius: 15px;
 }
 
 .searchfriend input {
@@ -18,6 +19,7 @@
     margin-left: 50%;
     margin-top: 100px;
     width: 40%;
+    border-radius: 15px;
 }
 
 .friend .friendavatar{

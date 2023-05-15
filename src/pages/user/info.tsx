@@ -278,7 +278,7 @@ const InitPage = () => {
     return (
         <div style={{ padding: 12 }}>
             <Navbar name={name} avatar={avatar}/>
-            <div id="main" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
+            <div className="info" >
                 {avatar && (
                     <div
                         style={{
@@ -289,7 +289,7 @@ const InitPage = () => {
                             backgroundSize: "cover",
                             backgroundPosition: "center",
                             border: "2px solid #ccc",
-                            margin: "50px auto",
+                            margin: "30px auto",
                         }}
                     />
                 )}
@@ -300,7 +300,7 @@ const InitPage = () => {
                     修改头像
                 </button>
                 {showPopupAvatar && (
-                    <div className="popup">
+                    <div className="popupAvatar" style={{padding: "15px"}}>
                         <div>修改头像</div>
                         <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false);  setShowPopupAvatar(false);  }}>
                             <input placeholder = "uploaded image" className="fileupload" type="file" name="avatar" accept="image/*" 

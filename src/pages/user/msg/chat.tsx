@@ -54,6 +54,8 @@ const ChatScreen = () => {
     const [showPopupMention, setShowPopupMention] = useState(false);
     const [popupMentionPosition, setPopupMentionPosition] = useState({ x: 0, y: 0 });
 
+    const [sticked, setSticked] = useState<string>();
+
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
         setShowEmojiPicker(showEmojiPicker => !showEmojiPicker);
@@ -94,7 +96,7 @@ const ChatScreen = () => {
         socket.current!.send(JSON.stringify({
             message: message, token: localStorage.getItem("token"),
             isImg: false, isFile: false, isVideo: false,
-            mentioned_members: []
+            mentioned_members: mentioned_members
         }));
     };
 
@@ -434,6 +436,7 @@ const ChatScreen = () => {
         setChatID(query.id as string);
         setChatName(query.name as string);
         setIsGroup(query.group as string);
+        setSticked(query.sticked as string);
 
         const options: Options = {
             url: suffix + `${router.query.id}/`,
@@ -455,10 +458,29 @@ const ChatScreen = () => {
                     .filter((val: any) => !val.delete_members?.some((user: any) => user === currentUserid))
                     .map((val: any) => ({ ...val }))
                 );
-                // 群里面的其他人 指可能被@的对象
-                const members = JSON.parse(event.data).members;
-                setmemberList(members.map((val: any) => ({ ...val })));
-                
+                const last_id = messages.length === 0 ? -1 : messages.at(-1).msg_id;
+                fetch(
+                    "/api/user/set_read_message/",
+                    {
+                        method:"POST",
+                        credentials:"include",
+                        body: JSON.stringify({
+                            token: localStorage.getItem("token"),
+                            conversation: router.query.id,
+                            msg_id: last_id
+                        })
+                    }
+                )
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if(data.code === 0) {
+                            console.log("设置已读消息成功:", last_id);
+                        }
+                        else {
+                            throw new Error(`${data.info}`);
+                        }
+                    })
+                    .catch((err) => alert(err));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -490,14 +512,14 @@ const ChatScreen = () => {
     }, []);
 
     useEffect(() => {
-        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
+        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined && sticked !== undefined) {
             console.log("聊天视窗刷新");
             setRefreshing(false);
         }
         else{
             setRefreshing(true);
         }
-    }, [chatID, chatName, isGroup, myID]);
+    }, [chatID, chatName, isGroup, myID, sticked]);
 
     return refreshing ? (
         <div></div>
@@ -505,7 +527,7 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} />
+            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} />
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">

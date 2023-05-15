@@ -5,6 +5,8 @@ import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
 
 const MsgBar = () => {
+    const [stickedPrivate, setStickedPrivate] = useState<ChatMetaData[]>();
+    const [stickedGroup, setStickedGroup] = useState<GroupChatMetaData[]>();
     const [chatList, setChatList] = useState<ChatMetaData[]>();
     const [groupChatList, setGroupChatList] = useState<GroupChatMetaData[]>();
     const [refreshing, setRefreshing] = useState<boolean>(true);
@@ -33,7 +35,7 @@ const MsgBar = () => {
     useEffect(() => {
         console.log("私聊: ", chatList);
         console.log("群聊: ", groupChatList);
-        if (typeof chatList === "undefined" || typeof groupChatList === "undefined") {
+        if (typeof chatList === "undefined" || typeof groupChatList === "undefined" || typeof stickedPrivate === "undefined" || typeof stickedGroup === "undefined") {
             console.log("列表不存在");
             return;
         }
@@ -53,6 +55,94 @@ const MsgBar = () => {
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
+
+        stickedPrivate.forEach((chat) => {
+            console.log("sticked private");
+            options.url = suffix + `${chat.id}/`;
+            const socket = new Socket(options);
+            socket.onmessage((event: MessageEvent) => {
+                setChatInfo((array) => {
+                    if (array === undefined) {
+                        return [];
+                    }
+                    let newArray = [...array];
+                    const index = JSON.parse(event.data).messages.length;
+                    if (index === 0) {
+                        return [];
+                    }
+                    newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                    return newArray;
+                });
+                fetch(
+                    "/api/user/get_unread_messages/",
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify({
+                            token: localStorage.getItem("token"),
+                            conversation: chat.id
+                        })
+                    }
+                )
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data.code === 0) {
+                            const unread = data.UnreadMessages;
+                            const target = document.getElementById(`chat${chat.id}`);
+                            if (target === null) {
+                                return;
+                            }
+                            target.innerHTML = unread;
+                        }
+                    })
+                    .catch((err) => alert(err));
+            });
+            sockets.current.push(socket);
+        });
+
+        stickedGroup.forEach((chat) => {
+            console.log("private");
+            options.url = suffix + `${chat.id}/`;
+            const socket = new Socket(options);
+            socket.onmessage((event: MessageEvent) => {
+                setChatInfo((array) => {
+                    if (array === undefined) {
+                        return [];
+                    }
+                    let newArray = [...array];
+                    const index = JSON.parse(event.data).messages.length;
+                    if (index === 0) {
+                        return [];
+                    }
+                    newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                    return newArray;
+                });
+                fetch(
+                    "/api/user/get_unread_messages/",
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify({
+                            token: localStorage.getItem("token"),
+                            conversation: chat.id
+                        })
+                    }
+                )
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data.code === 0) {
+                            const unread = data.UnreadMessages;
+                            const target = document.getElementById(`chat${chat.id}`);
+                            if (target === null) {
+                                return;
+                            }
+                            target.innerHTML = unread;
+                        }
+                    })
+                    .catch((err) => alert(err));
+            });
+            sockets.current.push(socket);
+        });
 
         chatList.forEach((chat) => {
             console.log("private");
@@ -145,10 +235,52 @@ const MsgBar = () => {
         });
 
         return cleanUp;
-    }, [chatList, groupChatList]);
+    }, [chatList, groupChatList, stickedPrivate, stickedGroup]);
 
     const fetchList = async () => {
         setRefreshing(true);
+        await fetch(
+            "/api/user/get_sticky_private_conversations/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    console.log("获取置顶私聊成功");
+                    setStickedPrivate(data.conversations.map((val: any) => ({ ...val })));
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert(err));
+        await fetch(
+            "/api/user/get_sticky_group_conversations/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    console.log("获取置顶群聊成功");
+                    setStickedGroup(data.conversations.map((val: any) => ({ ...val })));
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert(err));
         await fetch(
             "/api/user/get_private_conversations/",
             {
@@ -161,9 +293,14 @@ const MsgBar = () => {
         )
             .then((res) => res.json())
             .then((data) => {
-                console.log("获取私聊消息列表成功");
-                // console.log(data);
-                setChatList(data.conversations.map((val: any) => ({ ...val })));
+                if(data.code === 0) {
+                    console.log("获取私聊消息列表成功");
+                    // console.log(data);
+                    setChatList(data.conversations.map((val: any) => ({ ...val })));
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
             })
             .catch((err) => {
                 alert(err);
@@ -182,10 +319,15 @@ const MsgBar = () => {
         )
             .then((res) => res.json())
             .then((data) => {
-                console.log("获取群聊消息列表成功");
-                // console.log(data);
-                setGroupChatList(data.conversations.map((val: any) => ({ ...val })));
-                setRefreshing(false);
+                if(data.code === 0) {
+                    console.log("获取群聊消息列表成功");
+                    // console.log(data);
+                    setGroupChatList(data.conversations.map((val: any) => ({ ...val })));
+                    setRefreshing(false);                    
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
             })
             .catch((err) => {
                 alert(err);
@@ -198,12 +340,32 @@ const MsgBar = () => {
     ) : (
         <div style={{ padding: 12 }}>
             <Navbar />
-            {chatList!.length + groupChatList!.length === 0 ? (
+            {chatList!.length + groupChatList!.length + stickedPrivate!.length + stickedGroup!.length === 0 ? (
                 <ul className="friendlist" style={{ color: "white", textAlign: "center" }}> 当前没有会话 </ul>
             ) : (
                 <ul className="friendlist">
+                    {stickedPrivate!.map((chat) => (
+                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => { router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}`); }}>
+                            <img src={`${chat.friend_avatar}`} alt="oops" />
+                            <div className="msginfopv" >
+                                <div className="senderpv">{chat.friend_name.length > 6 ? `${chat.friend_name.slice(0, 6)}...` : chat.friend_name}</div>
+                                <div className="msgpv">{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
+                            </div>
+                            <div className="count" id={`chat${chat.id}`}>0</div>
+                        </li>
+                    ))}
+                    {stickedGroup!.map((chat) => (
+                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}`)}>
+                            <img src={`${chat.avatar}`} alt="oops" />
+                            <div className="msginfopv" >
+                                <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0, 6)}...` : chat.name}</div>
+                                <div className="msgpv">{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
+                            </div>
+                            <div className="count" id={`chat${chat.id}`}>0</div>
+                        </li>
+                    ))}
                     {chatList!.map((chat) => (
-                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0`)}>
+                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => { router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}`); }}>
                             <img src={`${chat.friend_avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.friend_name.length > 6 ? `${chat.friend_name.slice(0, 6)}...` : chat.friend_name}</div>
@@ -213,7 +375,7 @@ const MsgBar = () => {
                         </li>
                     ))}
                     {groupChatList!.map((chat) => (
-                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1`)}>
+                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}`)}>
                             <img src={`${chat.avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0, 6)}...` : chat.name}</div>
