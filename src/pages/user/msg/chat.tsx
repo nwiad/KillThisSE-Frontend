@@ -396,6 +396,29 @@ const ChatScreen = () => {
                     .filter((val: any) => !val.delete_members?.some((user: any) => user === currentUserid))
                     .map((val: any) => ({ ...val }))
                 );
+                const last_id = messages.length === 0 ? -1 : messages.at(-1).msg_id;
+                fetch(
+                    "/api/user/set_read_message/",
+                    {
+                        method:"POST",
+                        credentials:"include",
+                        body: JSON.stringify({
+                            token: localStorage.getItem("token"),
+                            conversation: router.query.id,
+                            msg_id: last_id
+                        })
+                    }
+                )
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if(data.code === 0) {
+                            console.log("设置已读消息成功:", last_id);
+                        }
+                        else {
+                            throw new Error(`${data.info}`);
+                        }
+                    })
+                    .catch((err) => alert(err));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
