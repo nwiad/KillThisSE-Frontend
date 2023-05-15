@@ -2,6 +2,7 @@ import { faPenToSquare, faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKe
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { isDisabled } from "@testing-library/user-event/dist/utils";
 
 interface memberMetaData {
     id: number,
@@ -46,9 +47,10 @@ const DetailsPage = (props: detailProps) => {
     const [newNotice, setNewNOtice] = useState<string>("");
 
     const [otherFriends, setOtherFriends] = useState<Friend[]>();
-    const [invitees, setInvitees] = useState<string[]>([]);
+    const [invitees, setInvitees] = useState<number[]>([]);
     const [showInvite, setShowInvite] = useState<boolean>(false);
-    const [showRemove, setShowRemove] = useState<boolean>();
+    const [showRemove, setShowRemove] = useState<boolean>(false);
+    const [removed, setRemoved] = useState<number[]>([]);
 
     useEffect(() => {
         if (!router.isReady) {
@@ -175,6 +177,7 @@ const DetailsPage = (props: detailProps) => {
         };
         if (props.group === "1" && owner !== undefined && admins !== undefined && members !== undefined) {
             console.log("聊天详情刷新");
+            getOtherFriends();
             setHasPermit(checkPermission());
             setRefreshing(false);
         }
@@ -235,7 +238,13 @@ const DetailsPage = (props: detailProps) => {
                         avatar: friend.avatar
                     }));
                     // TODO: 筛选
-                    setOtherFriends(friends);
+                    let newArray: Friend[] = [];
+                    friends.forEach((friend: Friend) => {
+                        if(!alreadyInGroup(friend.user_id)) {
+                            newArray.push(friend);
+                        }
+                    });
+                    setOtherFriends(newArray);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -244,20 +253,20 @@ const DetailsPage = (props: detailProps) => {
     };
 
     // 筛选不在群里的好友
-    const alreadyInGroup = (friend_id: number) => {
+    const alreadyInGroup = (friend_id: number): boolean => {
         if (owner?.id === friend_id) {
             return true;
         }
-        admins?.forEach((admin) => {
-            if (admin.id === friend_id) {
+        for(let admin of admins!) {
+            if(admin.id === friend_id) {
                 return true;
             }
-        });
-        members?.forEach((member) => {
-            if (member.id === friend_id) {
+        }
+        for(let memeber of members!) {
+            if(memeber.id === friend_id) {
                 return true;
             }
-        });
+        }
         return false;
     };
 
@@ -291,8 +300,35 @@ const DetailsPage = (props: detailProps) => {
         setInvitees([]);
     };
 
-    const remove = (friend_id: number) => {
-        // 我api呢
+    const closeRemove = () => {
+        setShowRemove(false);
+    };
+
+    const addOrRemoveGroupMember = (id: number) => {
+        const index = invitees.indexOf(id);
+        if (index !== -1) {
+            let newArray = [...invitees];
+            newArray.splice(index, 1);
+            setInvitees(newArray);
+        }
+        else {
+            setInvitees((memeberList) => [...memeberList, id]);
+        }
+    };
+
+    const remove = () => {
+        // TODO
+        fetch(
+            "/api",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    group: props.chatID,
+                })
+            }
+        );
     };
 
     return refreshing ? (
@@ -324,14 +360,14 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={top ? faArrowDown : faArrowsUpToLine} />
                         <p className="admininfo">{top ? "取消置顶" : "置顶"}</p>
                     </div>
-                    <div className="adminbutton">
+                    <div className="adminbutton" onClick={() => { setShowInvite(true); }}>
                         <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
                         <p className="admininfo">邀请</p>
                     </div>
-                    <div className="adminbutton">
+                    { hasPermit &&  <div className="adminbutton" onClick={() => { setShowRemove(true); } }>
                         <FontAwesomeIcon className="adminicon" icon={faUserMinus} />
                         <p className="admininfo">移除成员</p>
-                    </div>
+                    </div>}
                     <div className="adminbutton">
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
                         <p className="admininfo">退出</p>
@@ -395,11 +431,87 @@ const DetailsPage = (props: detailProps) => {
                     </button>
                 </div>
             )}
+            {showInvite && (
+                <div className="popup">
+                    <ul className="startgroupchoice">
+                        {otherFriends?.map((item) => (
+                            <div className="startgroupchoicebox" key={item.user_id} style={{ display: "flex", flexDirection: "row" }}>
+                                <input
+                                    type="checkbox"
+                                    className="startgroupcheckbox"
+                                    onClick={() => { addOrRemoveGroupMember(item.user_id); }}
+                                />
+                                <li
+                                    className="navbar_ele_info"
+                                    style={{ display: "flex", width: "100%" }}>
+                                    <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
+                                    <p style={{ color: "black" }}>{item.name}</p>
+                                </li>
+                            </div>
+                        ))}
+                    </ul>
+                    <button onClick={() => { closeInvite(); }}>
+                        取消
+                    </button>
+                    <button onClick={() => { invite(); closeInvite(); }} disabled={invitees.length === 0 }>
+                        完成
+                    </button>
+                </div>
+            )}
+            {showRemove && (
+                <div className="popup">
+                    {props.myID === owner!.id.toString()}
+                    {
+                        otherFriends?.map((item) => (
+                            <div className="startgroupchoicebox" key={item.user_id} style={{ display: "flex", flexDirection: "row" }}>
+                                <input
+                                    type="checkbox"
+                                    className="startgroupcheckbox"
+                                    onClick={() => { addOrRemoveGroupMember(item.user_id); }}
+                                />
+                                <li
+                                    className="navbar_ele_info"
+                                    style={{ display: "flex", width: "100%" }}>
+                                    <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
+                                    <p style={{ color: "black" }}>{item.name}</p>
+                                </li>
+                            </div>
+                        ))}
+                    <button onClick={() => { closeRemove(); }}>
+                        取消
+                    </button>
+                    <button onClick={() => { remove(); closeRemove(); }} disabled={removed.length === 0}>
+                        完成
+                    </button>
+                </div>
+            )}
         </div>
     ) : (
         <div style={{ padding: 12 }}>
             <div id="detaildisplay">
                 <p className="chatname"> {props.chatName}</p>
+                <div className="groupadminbuttons">
+                    <div className="adminbutton">
+                        <FontAwesomeIcon className="adminicon" icon={faKey} />
+                        <p className="admininfo">二级密码</p>
+                    </div>
+                    <div className="adminbutton" onClick={() => { setRemind(!remind); }}>
+                        <FontAwesomeIcon className="adminicon" icon={remind ? faBellSlash : faBell} />
+                        <p className="admininfo">{remind ? "免打扰" : "解除免打扰"}</p>
+                    </div>
+                    <div className="adminbutton" onClick={() => { setTop(!top); }}>
+                        <FontAwesomeIcon className="adminicon" icon={top ?  faArrowDown : faArrowsUpToLine}  />
+                        <p className="admininfo">{top ? "取消置顶" : "置顶" }</p>
+                    </div>
+                    <div className="adminbutton" onClick={() => { setShowInvite(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
+                        <p className="admininfo">邀请好友建立群聊</p>
+                    </div>
+                    <div className="adminbutton">
+                        <FontAwesomeIcon className="quiticon" icon={faXmark} />
+                        <p className="admininfo">删除好友</p>
+                    </div>
+                </div>
             </div>
         </div>
     ));
