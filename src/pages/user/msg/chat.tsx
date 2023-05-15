@@ -6,6 +6,7 @@ import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "reac
 import { uploadFile } from "../../../utils/oss";
 import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
+import { transform } from "../../../utils/youdao";
 import Navbar from "../navbar";
 import MsgBar from "./msgbar";
 import DetailsPage from "./details";
@@ -202,7 +203,7 @@ const ChatScreen = () => {
     const sendAudio = async (audioURL: string) => {
         try {
             const audioBlob = await (await fetch(audioURL)).blob();
-            const audioFile = blobToFile(audioBlob, "recording.mp3");
+            const audioFile = blobToFile(audioBlob, "recording.wav");
             const audioUrl = await uploadFile(audioFile);
 
             if (socket.current) {
@@ -298,9 +299,9 @@ const ChatScreen = () => {
                     return;
                 }
                 const newElement = document.createElement("p");
-                newElement.className = "transform";
-                // newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
-                newElement.innerHTML = "转文字结果";
+                newElement.className="transform";
+                newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
+                // newElement.innerHTML = "转文字结果";
                 target?.insertAdjacentElement("beforeend", newElement);
                 hideContextMenu();
                 console.log("转换结果：" + newElement.innerHTML);

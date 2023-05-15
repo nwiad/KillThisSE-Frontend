@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
 import { transform } from "../utils/youdao";
 import { faKey, faEnvelope} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { voiceService } from "../utils/youdao";
 
 const test = async () => {
-    transform("http://killthisse-avatar.oss-cn-beijing.aliyuncs.com/1683988188865recording.mp3")
+    voiceService("http://killthisse-avatar.oss-cn-beijing.aliyuncs.com/1684060999727recording.wav")
         .then((res) => console.log("测试测试"+res))
         .catch((err) => alert("调用失败"));
 };
