@@ -7,6 +7,7 @@ interface Friend {
     user_id: number;
     name: string;
     avatar: string;
+    chosen: boolean;
 }
 
 const GroupStarter = () => {
@@ -17,7 +18,7 @@ const GroupStarter = () => {
 
     useEffect(() => {
         console.log("群聊成员:", groupMembers);
-    }, [groupMembers]);
+    }, [groupMembers, groupFriendList]);
 
     const getFriendList = async () => {
         await fetch(
@@ -36,7 +37,8 @@ const GroupStarter = () => {
                     const friends = data.friends.map((friend: Friend) => ({
                         user_id: friend.user_id,
                         name: friend.name,
-                        avatar: friend.avatar
+                        avatar: friend.avatar,
+                        chosen: false
                     }));
                     setGroupFriendList(friends);
                 } else {
@@ -91,30 +93,20 @@ const GroupStarter = () => {
     };
 
     return (
-        <div style={{ padding: 12 }}>
-            <Navbar />
-            <div id="main" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
-                <div className="startgrouptitle">发起群聊</div>
-                <input onChange={(e) => setGroupName(e.target.value)} placeholder="群聊名称" />
-                <div className="startgroupfriends">请选择需要邀请的好友</div>
-                <ul className="startgroupchoice">
-                    {groupFriendList?.map((item: Friend) => (
-                        <div className="startgroupchoicebox" key={item.user_id} style={{ display: "flex", flexDirection: "row" }}>
-                            <input
-                                type="checkbox"
-                                className="startgroupcheckbox"
-                                onClick={() => { addOrRemoveGroupMember(item.user_id); }}
-                            />
-                            <li
-                                className="navbar_ele_info"
-                                style={{ display: "flex", width: "100%" }}>
-                                <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
-                                <p style={{ color: "black" }}>{item.name}</p>
-                            </li>
-                        </div>
-                    ))}
-                </ul>
-
+        <div className="popup" style={{ display: "flex", flexDirection: "column", height: "500px" }}>
+            <div className="startgrouptitle">发起群聊</div>
+            <input onChange={(e) => setGroupName(e.target.value)} placeholder="群聊名称" />
+            <div className="startgroupfriends">请选择需要邀请的好友</div>
+            <ul className="startgroupchoice">
+                {groupFriendList?.map((item: Friend) => (
+                    <div className="startgroupchoicebox" key={item.user_id} style={{backgroundColor: `${item.chosen ? "#0660e9" : "white"}`}} onClick={() => { item.chosen = !item.chosen; addOrRemoveGroupMember(item.user_id); }}>
+                        <img className="startgroupavatar" src={`${item.avatar}`} alt="oops" />
+                        <p className="startgroupname">
+                            {item.name} </p>
+                    </div>
+                ))}
+            </ul>
+            <div style={{ display: "flex", flexDirection: "row", margin:"auto"}}>
                 <button onClick={() => {
                     createGroupChat(); setGroupFriendList([]); setGroupMembers([]);
                     router.push("/user");

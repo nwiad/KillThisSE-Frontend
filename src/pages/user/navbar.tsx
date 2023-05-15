@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment, faUsers, faUser, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import GroupStarter from "./startgroup"; 
 
 interface infoProps {
     name?: string,
@@ -11,6 +12,7 @@ interface infoProps {
 const Navbar = (props: infoProps) => {
     const [name, setName] = useState<string>("");
     const [avatar, setAvatar] = useState<string>();
+    const [showPopupStartGroup, setShowPopupStartGroup] = useState(false);
 
     const router = useRouter();
 
@@ -57,30 +59,35 @@ const Navbar = (props: infoProps) => {
     }, []);
 
     return (
-        <nav style={{ padding: 12, zIndex: 9999, position: "fixed" }}>
-            <ul className="navbar">
-                <li className="navbar_ele_r" onClick={() => { router.push("/user/"); }}>
-                    <FontAwesomeIcon className="Icon" icon={faComment} />
-                    消息
-                </li>
-                <li className="navbar_ele_r" onClick={() => { router.push("/user/friend/friendindex"); }}>
-                    <FontAwesomeIcon className="Icon" icon={faUser} />
-                    好友
-                </li>
-                <li className="navbar_ele_r" onClick={() => { router.push("/user/startgroup"); }}>
-                    <FontAwesomeIcon className="Icon" icon={faUsers} />
-                    创建群聊
-                </li>                
-                <li className="navbar_ele_info" onClick={() => { router.push("/user/info"); }}>
-                    <p style={{ display: "inline-block", verticalAlign: "middle" }}>{props.name ? props.name : name}</p>
-                    <img className="navbarAvatar" src={`${props.avatar ? props.avatar : avatar}`} style={{ display: "inline-block", verticalAlign: "middle" }} alt="oops" />
-                </li>
-                <li className="navbar_ele_l" onClick={() => { userLogout(); router.push("/"); }}>
-                    <FontAwesomeIcon className="Icon" icon={faRightFromBracket} />
-                    登出
-                </li>
-            </ul>
-        </nav>
+        <div>
+            <nav style={{ padding: 12, zIndex: 9999, position: "fixed" }}>
+                <ul className="navbar">
+                    <li className="navbar_ele_r" onClick={() => { router.push("/user/"); }}>
+                        <FontAwesomeIcon className="Icon" icon={faComment} />
+                        消息
+                    </li>
+                    <li className="navbar_ele_r" onClick={() => { router.push("/user/friend/friendindex"); }}>
+                        <FontAwesomeIcon className="Icon" icon={faUser} />
+                        好友
+                    </li>
+                    <li className="navbar_ele_r" onClick={() => { setShowPopupStartGroup(true); }}>
+                        <FontAwesomeIcon className="Icon" icon={faUsers} />
+                        创建群聊
+                    </li>
+                    <li className="navbar_ele_info" onClick={() => { router.push("/user/info"); }}>
+                        <p style={{ display: "inline-block", verticalAlign: "middle" }}>{props.name ? props.name : name}</p>
+                        <img className="navbarAvatar" src={`${props.avatar ? props.avatar : avatar}`} style={{ display: "inline-block", verticalAlign: "middle" }} alt="oops" />
+                    </li>
+                    <li className="navbar_ele_l" onClick={() => { userLogout(); router.push("/"); }}>
+                        <FontAwesomeIcon className="Icon" icon={faRightFromBracket} />
+                        登出
+                    </li>
+                </ul>
+            </nav>
+            {showPopupStartGroup&&(
+                <GroupStarter />
+            )}
+        </div>
     );
 };
 

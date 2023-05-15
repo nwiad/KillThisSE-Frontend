@@ -1,4 +1,4 @@
-import { faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -321,8 +321,8 @@ const DetailsPage = (props: detailProps) => {
                         <p className="admininfo">{remind ? "免打扰" : "解除免打扰"}</p>
                     </div>
                     <div className="adminbutton" onClick={() => { setTop(!top); }}>
-                        <FontAwesomeIcon className="adminicon" icon={top ?  faArrowDown : faArrowsUpToLine}  />
-                        <p className="admininfo">{top ? "取消置顶" : "置顶" }</p>
+                        <FontAwesomeIcon className="adminicon" icon={top ? faArrowDown : faArrowsUpToLine} />
+                        <p className="admininfo">{top ? "取消置顶" : "置顶"}</p>
                     </div>
                     <div className="adminbutton">
                         <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
@@ -340,20 +340,21 @@ const DetailsPage = (props: detailProps) => {
 
             </div>
             {showPopUpMembers && (
-                <p className="members" style={{ display: "flex", flexDirection: "column" }}>
-                    群成员
+                <p className="members">
                     <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowPopUpMembers(false); }} />
                     <div className="membersort">
                         <div key={0} className="member">
-                            <img className="sender_avatar" src={`${owner?.avatar}`} alt="oops" />
-                            <p style={{ color: "black" }}>{owner?.name}（群主）</p>
+                            <img className="sender_avatar" style={{ borderColor: "#0660e9" }} src={`${owner?.avatar}`} alt="oops" />
+                            <p style={{ color: "black", margin: "auto 10px", fontSize: "30px" }}>{owner?.name}</p>
+                            <p className="owner">群主</p>
                         </div>
                     </div>
                     <div className="membersort">
                         {admins?.map((admin) => (
                             <div key={admin.id} className="member">
                                 <img className="sender_avatar" src={`${admin?.avatar}`} alt="oops" />
-                                <p style={{ color: "black" }}>{admin?.name}</p>
+                                <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{admin?.name}</p>
+                                <p className="admin">管理员</p>
                             </div>
                         ))}
                     </div>
@@ -361,7 +362,7 @@ const DetailsPage = (props: detailProps) => {
                         {members?.map((member) => (
                             <div key={member.id} className="member">
                                 <img className="sender_avatar" src={`${member?.avatar}`} alt="oops" />
-                                <p style={{ color: "black" }}>{member?.name}</p>
+                                <p style={{ color: "black", margin: "auto 10px" }}>{member?.name}</p>
                             </div>
                         ))}
                     </div>
@@ -370,16 +371,12 @@ const DetailsPage = (props: detailProps) => {
             {showPopUpNotice && (
                 <div className="members">
                     <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowPopUpNotice(false); }} />
-                    <p className="notice"> 群公告: {notice} </p>
+                    <p className="notice"> {notice} </p>
                     {
                         (hasPermit === true) ? (
-                            <button disabled={!hasPermit} onClick={() => { setShowPopUpNoticeBoard(true); }}>
-                                设置/修改群公告
-                            </button>
+                            <FontAwesomeIcon className="setnotice" icon={faPenToSquare} onClick={() => { setShowPopUpNoticeBoard(true); }} />
                         ) : (
-                            <button disabled={true} onClick={() => { setShowPopUpNoticeBoard(true); }}>
-                                仅群主和管理员可设置/修改群公告
-                            </button>
+                            <p className="permittip"> 仅群主和管理员可设置/修改群公告 </p>
                         )
                     }
                 </div>
