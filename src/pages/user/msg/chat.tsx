@@ -1,6 +1,7 @@
 import Picker from "@emoji-mart/react";
 import { faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import moment from "moment";
 import { useRouter } from "next/router";
 import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
 import { uploadFile } from "../../../utils/oss";
@@ -239,7 +240,7 @@ const ChatScreen = () => {
     }
 
     // 功能：消息右键菜单
-    const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number) => {
+    const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string) => {
         event.preventDefault();
 
         const contextMenu = document.createElement("ul");
@@ -254,7 +255,28 @@ const ChatScreen = () => {
                 deleteItem.innerHTML = "撤回";
                 deleteItem.addEventListener("click", () => {
                     //TODO
+                    // 如果现在时间减去消息时间少于5分钟，可以撤回
                     event.stopPropagation();
+                    const now_time_str = new Date();
+                    
+                    console.log("当前时间");
+                    console.log(now_time_str);
+                    // Mon May 15 2023 18:34:08 GMT+0800
+                    
+                    console.log(msg_time);
+                    // 将输入的时间字符串转化为 moment 对象
+                    let now_time_use = moment(now_time_str, "ddd MMM DD YYYY HH:mm:ss Z");
+                    let msg_time_use = moment(msg_time, "MM-DD HH:mm");
+
+                    // 因为 msg_time 没有年份，我们需要给它加上
+                    msg_time_use.year(now_time_use.year());
+
+                    // 计算时间差，单位为分钟
+                    let time_diff = now_time_use.diff(msg_time_use, "minutes");
+                    if(time_diff > 5) {
+                        alert("该消息发送超过5分钟，不能撤回");
+                        return;
+                    }
 
                     fetch(
                         "/api/msg/withdraw_msg/",
@@ -450,7 +472,7 @@ const ChatScreen = () => {
                         </div>
                         <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
                             onContextMenu={(event) => {
-                                msgContextMenu(event, myID!, msg.msg_id, msg.msg_body, msg.is_audio, msg.sender_id,);
+                                msgContextMenu(event, myID!, msg.msg_id, msg.msg_body, msg.is_audio, msg.sender_id,msg.create_time);
                             }}>
                             <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
                             {msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
