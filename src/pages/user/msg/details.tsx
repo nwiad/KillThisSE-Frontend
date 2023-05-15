@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Navbar from "../navbar";
 import { useEffect, useState } from "react";
 import MsgBar from "./msgbar";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faUserGroup, faNoteSticky, faKey, faBellSlash, faArrowsUpToLine, faXmark, faUserPlus, faUserMinus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface memberMetaData {
@@ -27,7 +27,9 @@ const DetailsPage = () => {
     const [admins, setAdmins] = useState<memberMetaData[]>();
     const [members, setMemers] = useState<memberMetaData[]>();
     const [notice, setNotice] = useState<string>("");
+    const [showPopUpMembers, setShowPopUpMembers] = useState<boolean>(false);
     const [showPopUpNoticeBoard, setShowPopUpNoticeBoard] = useState<boolean>(false);
+    const [showPopUpNotice, setShowPopUpNotice] = useState<boolean>(false);
     const [newNotice, setNewNOtice] = useState<string>("");
 
     const [friend, setFriend] = useState<memberMetaData>();
@@ -196,14 +198,50 @@ const DetailsPage = () => {
             .catch((err) => alert(err));
     };
 
-    return refreshing ? (
-        <p>Loading...</p>
-    ) : (isGroup === "1" ? (
+    return (isGroup === "1" ? (
         <div style={{ padding: 12 }}>
             <div id="detaildisplay">
                 <p className="chatname"> {chatName}</p>
+                <div className="groupadminbuttons">
+                    <div className="adminbutton" onClick={() => { setShowPopUpMembers(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
+                        <p className="admininfo">群成员</p>
+                    </div>
+                    <div className="adminbutton" onClick={() => { setShowPopUpNotice(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faNoteSticky} />
+                        <p className="admininfo">群公告</p>
+                    </div>
+                    <div className="adminbutton">
+                        <FontAwesomeIcon className="adminicon" icon={faKey} />
+                        <p className="admininfo">二级密码</p>
+                    </div>
+                    <div className="adminbutton">
+                        <FontAwesomeIcon className="adminicon" icon={faBellSlash} />
+                        <p className="admininfo">免打扰</p>
+                    </div>
+                    <div className="adminbutton">
+                        <FontAwesomeIcon className="adminicon" icon={faArrowsUpToLine} />
+                        <p className="admininfo">置顶</p>
+                    </div>
+                    <div className="adminbutton">
+                        <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
+                        <p className="admininfo">邀请</p>
+                    </div>
+                    <div className="adminbutton">
+                        <FontAwesomeIcon className="adminicon" icon={faUserMinus} />
+                        <p className="admininfo">移除成员</p>
+                    </div>
+                    <div className="adminbutton">
+                        <FontAwesomeIcon className="quiticon" icon={faXmark} />
+                        <p className="admininfo">退出</p>
+                    </div>
+                </div>
+
+            </div>
+            {showPopUpMembers && (
                 <p className="members" style={{ display: "flex", flexDirection: "column" }}>
                     群成员
+                    <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowPopUpMembers(false); }} />
                     <div className="membersort">
                         <div key={0} className="member">
                             <img className="sender_avatar" src={`${owner?.avatar}`} alt="oops" />
@@ -227,33 +265,38 @@ const DetailsPage = () => {
                         ))}
                     </div>
                 </p>
-                <p className="notice"> 群公告: {notice} </p>
-                {
-                    (hasPermit === true) ? (
-                        <button disabled={!hasPermit} onClick={() => { setShowPopUpNoticeBoard(true); }}>
-                            设置/修改群公告
-                        </button>
-                    ) : (
-                        <button disabled={true} onClick={() => { setShowPopUpNoticeBoard(true); }}>
-                            仅群主和管理员可设置/修改群公告
-                        </button>
-                    )
-                }
-                {showPopUpNoticeBoard && (
-                    <div className="popup">
-                        <input
-                            placeholder="输入群公告"
-                            onChange={(e) => { setNewNOtice(e.target.value); }}
-                        />
-                        <button onClick={() => { closeNoticeBoard(); }}>
-                            取消
-                        </button>
-                        <button onClick={() => { submitNotice(); setNotice(newNotice); closeNoticeBoard(); }} disabled={newNotice.length === 0}>
-                            完成
-                        </button>
-                    </div>
-                )}
-            </div>
+            )}
+            {showPopUpNotice && (
+                <div className="members">
+                    <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowPopUpNotice(false); }} />
+                    <p className="notice"> 群公告: {notice} </p>
+                    {
+                        (hasPermit === true) ? (
+                            <button disabled={!hasPermit} onClick={() => { setShowPopUpNoticeBoard(true); }}>
+                                设置/修改群公告
+                            </button>
+                        ) : (
+                            <button disabled={true} onClick={() => { setShowPopUpNoticeBoard(true); }}>
+                                仅群主和管理员可设置/修改群公告
+                            </button>
+                        )
+                    }
+                </div>
+            )}
+            {showPopUpNoticeBoard && (
+                <div className="popup">
+                    <input
+                        placeholder="输入群公告"
+                        onChange={(e) => { setNewNOtice(e.target.value); }}
+                    />
+                    <button onClick={() => { closeNoticeBoard(); }}>
+                        取消
+                    </button>
+                    <button onClick={() => { submitNotice(); setNotice(newNotice); closeNoticeBoard(); }} disabled={newNotice.length === 0}>
+                        完成
+                    </button>
+                </div>
+            )}
         </div>
     ) : (
         <div style={{ padding: 12 }}>

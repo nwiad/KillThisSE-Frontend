@@ -380,9 +380,7 @@ const ChatScreen = () => {
         }
     }, [chatID, chatName, isGroup, myID]);
 
-    return refreshing ? (
-        <p>Loading...</p>
-    ) : (
+    return (
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
