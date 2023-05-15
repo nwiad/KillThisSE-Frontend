@@ -56,7 +56,7 @@ const MsgBar = () => {
 
         chatList.forEach((chat) => {
             console.log("private");
-            options.url = suffix+`${chat.id}/`;
+            options.url = suffix + `${chat.id}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 setChatInfo((array) => {
@@ -84,10 +84,10 @@ const MsgBar = () => {
                 )
                     .then((res) => res.json())
                     .then((data) => {
-                        if(data.code === 0) {
+                        if (data.code === 0) {
                             const unread = data.UnreadMessages;
                             const target = document.getElementById(`chat${chat.id}`);
-                            if(target === null) {
+                            if (target === null) {
                                 return;
                             }
                             target.innerHTML = unread;
@@ -102,7 +102,7 @@ const MsgBar = () => {
             console.log("group");
             // options.url = `wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/${chat.id}/`;
             // options.url = `ws://localhost:8000/ws/chat/${chat.id}/`;
-            options.url = suffix+`${chat.id}/`;
+            options.url = suffix + `${chat.id}/`;
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 setChatInfo((array) => {
@@ -130,10 +130,10 @@ const MsgBar = () => {
                 )
                     .then((res) => res.json())
                     .then((data) => {
-                        if(data.code === 0) {
+                        if (data.code === 0) {
                             const unread = data.UnreadMessages;
                             const target = document.getElementById(`chat${chat.id}`);
-                            if(target === null) {
+                            if (target === null) {
                                 return;
                             }
                             target.innerHTML = unread;
@@ -199,27 +199,27 @@ const MsgBar = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             {chatList!.length + groupChatList!.length === 0 ? (
-                <ul className="friendlist" style={{color: "white", textAlign: "center"}}> 当前没有会话 </ul>
+                <ul className="friendlist" style={{ color: "white", textAlign: "center" }}> 当前没有会话 </ul>
             ) : (
                 <ul className="friendlist">
                     {chatList!.map((chat) => (
                         <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0`)}>
                             <img src={`${chat.friend_avatar}`} alt="oops" />
                             <div className="msginfopv" >
-                                <div className="senderpv">{chat.friend_name.length > 6 ?`${chat.friend_name.slice(0,6)}...` : chat.friend_name}</div>
-                                <div className="msgpv">{chatInfo&&chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
-                                <div id={`chat${chat.id}`}>0</div>
+                                <div className="senderpv">{chat.friend_name.length > 6 ? `${chat.friend_name.slice(0, 6)}...` : chat.friend_name}</div>
+                                <div className="msgpv">{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
                             </div>
+                            <div className="count" id={`chat${chat.id}`}>0</div>
                         </li>
                     ))}
                     {groupChatList!.map((chat) => (
                         <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1`)}>
                             <img src={`${chat.avatar}`} alt="oops" />
-                            <div className="msginfopv" id={`chat${chat.id}`}>
-                                <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0,6)}...` : chat.name}</div>
-                                <div className="msgpv">{chatInfo&&chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
-                                <div id={`chat${chat.id}`}>0</div>
+                            <div className="msginfopv" >
+                                <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0, 6)}...` : chat.name}</div>
+                                <div className="msgpv">{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
                             </div>
+                            <div className="count" id={`chat${chat.id}`}>0</div>
                         </li>
                     ))}
                 </ul>

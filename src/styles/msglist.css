@@ -424,3 +424,16 @@
     border-radius: 10px; /* 设置圆角矩形的半径 */
     padding: 10px; /* 可选：设置内边距 */
 }
+
+.count {
+    margin: auto;
+    background-color: #ffffff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    font-size: 16px;
+    font-weight: 1000;
+    text-align: center;
+    color: #535353;
+}
