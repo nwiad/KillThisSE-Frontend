@@ -239,7 +239,7 @@ const ChatScreen = () => {
     }
 
     // 功能：消息右键菜单
-    const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, msg_id: number, msg_body: string, msg_is_audio: boolean) => {
+    const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number) => {
         event.preventDefault();
 
         const contextMenu = document.createElement("ul");
@@ -248,37 +248,36 @@ const ChatScreen = () => {
         contextMenu.style.top = `${event.clientY}px`;
 
         if (!msg_is_audio) {
-            const deleteItem = document.createElement("li");
-            deleteItem.className = "ContextMenuLi";
-            deleteItem.innerHTML = "撤回";
-            deleteItem.addEventListener("click", () => {
-                //TODO
-                event.stopPropagation();
+            if(user_id==msg_owner) {
+                const deleteItem = document.createElement("li");
+                deleteItem.className = "ContextMenuLi";
+                deleteItem.innerHTML = "撤回";
+                deleteItem.addEventListener("click", () => {
+                    //TODO
+                    event.stopPropagation();
 
-                fetch(
-                    "/api/msg/withdraw_msg/",
-                    {
-                        method: "POST",
-                        credentials: "include",
-                        body: JSON.stringify({
-                            token: localStorage.getItem("token"),
-                            msg: msg_id
+                    fetch(
+                        "/api/msg/withdraw_msg/",
+                        {
+                            method: "POST",
+                            credentials: "include",
+                            body: JSON.stringify({
+                                token: localStorage.getItem("token"),
+                                msg: msg_id
+                            })
+                        }
+                    )
+                        .then((res) => res.json())
+                        .then((data) => {
+                            socket.current!.send(JSON.stringify({
+                                message: msg_body, token: localStorage.getItem("token"),
+                                withdraw_msg_id: msg_id
+                            }));
                         })
-                    }
-                )
-                    .then((res) => res.json())
-                    .then((data) => {
-                        setID(data.user_id);
-                    })
-                    .catch((err) => alert(err));
-
-                socket.current!.send(JSON.stringify({
-                    message: msg_body, token: localStorage.getItem("token"),
-                    withdraw_msg_id: msg_id
-                }));
-            });
-            contextMenu.appendChild(deleteItem);
-
+                        .catch((err) => alert(err));
+                });
+                contextMenu.appendChild(deleteItem);
+            }
             const translateItem = document.createElement("li");
             translateItem.className = "ContextMenuLi";
             translateItem.innerHTML = "翻译";
@@ -402,6 +401,9 @@ const ChatScreen = () => {
             console.log("聊天视窗刷新");
             setRefreshing(false);
         }
+        else{
+            setRefreshing(true);
+        }
     }, [chatID, chatName, isGroup, myID]);
 
     return refreshing ? (
@@ -419,7 +421,7 @@ const ChatScreen = () => {
                         </div>
                         <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
                             onContextMenu={(event) => {
-                                msgContextMenu(event, msg.msg_id, msg.msg_body, msg.is_audio);
+                                msgContextMenu(event, myID!, msg.msg_id, msg.msg_body, msg.is_audio, msg.sender_id,);
                             }}>
                             <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
                             {msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
