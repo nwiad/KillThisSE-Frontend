@@ -12,6 +12,21 @@
     z-index: 9999;
   }
   
+  .popupAvatar {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: auto;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    text-align: center;
+    z-index: 9999;
+  }
+
   .popup input {
     width: 80%;
     height: 40px;
@@ -45,7 +60,8 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 400px;
-    height: 400px;
+    height: auto;
+    padding: 10px;
     background-color: #ffffff;
     border: 1px solid #ccc;
     border-radius: 15px;
@@ -71,3 +87,22 @@
     font-size: 18px;
   }
   
+.info {
+    display: flex;
+    flex-direction: column;
+    width: 35%;
+    height: auto;
+    margin: 95px auto;
+    margin-bottom: 20px;
+    background-size: cover;
+    background-position: center;
+    overflow-y: auto;
+    border-radius: 15px;
+    background-color: #f0f0f0;
+}
+
+#infoTitle {
+  font-size: 40px;
+  margin: 30px auto;
+  font-weight: 400;
+}

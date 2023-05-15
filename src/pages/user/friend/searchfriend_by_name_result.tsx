@@ -81,21 +81,12 @@ const InitPage = () => {
     return (
         <div>
             <FriendBar />
-            <div>
-                <div className="friend">
-                    <img className="friendavatar" src={`${avatar}`} style={{
-                        width: "100px",
-                        height: "100px",
-                        borderRadius: "50%",
-                        backgroundImage: `url(${avatar})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        border: "2px solid #ccc",
-                        margin: "50px 90px",
-                    }} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
-                    <p className="resultName">{name}</p>
-                    <button onClick={() => { setFriend(friend); getNewFriend(); }} disabled={id === friend}>添加好友</button>
-                </div>
+            <div className="requests">
+                <li className="request">
+                    <img className="friendavatar" src={`${avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
+                    <p >{name}</p>
+                    <button className="accept" onClick={() => { setFriend(friend); getNewFriend(); }} disabled={id === friend}>添加好友</button>
+                </li>
             </div>
         </div>
     );

@@ -143,7 +143,6 @@ const InitPage = () => {
                     <li key = {request.user_id}  className="request">
                         <img src={`${request.avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
                         <p>{request.name}</p>
-                        <p>id:{request.user_id}</p>
                         <button className="reject" onClick={() => { sendRespond(request.user_id,"reject"); }}> 拒绝 </button>
                         <button className="accept" onClick={() => { sendRespond(request.user_id,"accept"); }}> 同意 </button>
                     </li>

@@ -218,7 +218,7 @@ const FriendBar = () => {
 
         const contextMenu = document.createElement("div");
         contextMenu.innerHTML = "从该组中移除此好友";
-        contextMenu.className = "deleteContextMenu";
+        contextMenu.className = "msgContextMenu";
         contextMenu.style.left = `${event.clientX}px`;
         contextMenu.style.top = `${event.clientY}px`;
 
@@ -279,7 +279,7 @@ const FriendBar = () => {
                     {friendsList?.map((item: Friend) => (
                         <li key={item.user_id}
                             className="friendinList"
-                            onClick={() => { router.push(`/user/friend/friendinfo?id=${item.user_id}&name=${item.name}`); }}
+                            onClick={() => { router.push(`/user/friend/friendinfo?id=${item.user_id}&name=${item.name}&avatar=${item.avatar}`); }}
                             style={{ display: `${allCollapsed ? "block" : "none"}` }}>
                             <img className="friendavatar" src={`${item.avatar}`} alt="oops" />
                             <p>{item.name}</p>

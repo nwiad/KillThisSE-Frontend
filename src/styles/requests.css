@@ -1,12 +1,14 @@
 .requests {
     float: flex;
     position: fixed;
-    top: 50px;
+    top: 100px;
     margin-left: 40px;
-    width: 80%;
-    right: 0;
+    width: 75%;
+    right: 20px;
     list-style-type: none;
+    border-radius: 15px;
     padding: 0;
+    background-color: #e5e3e3;
 }
 
 .requests li {
@@ -15,7 +17,8 @@
     height: 80px;
     color: rgb(0, 0, 0);
     border-style: solid;
-    border-width: 1px;
+    border-radius: 15px;
+    border-width: 0px;
     border-left-color: #ffffff;
     border-right-color: #ffffff;
     border-top-color: #ffffff;
@@ -24,6 +27,7 @@
 
 .requests li:hover {
     background-color: #d4d4d4;
+    border-radius: 15px;
 }
 
 .requests li img {

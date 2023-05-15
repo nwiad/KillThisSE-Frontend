@@ -6,7 +6,8 @@
     width: 400px;
     height: 300px;
     background-color: #ffffff;
-    border: 3px solid #7b7b7b;
+    border: 1px solid #7b7b7b;
+    border-radius: 15px;
     text-align: center;
     z-index: 9999;
     overflow-y: auto;
@@ -68,4 +69,34 @@
 
 .popupGrouptoAdd li:hover{
     background-color: #ccc;
+}
+
+.friendinfodisplay {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    width: 75%;
+    height: auto;
+    top: 115px;
+    bottom: 20px;
+    right: 20px;
+    background-size: cover;
+    background-position: center;
+    float: right;
+    overflow-y: auto;
+    border-radius: 15px;
+    background-color: #f0f0f0;
+}
+
+.friendinfoname {
+    margin: 30px auto;
+    font-size: 40px;
+    font-weight: 500;
+}
+
+.friendinfoavatar {
+  margin: 50px auto;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
 }
