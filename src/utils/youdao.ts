@@ -1,3 +1,5 @@
+import axios from "axios";
+import { createHash } from "crypto";
 import CryptoJS from "crypto-js";
 import $ from "jquery";
 
@@ -56,46 +58,88 @@ export const translate = async (queryString: string): Promise<string> => {
     });
     return output;
 };
-  
-// 语音转文字
-export const transform = async (queryString: string): Promise<string> => {
-    // 转成base64
-    const base64Data = Buffer.from(queryString).toString("base64");
-    console.log("transform begins");
-    const appID = "3c60ebd01606a5ca";
-    const appKey = "RpS8mnChMx9pILX2TyhK69iyCPqnibrV";
+
+
+export const transform = async(queryString: string):Promise<string> =>{
+    const YOUDAO_URL = "https://openapi.youdao.com/asrapi";
+    const APP_KEY = "3c60ebd01606a5ca";
+    const APP_SECRET = "RpS8mnChMx9pILX2TyhK69iyCPqnibrV";
+    const audio_file_path = queryString;
+    const lang_type = "zh-CHS";
+    const extension = audio_file_path.slice(audio_file_path.lastIndexOf(".") + 1);
+    if (extension !== "wav") {
+        console.log("不支持的音频类型");
+        process.exit(1);
+    }
+    const q = Buffer.from(audio_file_path).toString("base64");
     const salt = (new Date).getTime().toString();
-    const curtime = Math.round(new Date().getTime()/1000);
-    const encodeStr = appID + truncate(base64Data) + salt + curtime + appKey;
-    const sign = CryptoJS.SHA256(encodeStr).toString(CryptoJS.enc.Hex);
+    const curtime = Math.floor(Date.now() / 1000).toString();
+    const signStr = APP_KEY + truncate(q) + salt + curtime + APP_SECRET;
+    const sign = CryptoJS.SHA256(signStr).toString(CryptoJS.enc.Hex);
+
     let output = "[Unknown text]]";
-    console.log("queryString", base64Data);
-    console.log("即将进入await！！！");
-    let data = {
-        q: base64Data,
-        langType: "zh-CHS",
-        appKey: appID,
+    
+    const data = {
+        appKey: APP_KEY,
+        q: q,
         salt: salt,
         sign: sign,
-        signType: "v3",
-        curtime: curtime,
-        format: "mp3",
+        signType: "v2",
+        langType: lang_type,
         rate: 16000,
+        format: "wav",
         channel: 1,
-        type: "1",
+        type: 1,
+        curtime: curtime,
     };
-    let encodeData = $.param(data);
+    
+    console.log("2222222222222222222");
     await $.ajax({
-        url: "https://openapi.youdao.com/asrapi",
+        url: YOUDAO_URL,
         type: "post",
-        dataType: "jsonp",
-        data: JSON.stringify(encodeData),
+        data: data,
         contentType: "application/x-www-form-urlencoded",
-        processData: false,
         success: function (data) {
             console.log(data);
             output = data.result[0];
         }
     });
     return output;
+};
+
+export const voiceService = async (queryString: string): Promise<string> => {
+    // 科大讯飞 API 信息
+    const APPID = "038eada2";
+    const APIKey = "b3ba0a78054695b9f9b9205be91e7baf";
+    let output = "[Unknown text]]";
+    const url = "https://raasr.xfyun.cn/v2/api/xxx";
+    const audioBase64 = Buffer.from(queryString).toString("base64");
+    // 构造请求头
+    const curTime = Math.floor(Date.now() / 1000).toString();
+    const param = { engine_type: "sms16k", aue: "raw" };
+    const paramBase64 = Buffer.from(JSON.stringify(param)).toString("base64");
+    const checkSum = createHash("md5").update(APIKey + curTime + paramBase64).digest("hex");
+
+    const headers = {
+        "X-Appid": APPID,
+        "X-CurTime": curTime,
+        "X-Param": paramBase64,
+        "X-CheckSum": checkSum,
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
+    };
+
+    // 请求体
+    const data = {
+        audio: audioBase64
+    };
+
+    // 发送请求
+    try {
+        const response = await axios.post(url, data, { headers: headers });
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error(`Error: ${error}`);
+        return output;
+    }
 };
