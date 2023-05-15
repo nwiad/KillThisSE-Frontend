@@ -17,6 +17,7 @@ export class Socket extends Heart {
         url: "", // 链接的通道的地址
         heartTime: 5000, // 心跳时间间隔
         heartMsg: JSON.stringify({message: "ping", token: localStorage.getItem("token"), heartbeat: true}), // 心跳信息,默认为"ping"
+        sayHi: false,
         isReconnect: true, // 是否自动重连
         isDestroy: false, // 是否销毁
         reconnectTime: 5000, // 重连时间间隔
@@ -61,6 +62,12 @@ export class Socket extends Heart {
         }
         this.ws!.onopen = (event) => {
             console.log("WebSocket 已连接", this.OPTIONS.url);
+            if(this.OPTIONS.sayHi === true) {
+                this.send(JSON.stringify({
+                    message: "我通过了你的好友申请，我们开始聊天吧！", token: localStorage.getItem("token"),
+                    isImg: false, isFile: false, isVideo: false
+                }));
+            }
             clearTimeout(this.RECONNECT_TIMER); // 清除重连定时器
             this.OPTIONS.reconnectCount = this.RECONNECT_COUNT; // 计数器重置
             // 建立心跳机制

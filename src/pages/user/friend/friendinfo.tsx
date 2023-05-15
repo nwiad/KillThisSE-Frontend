@@ -11,13 +11,24 @@ interface Group {
 const InitPage = () => {
 
     const router = useRouter();
-    const id = router.query.id;
+    const query = router.query;
+    // const id = router.query.id;
+    const [friendID, setFriendID] = useState<string>();
+    const [friendName, setFriendName] = useState<string>();
     const [showPopupGrouptoAdd, setShowPopupGrouptoAdd] = useState(false);
     const [groupsList, setGroupsList] = useState<Group[]>([]);
-    const [chatID, setChatID] = useState<number>(-1);
+    const [chatID, setChatID] = useState<number>();
+    const [refreshing, setRefreshing] = useState<boolean>(true);
 
     useEffect(() => {
-        console.log(chatID);
+        if(!router.isReady) {
+            return;
+        }
+        setFriendID(router.query.id as string);
+        setFriendName(router.query.name as string);
+    }, [router, query]);
+
+    useEffect(() => {
         fetch(
             "/api/user/get_group/",
             {
@@ -51,7 +62,7 @@ const InitPage = () => {
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify({
-                    friend_user_id: id,
+                    friend_user_id: friendID, // id
                     token: localStorage.getItem("token")
                 })
             }
@@ -76,7 +87,7 @@ const InitPage = () => {
                 credentials: "include",
                 body: JSON.stringify({
                     group_id: groupID,
-                    friend_id: id,
+                    friend_id: friendID, // id
                     token: localStorage.getItem("token")
                 })
             }
@@ -99,7 +110,7 @@ const InitPage = () => {
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify({
-                    friend: id,
+                    friend: friendID, // id
                     token: localStorage.getItem("token")
                 })
             }
@@ -117,12 +128,23 @@ const InitPage = () => {
             .catch((err) => alert(err));
         router.push("/user/friend/friendindex");
     };
+
     useEffect(() => {
-        if (chatID > 0) {
-            router.push(`/user/msg/chat?id=${chatID}`);
+        if (chatID !== undefined && friendName !== undefined) {
+            router.push(`/user/msg/chat?id=${chatID}&name=${friendName}&group=0`);
         }
-    }, [chatID, router]);
-    return (
+    }, [chatID, friendName, router]);
+
+    useEffect(() => {
+        console.log(friendID, friendName);
+        if(friendID !== undefined && friendName !== undefined) {
+            setRefreshing(false);
+        }
+    }, [friendID, friendName]);
+
+    return  refreshing ? (
+        <p>正在加载好友信息</p>
+    ) : (
         <div>
             <FriendBar />
             <button className="deleteFriend" style={{ backgroundColor: "blue" }} onClick={() => { startChat(); }}>

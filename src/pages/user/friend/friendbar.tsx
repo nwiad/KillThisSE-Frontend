@@ -279,7 +279,7 @@ const FriendBar = () => {
                     {friendsList?.map((item: Friend) => (
                         <li key={item.user_id}
                             className="friendinList"
-                            onClick={() => { router.push(`/user/friend/friendinfo?id=${item.user_id}`); }}
+                            onClick={() => { router.push(`/user/friend/friendinfo?id=${item.user_id}&name=${item.name}`); }}
                             style={{ display: `${allCollapsed ? "block" : "none"}` }}>
                             <img className="friendavatar" src={`${item.avatar}`} alt="oops" />
                             <p>{item.name}</p>
@@ -301,7 +301,7 @@ const FriendBar = () => {
                             {item?.friends?.map((friend: Friend) => (
                                 <li key={friend.user_id}
                                     className="friendinList"
-                                    onClick={() => { router.push(`/user/friend/friendinfo?id=${friend.user_id}`); }}
+                                    onClick={() => { router.push(`/user/friend/friendinfo?id=${friend.user_id}&name=${friend.name}`); }}
                                     style={{ display: `${item.collapsed ? "block" : "none"}` }}
                                     onContextMenu={ (event) => {
                                         removeFriendContextMenu(event, item.group_id, friend.user_id);
