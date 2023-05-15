@@ -8,6 +8,7 @@ import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
 import MsgBar from "./msgbar";
+import DetailsPage from "./details";
 
 const ChatScreen = () => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -384,10 +385,7 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <div className="chatname">{chatName}</div>
-            <button className="chatinfobutton" onClick={() => { router.push(`/user/msg/details?id=${chatID}&name=${chatName}&group=${isGroup}&myID=${myID}`); }}>
-                <FontAwesomeIcon className="Icon" icon={faCircleInfo} />
-            </button>
+            <DetailsPage />
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">

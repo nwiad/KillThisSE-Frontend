@@ -1,14 +1,14 @@
 .friendlist {
     position: fixed;
-    top: 65px;
-    left: 0;
-    bottom: 0;
+    top: 95px;
+    left: 20px;
+    bottom: 0px;
     width: 20%;
     list-style-type: none;
-    margin: 0;
     padding: 0;
     background-color: #535353;
     overflow-y: auto;
+    border-radius: 15px;
 }
 
 .friendlist li {
@@ -35,6 +35,8 @@
 
 .friendlist li:hover {
     background-color: #888888;
+    border-radius: 15px;
+    border: 0;
 }
 
 .friendinList {

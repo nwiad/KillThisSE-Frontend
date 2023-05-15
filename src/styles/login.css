@@ -95,17 +95,43 @@ img {
 
 .registerbar, .indexbar {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 20px;
+    left: 20px;
+    right: 20px;
     height: 65px;
     list-style-type: none;
     margin: 0;
     padding: 0;
     background-color: #0660e9;
+    border-radius: 15px;
 }
 
-.registerbar, .indexbar li {
+.loginbarli {
+    float: right;
+    height: 65px;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    text-decoration: none;
+    margin: auto;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size: 22px;
+    font-weight: 100;
+    border-style:solid;
+    border-width:0px;
+    border-left-color: #0660e9;
+    border-right-color: #589bff;
+    border-top-color: #0660e9;
+    border-bottom-color: #0660e9;
+}
+
+.loginbarli:hover {
+    background-color: #004dc0;
+    border-radius: 15px;
+}
+
+.hometitle, .registerbarli {
     float: left;
     height: 65px;
     display: block;
@@ -115,16 +141,19 @@ img {
     text-decoration: none;
     margin: auto;
     font-family:Arial, Helvetica, sans-serif;
-    font-size:20px;
+    font-size: 25px;
     font-weight: 100;
     border-style:solid;
-    border-width:1px;
-    border-left-color: #0660e9;
-    border-right-color: #589bff;
-    border-top-color: #0660e9;
-    border-bottom-color: #0660e9;
+    border-width:0px;
 }
 
-.registerbar, .indexbar li:hover {
-    background-color: #004dc0;
+.hometitle:hover {
+    background-color: #0660e9;
+    border-radius: 15px;
+}
+
+.registerbarli:hover {
+    background-color: #0660e9;
+    border-radius: 15px;
+    color: #e6e6e6;
 }

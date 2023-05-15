@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Navbar from "../navbar";
 import { useEffect, useState } from "react";
 import MsgBar from "./msgbar";
-import { faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface memberMetaData {
@@ -29,6 +29,8 @@ const DetailsPage = () => {
     const [notice, setNotice] = useState<string>("");
     const [showPopUpNoticeBoard, setShowPopUpNoticeBoard] = useState<boolean>(false);
     const [newNotice, setNewNOtice] = useState<string>("");
+
+    const [friend, setFriend] = useState<memberMetaData>();
 
     useEffect(() => {
         if (!router.isReady) {
@@ -137,16 +139,17 @@ const DetailsPage = () => {
         }
         else if (isGroup === "0") {
             setRefreshing(false);
+
         }
     }, [chatID, chatName, isGroup, myID]);
 
     useEffect(() => {
         const checkPermission = () => {
-            if(owner?.id.toString() === myID) {
+            if (owner?.id.toString() === myID) {
                 return true;
             }
             admins?.forEach((admin) => {
-                if(admin.id.toString() === myID) {
+                if (admin.id.toString() === myID) {
                     return true;
                 }
             });
@@ -197,28 +200,32 @@ const DetailsPage = () => {
         <p>Loading...</p>
     ) : (isGroup === "1" ? (
         <div style={{ padding: 12 }}>
-            <Navbar />
-            <MsgBar />
-            <div id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
-                <button className="detailback" onClick={() => { router.push(`/user/msg/chat?id=${chatID}&name=${chatName}&group=${isGroup}`); }}><FontAwesomeIcon className="Icon" icon={faArrowLeft} /></button>
-                <p className="notice">{chatName}</p>
-                <p className="notice" style={{display: "flex", flexDirection: "row"}}>
-                    <div key={0} >
-                        <img className="sender_avatar" src={`${owner!.avatar}`} alt="oops" />
-                        <p style={{ color: "black" }}>{owner!.name}（群主）</p>
+            <div id="detaildisplay">
+                <p className="chatname"> {chatName}</p>
+                <p className="members" style={{ display: "flex", flexDirection: "column" }}>
+                    群成员
+                    <div className="membersort">
+                        <div key={0} className="member">
+                            <img className="sender_avatar" src={`${owner?.avatar}`} alt="oops" />
+                            <p style={{ color: "black" }}>{owner?.name}（群主）</p>
+                        </div>
                     </div>
-                    {admins?.map((admin) => (
-                        <div key={admin.id}>
-                            <img className="sender_avatar" src={`${admin!.avatar}`} alt="oops" />
-                            <p style={{ color: "black" }}>{admin!.name}</p>       
-                        </div>
-                    ))}
-                    {members?.map((member) => (
-                        <div key={member.id}>
-                            <img className="sender_avatar" src={`${member!.avatar}`} alt="oops" />
-                            <p style={{ color: "black" }}>{member!.name}</p>
-                        </div>
-                    ))}
+                    <div className="membersort">
+                        {admins?.map((admin) => (
+                            <div key={admin.id} className="member">
+                                <img className="sender_avatar" src={`${admin?.avatar}`} alt="oops" />
+                                <p style={{ color: "black" }}>{admin?.name}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="membersort">
+                        {members?.map((member) => (
+                            <div key={member.id} className="member">
+                                <img className="sender_avatar" src={`${member?.avatar}`} alt="oops" />
+                                <p style={{ color: "black" }}>{member?.name}</p>
+                            </div>
+                        ))}
+                    </div>
                 </p>
                 <p className="notice"> 群公告: {notice} </p>
                 {
@@ -250,11 +257,8 @@ const DetailsPage = () => {
         </div>
     ) : (
         <div style={{ padding: 12 }}>
-            <Navbar />
-            <MsgBar />
-            <div id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
-                <button className="detailback" onClick={() => { router.push(`/user/msg/chat?id=${chatID}&name=${chatName}&group=${isGroup}`); }}><FontAwesomeIcon className="Icon" icon={faArrowLeft} /></button>
-                <p className="notice">{chatName}</p>
+            <div id="detaildisplay">
+                <p className="chatname"> {chatName}</p>
             </div>
         </div>
     ));

@@ -7,6 +7,8 @@ import { request } from "../utils/network";
 import { nameValid, passwordValid } from "../utils/valid";
 import { title } from "process";
 import { randomInt } from "crypto";
+import { faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const InitRegisterPage = () => {
     const [name, setName] = useState<string>("");
@@ -54,9 +56,9 @@ const InitRegisterPage = () => {
     return (
         <div style={{padding: 12}}>
             <ul className="registerbar">
-                <li>
+                <li  className="registerbarli">
                     <Link href="/">
-                        返回到登录界面
+                        <FontAwesomeIcon icon={faArrowLeft}/>
                     </Link>
                 </li>
             </ul>

@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
 import { transform } from "../utils/youdao";
+import { faKey, faEnvelope} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const test = async () => {
     transform("http://killthisse-avatar.oss-cn-beijing.aliyuncs.com/1683988188865recording.mp3")
@@ -140,16 +142,16 @@ const InitLoginPage = () => {
     return (
         <div style={{padding: 12}}>
             <ul className="indexbar">
-                <li>
+                <li className="hometitle">
                     <Link href="/">
                         KillthisSE IM
                     </Link>
                 </li>
-                <li onClick={() => { setPWdLogin(true); }}>
-                    账号密码登陆    
+                <li className="loginbarli" onClick={() => { setPWdLogin(true); }}>
+                    <FontAwesomeIcon icon={faKey}/>
                 </li>
-                <li onClick={() => { setPWdLogin(false); }}>
-                    邮箱验证登陆    
+                <li  className="loginbarli" onClick={() => { setPWdLogin(false); }}>
+                    <FontAwesomeIcon icon={faEnvelope}/>
                 </li> 
             </ul>
             { pwdLogin ? (
