@@ -22,7 +22,8 @@ interface detailProps {
     chatID: string,
     chatName: string,
     myID: string,
-    group: string
+    group: string,
+    sticked: string
 }
 
 const DetailsPage = (props: detailProps) => {
@@ -43,7 +44,7 @@ const DetailsPage = (props: detailProps) => {
     const [showPopUpNoticeBoard, setShowPopUpNoticeBoard] = useState<boolean>(false);
     const [showPopUpNotice, setShowPopUpNotice] = useState<boolean>(false);
     const [remind, setRemind] = useState<boolean>(false);
-    const [top, setTop] = useState<boolean>(false);
+    const [top, setTop] = useState<boolean>(props.sticked === "1");
     const [newNotice, setNewNOtice] = useState<string>("");
 
     const [otherFriends, setOtherFriends] = useState<Friend[]>();
@@ -51,6 +52,7 @@ const DetailsPage = (props: detailProps) => {
     const [showInvite, setShowInvite] = useState<boolean>(false);
     const [showRemove, setShowRemove] = useState<boolean>(false);
     const [removed, setRemoved] = useState<number[]>([]);
+
 
     useEffect(() => {
         if (!router.isReady) {
@@ -351,13 +353,49 @@ const DetailsPage = (props: detailProps) => {
                 if (data.code === 0) {
                     alert("已移除成员");
                     console.log("移除：", removed);
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}`);
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
             .catch((err) => alert(err));
     };
+
+    const makeOrUnmakeTop = (isTop: boolean) => {
+        const sticky = isTop ? "False" : "True";
+        console.log("how say");
+        fetch(
+            "/api/user/set_sticky_conversation/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    conversation: props.chatID,
+                    sticky: sticky
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    console.log(isTop ? "取消置顶" : "设为置顶");
+                    setTop(!isTop);
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert(err));
+    };
+
+    useEffect(() => {
+        if(top === undefined) {
+            return;
+        }
+        router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}`);
+    }, [top]);
+
 
     return refreshing ? (
         <div style={{ padding: 12 }}>
@@ -384,7 +422,7 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={remind ? faBellSlash : faBell} />
                         <p className="admininfo">{remind ? "免打扰" : "解除免打扰"}</p>
                     </div>
-                    <div className="adminbutton" onClick={() => { setTop(!top); }}>
+                    <div className="adminbutton" onClick={() => {makeOrUnmakeTop(top); }}>
                         <FontAwesomeIcon className="adminicon" icon={top ? faArrowDown : faArrowsUpToLine} />
                         <p className="admininfo">{top ? "取消置顶" : "置顶"}</p>
                     </div>
@@ -546,9 +584,9 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={remind ? faBellSlash : faBell} />
                         <p className="admininfo">{remind ? "免打扰" : "解除免打扰"}</p>
                     </div>
-                    <div className="adminbutton" onClick={() => { setTop(!top); }}>
-                        <FontAwesomeIcon className="adminicon" icon={top ?  faArrowDown : faArrowsUpToLine}  />
-                        <p className="admininfo">{top ? "取消置顶" : "置顶" }</p>
+                    <div className="adminbutton" onClick={() => {makeOrUnmakeTop(top); }}>
+                        <FontAwesomeIcon className="adminicon" icon={top ? faArrowDown : faArrowsUpToLine} />
+                        <p className="admininfo">{top ? "取消置顶" : "置顶"}</p>
                     </div>
                     <div className="adminbutton" onClick={() => { setShowInvite(true); }}>
                         <FontAwesomeIcon className="adminicon" icon={faUserPlus} />

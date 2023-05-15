@@ -53,6 +53,8 @@ const ChatScreen = () => {
     const [showPopupMention, setShowPopupMention] = useState(false);
     const [popupMentionPosition, setPopupMentionPosition] = useState({ x: 0, y: 0 });
 
+    const [sticked, setSticked] = useState<string>();
+
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
         setShowEmojiPicker(showEmojiPicker => !showEmojiPicker);
@@ -70,7 +72,7 @@ const ChatScreen = () => {
         }
         socket.current!.send(JSON.stringify({
             message: message, token: localStorage.getItem("token"),
-            isImg: false, isFile: false, isVideo: false
+            isImg: false, isFile: false, isVideo: false, 
         }));
     };
 
@@ -306,7 +308,6 @@ const ChatScreen = () => {
 
             });
             contextMenu.appendChild(translateItem);
-
         }
         else // 语音消息只能转文字
         {
@@ -375,6 +376,7 @@ const ChatScreen = () => {
         setChatID(query.id as string);
         setChatName(query.name as string);
         setIsGroup(query.group as string);
+        setSticked(query.sticked as string);
 
         const options: Options = {
             url: suffix + `${router.query.id}/`,
@@ -450,14 +452,14 @@ const ChatScreen = () => {
     }, []);
 
     useEffect(() => {
-        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
+        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined && sticked !== undefined) {
             console.log("聊天视窗刷新");
             setRefreshing(false);
         }
         else{
             setRefreshing(true);
         }
-    }, [chatID, chatName, isGroup, myID]);
+    }, [chatID, chatName, isGroup, myID, sticked]);
 
     return refreshing ? (
         <div></div>
@@ -465,7 +467,7 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} />
+            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} />
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
