@@ -59,7 +59,7 @@ export const translate = async (queryString: string): Promise<string> => {
     return output;
 };
 
-
+// 有道语音转文字
 export const transform = async(queryString: string):Promise<string> =>{
     const YOUDAO_URL = "https://openapi.youdao.com/asrapi";
     const APP_KEY = "3c60ebd01606a5ca";

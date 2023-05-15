@@ -1,9 +1,5 @@
 import { useRouter } from "next/router";
-import Navbar from "../navbar";
 import { useEffect, useState } from "react";
-import MsgBar from "./msgbar";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface memberMetaData {
     id: number,

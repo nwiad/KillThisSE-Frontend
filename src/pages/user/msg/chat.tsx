@@ -1,15 +1,15 @@
 import Picker from "@emoji-mart/react";
-import { faCircleInfo, faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
 import { uploadFile } from "../../../utils/oss";
 import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
-import { voiceService } from "../../../utils/youdao";
+import { transform } from "../../../utils/youdao";
 import Navbar from "../navbar";
-import MsgBar from "./msgbar";
 import DetailsPage from "./details";
+import MsgBar from "./msgbar";
 
 const ChatScreen = () => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -253,6 +253,29 @@ const ChatScreen = () => {
             deleteItem.innerHTML = "撤回";
             deleteItem.addEventListener("click", () => {
                 //TODO
+                event.stopPropagation();
+
+                fetch(
+                    "/api/msg/withdraw_msg/",
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify({
+                            token: localStorage.getItem("token"),
+                            msg: msg_id
+                        })
+                    }
+                )
+                    .then((res) => res.json())
+                    .then((data) => {
+                        setID(data.user_id);
+                    })
+                    .catch((err) => alert(err));
+
+                socket.current!.send(JSON.stringify({
+                    message: msg_body, token: localStorage.getItem("token"),
+                    withdraw_msg_id: msg_id
+                }));
             });
             contextMenu.appendChild(deleteItem);
 
@@ -300,7 +323,7 @@ const ChatScreen = () => {
                 }
                 const newElement = document.createElement("p");
                 newElement.className="transform";
-                newElement.innerHTML = await voiceService(msg_body);
+                newElement.innerHTML = await transform(msg_body);
                 // newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
                 // newElement.innerHTML = "转文字结果";
                 target?.insertAdjacentElement("beforeend", newElement);
@@ -556,7 +579,7 @@ const ChatScreen = () => {
                     )}
                     {/* 发送语音功能 */}
                     <button className="sendbutton" onClick={() => { handleRecording(); }}>
-                        <FontAwesomeIcon className="Icon" id={recording ? "rcd" : "notrcd"} icon={faFileAudio} />
+                        <FontAwesomeIcon className="Icon" id={recording ? "notrcd" : "rcd"} icon={faFileAudio} />
                     </button>
                 </div>
                 <button

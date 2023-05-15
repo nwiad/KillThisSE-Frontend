@@ -49,4 +49,5 @@ export interface MsgMetaData {
     is_file: boolean,
     is_video: boolean,
     is_audio: boolean,
+    msg_to_withdraw: number,
 };
