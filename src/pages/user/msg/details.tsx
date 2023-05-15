@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Navbar from "../navbar";
 import { useEffect, useState } from "react";
 import MsgBar from "./msgbar";
-import { faArrowLeft, faUserGroup, faNoteSticky, faKey, faBellSlash, faArrowsUpToLine, faXmark, faUserPlus, faUserMinus } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faUserGroup, faNoteSticky, faKey, faBellSlash, faArrowsUpToLine, faXmark, faUserPlus, faUserMinus, faBell, faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface memberMetaData {
@@ -13,14 +13,27 @@ interface memberMetaData {
     is_owner: boolean
 }
 
-const DetailsPage = () => {
+interface Friend {
+    user_id: number;
+    name: string;
+    avatar: string;
+}
+
+interface detailProps {
+    chatID: string,
+    chatName: string,
+    myID: string,
+    group: string
+}
+
+const DetailsPage = (props: detailProps) => {
     const router = useRouter();
     const query = router.query;
-    const [chatID, setChatID] = useState<string>();
-    const [chatName, setChatName] = useState<string>();
-    const [isGroup, setIsGroup] = useState<string>();
+    // const [chatID, setChatID] = useState<string>();
+    // const [chatName, setChatName] = useState<string>();
+    // const [isGroup, setIsGroup] = useState<string>();
     const [refreshing, setRefreshing] = useState<boolean>(true);
-    const [myID, setID] = useState<string>();
+    // const [myID, setID] = useState<string>();
     const [hasPermit, setHasPermit] = useState<boolean>();
 
     const [owner, setOwner] = useState<memberMetaData>();
@@ -34,140 +47,143 @@ const DetailsPage = () => {
     const [top, setTop] = useState<boolean>(false);
     const [newNotice, setNewNOtice] = useState<string>("");
 
-    const [friend, setFriend] = useState<memberMetaData>();
+    const [otherFriends, setOtherFriends] = useState<Friend[]>();
+    const [invitees, setInvitees] = useState<string[]>([]);
+    const [showInvite, setShowInvite] = useState<boolean>(false);
+    const [showRemove, setShowRemove] = useState<boolean>();
 
     useEffect(() => {
         if (!router.isReady) {
             return;
         }
-        setChatID(query.id as string);
-        setChatName(query.name as string);
-        setIsGroup(query.group as string);
-        setID(query.myID as string);
+        // setChatID(query.id as string);
+        // setChatName(query.name as string);
+        // setIsGroup(query.group as string);
+        // setID(query.myID as string);
+        console.log(router.query.id);
     }, [router, query]);
 
     useEffect(() => {
-        console.log("group?", isGroup);
-        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
-            if (isGroup === "1") {
-                // 获取群成员
-                fetch(
-                    "/api/user/get_group_members/",
-                    {
-                        method: "POST",
-                        credentials: "include",
-                        body: JSON.stringify({
-                            token: localStorage.getItem("token"),
-                            group: chatID
-                        })
-                    }
-                )
-                    .then((res) => res.json())
-                    .then((data) => {
-                        if (data.code === 0) {
-                            setMemers(data.members.map((member: any) => ({ ...member })));
-                        }
-                        else {
-                            throw new Error(`${data.info}`);
-                        }
+        // console.log("group?", isGroup);
+        // if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
+        if (props.group === "1") {
+            // 获取群成员
+            fetch(
+                "/api/user/get_group_members/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        group: props.chatID
                     })
-                    .catch((err) => alert(err));
-                // 获取管理员（不含群主）
-                fetch(
-                    "/api/user/get_group_administrators/",
-                    {
-                        method: "POST",
-                        credentials: "include",
-                        body: JSON.stringify({
-                            token: localStorage.getItem("token"),
-                            group: chatID
-                        })
+                }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.code === 0) {
+                        setMemers(data.members.map((member: any) => ({ ...member })));
                     }
-                )
-                    .then((res) => res.json())
-                    .then((data) => {
-                        if (data.code === 0) {
-                            setAdmins(data.administrators.map((admin: any) => ({ ...admin })));
-                        }
-                        else {
-                            throw new Error(`${data.info}`);
-                        }
-                    })
-                    .catch((err) => alert(err));
-                // 获取群主
-                fetch(
-                    "/api/user/get_group_owner/",
-                    {
-                        method: "POST",
-                        credentials: "include",
-                        body: JSON.stringify({
-                            token: localStorage.getItem("token"),
-                            group: chatID
-                        })
+                    else {
+                        throw new Error(`${data.info}`);
                     }
-                )
-                    .then((res) => res.json())
-                    .then((data) => {
-                        if (data.code === 0) {
-                            setOwner(data.owner);
-                        }
-                        else {
-                            console.log(localStorage.getItem("token"));
-                            throw new Error(`${data.info}`);
-                        }
+                })
+                .catch((err) => alert(err));
+            // 获取管理员（不含群主）
+            fetch(
+                "/api/user/get_group_administrators/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        group: props.chatID
                     })
-                    .catch((err) => alert(err));
-                // 获取群公告
-                fetch(
-                    "/api/user/get_group_announcement/",
-                    {
-                        method: "POST",
-                        credentials: "include",
-                        body: JSON.stringify({
-                            token: localStorage.getItem("token"),
-                            group: chatID
-                        })
+                }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.code === 0) {
+                        setAdmins(data.administrators.map((admin: any) => ({ ...admin })));
                     }
-                )
-                    .then((res) => res.json())
-                    .then((data) => {
-                        if (data.code === 0) {
-                            setNotice(data.Announcement);
-                        }
-                        else {
-                            throw new Error(`${data.info}`);
-                        }
+                    else {
+                        throw new Error(`${data.info}`);
+                    }
+                })
+                .catch((err) => alert(err));
+            // 获取群主
+            fetch(
+                "/api/user/get_group_owner/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        group: props.chatID
                     })
-                    .catch((err) => alert(err));
-            }
+                }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.code === 0) {
+                        setOwner(data.owner);
+                    }
+                    else {
+                        console.log(localStorage.getItem("token"));
+                        throw new Error(`${data.info}`);
+                    }
+                })
+                .catch((err) => alert(err));
+            // 获取群公告
+            fetch(
+                "/api/user/get_group_announcement/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        group: props.chatID
+                    })
+                }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.code === 0) {
+                        setNotice(data.Announcement);
+                    }
+                    else {
+                        throw new Error(`${data.info}`);
+                    }
+                })
+                .catch((err) => alert(err));
         }
-        else if (isGroup === "0") {
+        // }
+        else if (props.group === "0") {
             setRefreshing(false);
-
         }
-    }, [chatID, chatName, isGroup, myID]);
+    }, [props]);
 
     useEffect(() => {
         const checkPermission = () => {
-            if (owner?.id.toString() === myID) {
+            if (owner?.id.toString() === props.myID) {
                 return true;
             }
             admins?.forEach((admin) => {
-                if (admin.id.toString() === myID) {
+                if (admin.id.toString() === props.myID) {
                     return true;
                 }
             });
             return false;
         };
-        if (isGroup === "1" && owner !== undefined && admins !== undefined && members !== undefined) {
+        if (props.group === "1" && owner !== undefined && admins !== undefined && members !== undefined) {
             console.log("聊天详情刷新");
             setHasPermit(checkPermission());
             setRefreshing(false);
         }
-        else if (isGroup === "0") {
+        else if (props.group === "0") {
             setRefreshing(false);
         }
-    }, [owner, admins, members, isGroup, myID]);
+    }, [owner, admins, members, props]);
 
     const closeNoticeBoard = () => {
         setShowPopUpNoticeBoard(false);
@@ -183,7 +199,7 @@ const DetailsPage = () => {
                 credentials: "include",
                 body: JSON.stringify({
                     token: localStorage.getItem("token"),
-                    group: chatID,
+                    group: props.chatID,
                     announcement: newNotice
                 })
             }
@@ -200,10 +216,95 @@ const DetailsPage = () => {
             .catch((err) => alert(err));
     };
 
-    return (isGroup === "1" ? (
+    // 获取好友列表
+    const getOtherFriends = async () => {
+        await fetch(
+            "/api/user/get_friends/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
+            }
+        )
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                if (data.code === 0) {
+                    const friends = data.friends.map((friend: Friend) => ({
+                        user_id: friend.user_id,
+                        name: friend.name,
+                        avatar: friend.avatar
+                    }));
+                    // TODO: 筛选
+                    setOtherFriends(friends);
+                } else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert(err));
+    };
+
+    // 筛选不在群里的好友
+    const alreadyInGroup = (friend_id: number) => {
+        if (owner?.id === friend_id) {
+            return true;
+        }
+        admins?.forEach((admin) => {
+            if (admin.id === friend_id) {
+                return true;
+            }
+        });
+        members?.forEach((member) => {
+            if (member.id === friend_id) {
+                return true;
+            }
+        });
+        return false;
+    };
+
+    // 邀请新成员（能不能改成列表啊）
+    const invite = () => {
+        fetch(
+            "/api/user/invite_member_to_group/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    group: props.chatID,
+                    invitee: invitees
+                })
+            }
+        )
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                if (data.code === 0) {
+                    alert("已发送邀请");
+                } else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert(err));
+    };
+
+    const closeInvite = () => {
+        setShowInvite(false);
+        setInvitees([]);
+    };
+
+    const remove = (friend_id: number) => {
+        // 我api呢
+    };
+
+    return refreshing ? (
+        <div style={{ padding: 12 }}>
+            <p>Loading...</p>
+        </div>
+    ) : (props.group === "1" ? (
         <div style={{ padding: 12 }}>
             <div id="detaildisplay">
-                <p className="chatname"> {chatName}</p>
+                <p className="chatname"> {props.chatName}</p>
                 <div className="groupadminbuttons">
                     <div className="adminbutton" onClick={() => { setShowPopUpMembers(true); }}>
                         <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
@@ -217,13 +318,13 @@ const DetailsPage = () => {
                         <FontAwesomeIcon className="adminicon" icon={faKey} />
                         <p className="admininfo">二级密码</p>
                     </div>
-                    <div className="adminbutton" onClick={()=>{setRemind(!remind);}}>
-                        <FontAwesomeIcon className="adminicon" icon={faBellSlash} />
-                        <p className="admininfo">{remind? "解除免打扰" : "免打扰"}</p>
+                    <div className="adminbutton" onClick={() => { setRemind(!remind); }}>
+                        <FontAwesomeIcon className="adminicon" icon={remind ? faBellSlash : faBell} />
+                        <p className="admininfo">{remind ? "免打扰" : "解除免打扰"}</p>
                     </div>
-                    <div className="adminbutton">
-                        <FontAwesomeIcon className="adminicon" icon={faArrowsUpToLine} />
-                        <p className="admininfo">置顶</p>
+                    <div className="adminbutton" onClick={() => { setTop(!top); }}>
+                        <FontAwesomeIcon className="adminicon" icon={top ?  faArrowDown : faArrowsUpToLine}  />
+                        <p className="admininfo">{top ? "取消置顶" : "置顶" }</p>
                     </div>
                     <div className="adminbutton">
                         <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
@@ -303,7 +404,7 @@ const DetailsPage = () => {
     ) : (
         <div style={{ padding: 12 }}>
             <div id="detaildisplay">
-                <p className="chatname"> {chatName}</p>
+                <p className="chatname"> {props.chatName}</p>
             </div>
         </div>
     ));

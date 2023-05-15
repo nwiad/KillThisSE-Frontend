@@ -6,7 +6,7 @@ import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "reac
 import { uploadFile } from "../../../utils/oss";
 import { MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
-import { transform } from "../../../utils/youdao";
+import { voiceService } from "../../../utils/youdao";
 import Navbar from "../navbar";
 import MsgBar from "./msgbar";
 import DetailsPage from "./details";
@@ -300,7 +300,8 @@ const ChatScreen = () => {
                 }
                 const newElement = document.createElement("p");
                 newElement.className="transform";
-                newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
+                newElement.innerHTML = await voiceService(msg_body);
+                // newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
                 // newElement.innerHTML = "转文字结果";
                 target?.insertAdjacentElement("beforeend", newElement);
                 hideContextMenu();
@@ -380,11 +381,13 @@ const ChatScreen = () => {
         }
     }, [chatID, chatName, isGroup, myID]);
 
-    return (
+    return refreshing ? (
+        <div></div>
+    ):(
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <DetailsPage />
+            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!}  />
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
