@@ -540,13 +540,63 @@ const DetailsPage = (props: detailProps) => {
                 if(data.code === 0){
                     alert("删除成功");
                     router.push("/user");
-
                 }
                 else {
                     throw new Error(`从详情页删除好友: ${data.info}`);
                 }
             })
             .catch((err) => alert("从详情页删除好友: "+err));
+    };
+
+    const dismissOrQuit = () => {
+        if(props.myID === owner?.id.toString()) {  // 群主解散群聊
+            fetch(
+                "/api/user/dismiss_group_conversation/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        gourp_id: props.chatID
+                    })
+                }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if(data.code === 0) {
+                        alert("解散成功");
+                        router.push("/user");
+                    }
+                    else {
+                        throw new Error(`解散群聊: ${data.info}`);
+                    }
+                })
+                .catch((err) => alert("解散群聊: "+err));
+        }
+        else {  // 非群主退出群聊
+            fetch(
+                "/api/user/leave_group_conversation/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        group: props.chatID
+                    })
+                }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if(data.code === 0) {
+                        alert("已退出群聊");
+                        router.push("/user");
+                    }
+                    else {
+                        throw new Error(`退出群聊${data.info}`);
+                    }
+                })
+                .catch((err) => alert("退出群聊"+err));
+        }
     };
 
 
@@ -587,7 +637,7 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faUserMinus} />
                         <p className="admininfo">移除成员</p>
                     </div>}
-                    <div className="adminbutton">
+                    <div className="adminbutton" onClick={() => {dismissOrQuit();}}>
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
                         <p className="admininfo">{props.myID === owner?.id.toString() ? "解散群聊" : "退出"}</p>
                     </div>
