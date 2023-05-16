@@ -1,8 +1,7 @@
-import { faPenToSquare, faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { isDisabled } from "@testing-library/user-event/dist/utils";
 
 interface memberMetaData {
     id: number,
@@ -38,7 +37,7 @@ const DetailsPage = (props: detailProps) => {
 
     const [owner, setOwner] = useState<memberMetaData>();
     const [admins, setAdmins] = useState<memberMetaData[]>();
-    const [members, setMemers] = useState<memberMetaData[]>();
+    const [members, setMembers] = useState<memberMetaData[]>();
     const [notice, setNotice] = useState<string>("");
     const [showPopUpMembers, setShowPopUpMembers] = useState<boolean>(false);
     const [showPopUpNoticeBoard, setShowPopUpNoticeBoard] = useState<boolean>(false);
@@ -84,7 +83,8 @@ const DetailsPage = (props: detailProps) => {
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.code === 0) {
-                        setMemers(data.members.map((member: any) => ({ ...member })));
+                        console.log("群成员", data.members);
+                        setMembers(data.members.map((member: any) => ({ ...member })));
                     }
                     else {
                         throw new Error(`${data.info}`);

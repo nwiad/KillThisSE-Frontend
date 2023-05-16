@@ -335,8 +335,8 @@
 .emoji-picker-container{
     position: fixed;
     bottom: 30%;
-    right: 0;
-    height: 40%;
+    right: 22%;
+    height: 35%;
 }
 
 .ContextMenuLi {
