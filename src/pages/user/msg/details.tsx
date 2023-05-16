@@ -539,7 +539,7 @@ const DetailsPage = (props: detailProps) => {
             .then((data) => {
                 if(data.code === 0){
                     alert("删除成功");
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
+                    router.push("/user");
 
                 }
                 else {

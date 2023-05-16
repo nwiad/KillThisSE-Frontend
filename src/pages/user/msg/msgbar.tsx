@@ -369,7 +369,7 @@ const MsgBar = () => {
             ) : (
                 <ul className="friendlist">
                     {stickedPrivate!.map((chat) => (
-                        <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor:"#434343" }} onClick={() => { router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`); }}>
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor:"#434343" }} onClick={() => { router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`); }}>
                             <img src={`${chat.friend_avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.friend_name.length > 6 ? `${chat.friend_name.slice(0, 6)}...` : chat.friend_name}</div>
@@ -380,10 +380,10 @@ const MsgBar = () => {
                             ) : (
                                 <div className="count" id={`chat${chat.id}`}>0</div>
                             )}
-                        </li>
+                        </li>)
                     ))}
                     {stickedGroup!.map((chat) => (
-                        <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor:"#434343" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`)}>
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor:"#434343" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`)}>
                             <img src={`${chat.avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0, 6)}...` : chat.name}</div>
@@ -394,10 +394,10 @@ const MsgBar = () => {
                             ) : (
                                 <div className="count" id={`chat${chat.id}`}>0</div>
                             )}
-                        </li>
+                        </li>)
                     ))}
                     {chatList!.map((chat) => (
-                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => { router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`); }}>
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => { router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`); }}>
                             <img src={`${chat.friend_avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.friend_name.length > 6 ? `${chat.friend_name.slice(0, 6)}...` : chat.friend_name}</div>
@@ -408,10 +408,10 @@ const MsgBar = () => {
                             ) : (
                                 <div className="count" id={`chat${chat.id}`}>0</div>
                             )}
-                        </li>
+                        </li>)
                     ))}
                     {groupChatList!.map((chat) => (
-                        <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`)}>
+                        (!chat.disabled &&<li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`)}>
                             <img src={`${chat.avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0, 6)}...` : chat.name}</div>
@@ -422,7 +422,7 @@ const MsgBar = () => {
                             ) : (
                                 <div className="count" id={`chat${chat.id}`}>0</div>
                             )}
-                        </li>
+                        </li>)
                     ))}
                 </ul>
             )}

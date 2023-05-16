@@ -1,5 +1,5 @@
 import Picker from "@emoji-mart/react";
-import { faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo, faMicrophone } from "@fortawesome/free-solid-svg-icons";
+import { faFaceSmile, faFile, faImage, faMicrophone, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -39,6 +39,7 @@ const ChatScreen = () => {
     const [showPopupFile, setShowPopupFile] = useState(false);
     // audio
     const [recording, setRecording] = useState(false);
+    const [multiselecting, setMultiselecting] = useState(false);
     const [audioURL, setAudioURL] = useState("");
 
     // const [mediaRecorder,setmediaRecorder]= useRef<MediaRecorder>(new MediaRecorder(new MediaStream()));
@@ -198,7 +199,6 @@ const ChatScreen = () => {
             mediaRecorder.current = new MediaRecorder(stream);
             console.log("Created MediaRecorder", mediaRecorder, "with options", mediaRecorder.current!.stream);
             mediaRecorder.current.start();
-            setRecording(true);
         } catch (err) {
             console.error("Failed to start recording: ", err);
         }
@@ -310,7 +310,6 @@ const ChatScreen = () => {
                 deleteItem.className = "ContextMenuLi";
                 deleteItem.innerHTML = "撤回";
                 deleteItem.addEventListener("click", () => {
-                    //TODO
                     // 如果现在时间减去消息时间少于5分钟，可以撤回
                     event.stopPropagation();
                     const now_time_str = new Date();
@@ -334,25 +333,11 @@ const ChatScreen = () => {
                         return;
                     }
 
-                    fetch(
-                        "/api/msg/withdraw_msg/",
-                        {
-                            method: "POST",
-                            credentials: "include",
-                            body: JSON.stringify({
-                                token: localStorage.getItem("token"),
-                                msg: msg_id
-                            })
-                        }
-                    )
-                        .then((res) => res.json())
-                        .then((data) => {
-                            socket.current!.send(JSON.stringify({
-                                message: msg_body, token: localStorage.getItem("token"),
-                                withdraw_msg_id: msg_id
-                            }));
-                        })
-                        .catch((err) => alert(err));
+                    socket.current!.send(JSON.stringify({
+                        message: msg_body, token: localStorage.getItem("token"),
+                        withdraw_msg_id: msg_id
+                    }));
+                    
                 });
                 contextMenu.appendChild(deleteItem);
             }
@@ -430,11 +415,36 @@ const ChatScreen = () => {
         const multiselectItem = document.createElement("li");
         multiselectItem.className = "ContextMenuLi";
         multiselectItem.innerHTML = "多选";
-        // 被选中的消息
-        // let selectedMessages = [];
+        // 被选中的消息id list
+        let selectedMessagesId: number[] = [];
         multiselectItem.addEventListener("click", async (event) => {
             event.stopPropagation();
+            // 弹出字符 正在进行多选
+            setMultiselecting(true);
             const target = document.getElementById(`msg${msg_id}`);
+            // 点击任何一条消息，获取其id，同时把id打包到selectedMessagesID里面
+            if(target !== null) {
+                // 为每条消息添加一个点击事件监听器
+                // 当点击消息时
+                target.addEventListener("click", () => {
+                    // 消息的 ID 是否已存在于 selectedMessages 数组中
+                    if (!selectedMessagesId.includes(msg_id)) {
+                        // 如果不存在，将 ID 添加到数组中并添加 chosen 类名以标记选中状态；
+                        selectedMessagesId.push(msg_id);
+                        target.classList.add("chosen");
+                    } else {
+                        // 已存在，从数组中移除 ID 并移除 chosen 类名以取消选中状态。
+                        const index = selectedMessagesId.indexOf(msg_id);
+                        if (index > -1) {
+                            selectedMessagesId.splice(index, 1);
+                            target.classList.remove("chosen");
+                        }
+                    }
+                });
+            }
+            // 修改该消息的状态chosen为true
+
+
             // 把id打包起来
             // // Toggle the selected state of the message
             // if (selectedMessages.includes(msg_id)) {
@@ -446,9 +456,16 @@ const ChatScreen = () => {
             //     selectedMessages.push(msg_id);
             //     target.classList.add('selected');
             // }
+            // For debugging
+            console.log(selectedMessagesId);
 
-            // // For debugging
-            // console.log(selectedMessages);
+            // 给后端发的东西 后端收就可以 没有其他定义的位置
+            // 合并转发消息
+            socket.current!.send(JSON.stringify({
+                message: msg_body, token: localStorage.getItem("token"),
+                selectedMessages: selectedMessagesId,
+            }));
+            setMultiselecting(false);
         });
         contextMenu.appendChild(multiselectItem);
 
@@ -624,6 +641,13 @@ const ChatScreen = () => {
                 <div className="popuprecord">
                     <div className="popup-title">
                         &nbsp;&nbsp;正在录音......&nbsp;&nbsp;
+                    </div>
+                </div>
+            )}
+            {multiselecting && (
+                <div className="popuprecord">
+                    <div className="popup-title">
+                        &nbsp;&nbsp;正在进行多选&nbsp;&nbsp;
                     </div>
                 </div>
             )}
