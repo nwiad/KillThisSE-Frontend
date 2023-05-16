@@ -20,6 +20,7 @@ const InitPage = () => {
     const [groupsList, setGroupsList] = useState<Group[]>([]);
     const [chatID, setChatID] = useState<number>();
     const [refreshing, setRefreshing] = useState<boolean>(true);
+    const [silent, setSilent] = useState<boolean>();
 
     useEffect(() => {
         if (!router.isReady) {
@@ -122,6 +123,7 @@ const InitPage = () => {
                 if (data.code === 0) {
                     console.log("成功发起会话");
                     setChatID(data.conversation_id);
+                    setSilent(data.silent);
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -132,10 +134,10 @@ const InitPage = () => {
     };
 
     useEffect(() => {
-        if (chatID !== undefined && friendName !== undefined) {
-            router.push(`/user/msg/chat?id=${chatID}&name=${friendName}&group=0&sticked=0`);
+        if (chatID !== undefined && friendName !== undefined && silent !== undefined) {
+            router.push(`/user/msg/chat?id=${chatID}&name=${friendName}&group=0&sticked=0&silent=${silent ? 1 : 0}`);
         }
-    }, [chatID, friendName, router]);
+    }, [chatID, friendName, router, silent]);
 
     useEffect(() => {
         console.log(friendID, friendName);

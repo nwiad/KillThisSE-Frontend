@@ -55,6 +55,7 @@ const ChatScreen = () => {
     const [popupMentionPosition, setPopupMentionPosition] = useState({ x: 0, y: 0 });
 
     const [sticked, setSticked] = useState<string>();
+    const [silent, setSilent] = useState<string>();
 
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
@@ -437,6 +438,7 @@ const ChatScreen = () => {
         setChatName(query.name as string);
         setIsGroup(query.group as string);
         setSticked(query.sticked as string);
+        setSilent(query.silent as string);
 
         const options: Options = {
             url: suffix + `${router.query.id}/${myID}/`,
@@ -532,7 +534,7 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} />
+            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} />
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
