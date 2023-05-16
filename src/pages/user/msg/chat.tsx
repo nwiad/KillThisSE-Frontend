@@ -66,35 +66,32 @@ const ChatScreen = () => {
         setInput(inputValue + emoji.native);
         setShowEmojiPicker(false);
     };
-
-    const  sendPublic = (isImg?: boolean, isFile?: boolean, isVideo?: boolean) =>  {
+    useEffect(() => {
+        setMsg(inputValue);
+    }, [inputValue]);
+    const sendPublic = async (isImg?: boolean, isFile?: boolean, isVideo?: boolean) => {
         if (message === "") {
             return;
-        }
-
-        // 创建一个空数组来存储成员的名字
-        let names = [];
-        for (let member of memberList) {
-            // 将每个成员的名字添加到names数组
-            names.push(member.user_name);
         }
 
         // 表示该条消息提及了谁
         let mentioned_members = [];
         // message表示消息内容 从中提取是否有@name
         // 如果有，提取出来，然后发送消息
-
-        // 遍历用户列表
-        for (let user in names) {
-            // 检查消息中是否包含用户名
-            if (message.includes(`@${user}`)) {
-                // 如果包含，将用户名添加到提及成员的数组中
-                mentioned_members.push(user);
+        
+        // 有@ 才检查是否有名字
+        if(message.includes("@")) {
+            console.log("有@");
+            for (let member of memberList){
+                // 检查消息中是否包含用户名
+                if (message.includes(`@${member.user_name}`)) {
+                    // 如果包含，将用户名添加到提及成员的数组中
+                    mentioned_members.push(member.user_name);
+                }
             }
         }
-
         socket.current!.send(JSON.stringify({
-            message: message, token: localStorage.getItem("token"),
+            message: inputValue, token: localStorage.getItem("token"),
             isImg: false, isFile: false, isVideo: false,
             mentioned_members: mentioned_members
         }));
@@ -262,8 +259,10 @@ const ChatScreen = () => {
         const input = inputBase as HTMLInputElement;
         const currentValue = input?.value;
         if (cursorPosStart !== null && cursorPosEnd !== null) {
-            setInput(currentValue.substring(0, cursorPosStart) +  textToInsert + currentValue.substring(cursorPosEnd));
+            setInput(currentValue.substring(0, cursorPosStart) + "@"+ textToInsert + currentValue.substring(cursorPosEnd));
+            setMsg(currentValue.substring(0, cursorPosStart) + "@"+ textToInsert + currentValue.substring(cursorPosEnd));
         }
+
     }
 
     // This could be a button click event or something similar
@@ -461,6 +460,11 @@ const ChatScreen = () => {
                     .filter((val: any) => !val.delete_members?.some((user: any) => user === currentUserid))
                     .map((val: any) => ({ ...val }))
                 );
+
+                const memberList = JSON.parse(event.data).members;
+                setmemberList(memberList
+                    .map((val: any) => ({ ...val }))
+                );
                 const last_id = messages.length === 0 ? -1 : messages.at(-1).msg_id;
                 fetch(
                     "/api/user/set_read_message/",
@@ -607,6 +611,7 @@ const ChatScreen = () => {
                             setInput("");
                         };
                         if (event.key === "@") {
+                            setShowPopupMention(true);
                             //TODO:验证是否为群聊
                             if (inputRef.current !== null) {
                                 const startPos = inputRef.current.selectionStart;
@@ -639,11 +644,14 @@ const ChatScreen = () => {
                                 }}>
                                     {member.user_name}
                                 </li>
+                                   
                             </div>
                         ))}
-                        <li className="ContextMenuLi">
-                            准备@的好友
-                        </li>
+                        <div>
+                            <li className="ContextMenuLi">
+                                准备@的好友
+                            </li>    
+                        </div>
                     </div>
 
                 )}

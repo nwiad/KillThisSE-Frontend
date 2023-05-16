@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Socket, suffix } from "../../../utils/websocket";
 import FriendBar from "./friendbar";
-import {Socket, suffix} from "../../../utils/websocket";
-import {Options} from "../../../utils/type";
 
 interface FriendRequest {
     user_id: number;
@@ -97,7 +96,7 @@ const InitPage = () => {
                                 console.log("成功发起会话");
                                 socket.current = new Socket(
                                     {
-                                        url: suffix + `${chatID}/${myID}`,
+                                        url: suffix + `${chatID}/${myID}/`,
                                         heartTime: 5000, // 心跳时间间隔
                                         heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
                                         sayHi: true,

@@ -1,21 +1,22 @@
-import { faPenToSquare, faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { isDisabled } from "@testing-library/user-event/dist/utils";
 
 interface memberMetaData {
     id: number,
     name: string,
     avatar: string,
     is_admin: boolean,
-    is_owner: boolean
+    is_owner: boolean,
+    chosen: boolean
 }
 
 interface Friend {
     user_id: number;
     name: string;
     avatar: string;
+    chosen: boolean;
 }
 
 interface detailProps {
@@ -38,7 +39,7 @@ const DetailsPage = (props: detailProps) => {
 
     const [owner, setOwner] = useState<memberMetaData>();
     const [admins, setAdmins] = useState<memberMetaData[]>();
-    const [members, setMemers] = useState<memberMetaData[]>();
+    const [members, setMembers] = useState<memberMetaData[]>();
     const [notice, setNotice] = useState<string>("");
     const [showPopUpMembers, setShowPopUpMembers] = useState<boolean>(false);
     const [showPopUpNoticeBoard, setShowPopUpNoticeBoard] = useState<boolean>(false);
@@ -53,6 +54,9 @@ const DetailsPage = (props: detailProps) => {
     const [showRemove, setShowRemove] = useState<boolean>(false);
     const [removed, setRemoved] = useState<number[]>([]);
 
+    const [myFriends, setMyFriends] = useState<Friend[]>();
+    const [groupName, setGroupName] = useState<string>("");
+    const [who, setWho] = useState<number>();
 
     useEffect(() => {
         if (!router.isReady) {
@@ -84,7 +88,8 @@ const DetailsPage = (props: detailProps) => {
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.code === 0) {
-                        setMemers(data.members.map((member: any) => ({ ...member })));
+                        console.log("群成员", data.members);
+                        setMembers(data.members.map((member: any) => ({ ...member })));
                     }
                     else {
                         throw new Error(`${data.info}`);
@@ -160,12 +165,64 @@ const DetailsPage = (props: detailProps) => {
                 .catch((err) => alert(err));
         }
         // }
-        else if (props.group === "0") {
-            setRefreshing(false);
-        }
+        // else if (props.group === "0") {
+        //     setRefreshing(false);
+        // }
     }, [props]);
 
     useEffect(() => {
+        const getOtherFriends = () => {
+            fetch(
+                "/api/user/get_friends/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token")
+                    })
+                }
+            )
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    if (data.code === 0) {
+                        const friends = data.friends.map((friend: Friend) => ({
+                            user_id: friend.user_id,
+                            name: friend.name,
+                            avatar: friend.avatar,
+                            chosen: false
+                        }));
+                        // TODO: 筛选
+                        let newArray: Friend[] = [];
+                        friends.forEach((friend: Friend) => {
+                            if(!alreadyInGroup(friend.user_id)) {
+                                newArray.push(friend);
+                            }
+                        });
+                        setOtherFriends(newArray);
+                    } else {
+                        throw new Error(`${data.info}`);
+                    }
+                })
+                .catch((err) => alert(err));
+        };
+    
+        // 筛选不在群里的好友
+        const alreadyInGroup = (friend_id: number): boolean => {
+            if (owner?.id === friend_id) {
+                return true;
+            }
+            for(let admin of admins!) {
+                if(admin.id === friend_id) {
+                    return true;
+                }
+            }
+            for(let memeber of members!) {
+                if(memeber.id === friend_id) {
+                    return true;
+                }
+            }
+            return false;
+        };
         const checkPermission = () => {
             if (owner?.id.toString() === props.myID) {
                 return true;
@@ -181,12 +238,77 @@ const DetailsPage = (props: detailProps) => {
             console.log("聊天详情刷新");
             getOtherFriends();
             setHasPermit(checkPermission());
-            setRefreshing(false);
+            // setRefreshing(false);
         }
         else if (props.group === "0") {
-            setRefreshing(false);
+            fetch(
+                "/api/user/get_friend_by_conversation/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        conversation: props.chatID
+                    })
+                }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if(data.code === 0) {
+                        console.log("对方是："+data.friend.user_id);
+                        setWho(data.friend.user_id);
+                        fetch(
+                            "/api/user/get_friends/",
+                            {
+                                method: "POST",
+                                credentials: "include",
+                                body: JSON.stringify({
+                                    token: localStorage.getItem("token")
+                                })
+                            }
+                        )
+                            .then((res) => { return res.json(); })
+                            .then((data_2) => {
+                                if (data_2.code === 0) {
+                                    const friends = data_2.friends.map((friend: Friend) => ({
+                                        user_id: friend.user_id,
+                                        name: friend.name,
+                                        avatar: friend.avatar
+                                    }));
+                                    const friendsButOppo: Friend[] = [];
+                                    friends.forEach((friend: Friend) => {
+                                        if(friend.user_id !== data.friend.user_id) {
+                                            friendsButOppo.push(friend);
+                                        }
+                                    });
+                                    setMyFriends(friendsButOppo);
+                                } else {
+                                    throw new Error(`${data.info}`);
+                                }
+                            })
+                            .catch((err) => alert(err));
+                    }
+                    else{ 
+                        throw new Error(`聊天获取对方id: ${data.info}`);
+                    }
+                })
+                .catch((err) => alert(err));
+            // setRefreshing(false);
         }
     }, [owner, admins, members, props]);
+
+    useEffect(() => {
+        if(props.group === "1") {
+            if(otherFriends !== undefined) {
+                setRefreshing(false);
+            }
+        }
+        else if(props.group === "0") {
+            if(myFriends !== undefined && who !== undefined) {
+                setRefreshing(false);
+            }
+        }
+    }, [myFriends, otherFriends, props, who]);
 
     const closeNoticeBoard = () => {
         setShowPopUpNoticeBoard(false);
@@ -219,59 +341,6 @@ const DetailsPage = (props: detailProps) => {
             .catch((err) => alert(err));
     };
 
-    // 获取好友列表
-    const getOtherFriends = async () => {
-        await fetch(
-            "/api/user/get_friends/",
-            {
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify({
-                    token: localStorage.getItem("token")
-                })
-            }
-        )
-            .then((res) => { return res.json(); })
-            .then((data) => {
-                if (data.code === 0) {
-                    const friends = data.friends.map((friend: Friend) => ({
-                        user_id: friend.user_id,
-                        name: friend.name,
-                        avatar: friend.avatar
-                    }));
-                    // TODO: 筛选
-                    let newArray: Friend[] = [];
-                    friends.forEach((friend: Friend) => {
-                        if(!alreadyInGroup(friend.user_id)) {
-                            newArray.push(friend);
-                        }
-                    });
-                    setOtherFriends(newArray);
-                } else {
-                    throw new Error(`${data.info}`);
-                }
-            })
-            .catch((err) => alert(err));
-    };
-
-    // 筛选不在群里的好友
-    const alreadyInGroup = (friend_id: number): boolean => {
-        if (owner?.id === friend_id) {
-            return true;
-        }
-        for(let admin of admins!) {
-            if(admin.id === friend_id) {
-                return true;
-            }
-        }
-        for(let memeber of members!) {
-            if(memeber.id === friend_id) {
-                return true;
-            }
-        }
-        return false;
-    };
-
     // 邀请新成员（能不能改成列表啊）
     const invite = () => {
         fetch(
@@ -298,9 +367,37 @@ const DetailsPage = (props: detailProps) => {
             .catch((err) => alert(err));
     };
 
+    const startGroup = () => {
+        console.log("拉取建群的人: ",invitees);
+        fetch(
+            "/api/user/create_group_conversation/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    members: invitees,
+                    name: groupName
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    alert("成功创建群聊");
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}`);
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert(err));
+    };
+
     const closeInvite = () => {
         setShowInvite(false);
         setInvitees([]);
+        setGroupName("");
     };
 
     const closeRemove = () => {
@@ -317,6 +414,9 @@ const DetailsPage = (props: detailProps) => {
         }
         else {
             setInvitees((memeberList) => [...memeberList, id]);
+        }
+        if(props.group === "0") {
+            setInvitees((memberList) => [...memberList, who!]);
         }
     };
 
@@ -499,15 +599,10 @@ const DetailsPage = (props: detailProps) => {
             )}
             {/* 邀请 */}
             {showInvite && (
-                <div className="popup">
+                <div className="popup" style={{padding: "20px", height: "auto"}}>
                     <ul className="startgroupchoice">
                         {otherFriends?.map((item) => (
-                            <div className="startgroupchoicebox" key={item.user_id} style={{ display: "flex", flexDirection: "row" }}>
-                                <input
-                                    type="checkbox"
-                                    className="startgroupcheckbox"
-                                    onClick={() => { addOrRemoveGroupMember(item.user_id); }}
-                                />
+                            <div className="startgroupchoicebox" key={item.user_id} style={{backgroundColor: `${item.chosen ? "#0660e9" : "white"}`}} onClick={() => { item.chosen=!item.chosen; addOrRemoveGroupMember(item.user_id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -527,16 +622,11 @@ const DetailsPage = (props: detailProps) => {
             )}
             {/* 踢人 */}
             {(hasPermit && showRemove) && (
-                <div className="popup">
+                <div className="popup"  style={{padding: "20px", height: "auto"}}>
                     <ul className="startgroupchoice">
                         {/* 只有群主可以移除管理员 */}
                         {(props.myID === owner?.id.toString()) && admins?.map((item) => ((
-                            <div className="startgroupchoicebox" key={item.id} style={{ display: "flex", flexDirection: "row" }}>
-                                <input
-                                    type="checkbox"
-                                    className="startgroupcheckbox"
-                                    onClick={() => { addOrRemoveSuckers(item.id); }}
-                                />
+                            <div className="startgroupchoicebox" key={item.id} style={{backgroundColor: `${item.chosen ? "#0660e9" : "white"}`}} onClick={() => { item.chosen=!item.chosen; addOrRemoveSuckers(item.id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -598,6 +688,34 @@ const DetailsPage = (props: detailProps) => {
                     </div>
                 </div>
             </div>
+            {showInvite && (
+                <div className="popup">
+                    <ul className="startgroupchoice">
+                        <input onChange={(e) => setGroupName(e.target.value)} placeholder="群聊名称" />
+                        {myFriends?.map((item) => (
+                            <div className="startgroupchoicebox" key={item.user_id} style={{ display: "flex", flexDirection: "row" }}>
+                                <input
+                                    type="checkbox"
+                                    className="startgroupcheckbox"
+                                    onClick={() => { addOrRemoveGroupMember(item.user_id); }}
+                                />
+                                <li
+                                    className="navbar_ele_info"
+                                    style={{ display: "flex", width: "100%" }}>
+                                    <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
+                                    <p style={{ color: "black" }}>{item.name}</p>
+                                </li>
+                            </div>
+                        ))}
+                    </ul>
+                    <button onClick={() => { closeInvite(); }}>
+                        取消
+                    </button>
+                    <button onClick={() => { startGroup(); closeInvite(); }} disabled={invitees.length === 0 || groupName.length === 0}>
+                        完成
+                    </button>
+                </div>
+            )}
         </div>
     ));
 };
