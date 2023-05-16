@@ -5,13 +5,14 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
 import { uploadFile } from "../../../utils/oss";
-import { MemberMetaData, MsgMetaData, Options } from "../../../utils/type";
+import { CovnMetaData, MemberMetaData, MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
 
 const ChatScreen = () => {
+    const selectRef = useRef<HTMLSelectElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [cursorPosStart, setCursorPosStart] = useState<number | null>(null);
     const [cursorPosEnd, setCursorPosEnd] = useState<number | null>(null);
@@ -20,6 +21,7 @@ const ChatScreen = () => {
     const [message, setMsg] = useState<string>("");
     const [msgList, setMsgList] = useState<MsgMetaData[]>([]);
     const [memberList, setmemberList] = useState<MemberMetaData[]>([]);
+    const [convList, setconvList] = useState<CovnMetaData[]>([]);
     const [myID, setID] = useState<number>();
     const chatBoxRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
@@ -277,21 +279,12 @@ const ChatScreen = () => {
         const input = inputBase as HTMLInputElement;
         const currentValue = input?.value;
         if (cursorPosStart !== null && cursorPosEnd !== null) {
-            setInput(currentValue.substring(0, cursorPosStart) + "@"+ textToInsert + currentValue.substring(cursorPosEnd));
-            setMsg(currentValue.substring(0, cursorPosStart) + "@"+ textToInsert + currentValue.substring(cursorPosEnd));
+            setInput(currentValue.substring(0, cursorPosStart) + textToInsert + currentValue.substring(cursorPosEnd));
+            // setMsg(currentValue.substring(0, cursorPosStart) + "@"+ textToInsert + currentValue.substring(cursorPosEnd));
         }
 
     }
 
-    // This could be a button click event or something similar
-    // async function forwardMessages() {
-    //     // Here you would implement the forwarding of the messages
-    //     // This will depend on your application's specific API or mechanism for forwarding messages
-    //     // After forwarding, clear the selection
-    //     selectedMessages = [];
-    //     // And also remove the 'selected' class from the forwarded messages
-    //     document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
-    // }
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string) => {
         event.preventDefault();
@@ -303,7 +296,6 @@ const ChatScreen = () => {
 
         // user_id指当前登录的用户
         // msg_owner指消息的发送者
-        // 语音消息不能转发
         if (!msg_is_audio) {
             if (user_id == msg_owner) {
                 const deleteItem = document.createElement("li");
@@ -416,56 +408,69 @@ const ChatScreen = () => {
         multiselectItem.className = "ContextMenuLi";
         multiselectItem.innerHTML = "多选";
         // 被选中的消息id list
-        let selectedMessagesId: number[] = [];
+        let selectedMessagesId: number[] = [];        
         multiselectItem.addEventListener("click", async (event) => {
             event.stopPropagation();
-            // 弹出字符 正在进行多选
+            // 弹出字幕 正在进行多选
             setMultiselecting(true);
-            const target = document.getElementById(`msg${msg_id}`);
-            // 点击任何一条消息，获取其id，同时把id打包到selectedMessagesID里面
-            if(target !== null) {
-                // 为每条消息添加一个点击事件监听器
-                // 当点击消息时
-                target.addEventListener("click", () => {
+
+            // 遍历消息的id 
+            for (const msg of msgList) {
+                msg_id = msg.msg_id;
+                const target = document.getElementById(`msg${msg_id}`);
+                // 如果消息已经被选中，就不再添加点击事件监听器
+                if(target !== null)
+                {
+                    target.addEventListener("click", () => {
                     // 消息的 ID 是否已存在于 selectedMessages 数组中
-                    if (!selectedMessagesId.includes(msg_id)) {
-                        // 如果不存在，将 ID 添加到数组中并添加 chosen 类名以标记选中状态；
-                        selectedMessagesId.push(msg_id);
-                        target.classList.add("chosen");
-                    } else {
-                        // 已存在，从数组中移除 ID 并移除 chosen 类名以取消选中状态。
-                        const index = selectedMessagesId.indexOf(msg_id);
-                        if (index > -1) {
-                            selectedMessagesId.splice(index, 1);
-                            target.classList.remove("chosen");
-                        }
-                    }
-                });
+                        if (!selectedMessagesId.includes(msg_id)) {
+                            // 如果不存在，将 ID 添加到数组中并用chosen标记选中状态；
+                            selectedMessagesId.push(msg_id);
+                            msg.chosen = false;
+                        } else {
+                            // 已存在，从数组中移除 ID 并移除 chosen 类名以取消选中状态。
+                            const index = selectedMessagesId.indexOf(msg_id);
+                            if (index > -1) {
+                                selectedMessagesId.splice(index, 1);
+                                msg.chosen = true;
+                            }
+                        }});
+                }
             }
-            // 修改该消息的状态chosen为true
-
-
-            // 把id打包起来
-            // // Toggle the selected state of the message
-            // if (selectedMessages.includes(msg_id)) {
-            //     // Remove the message from the selection if it's already selected
-            //     selectedMessages = selectedMessages.filter(id => id !== msg_id);
-            //     target.classList.remove('selected');
-            // } else {
-            //     // Add the message to the selection if it's not selected
-            //     selectedMessages.push(msg_id);
-            //     target.classList.add('selected');
-            // }
-            // For debugging
             console.log(selectedMessagesId);
 
             // 给后端发的东西 后端收就可以 没有其他定义的位置
             // 合并转发消息
-            socket.current!.send(JSON.stringify({
-                message: msg_body, token: localStorage.getItem("token"),
-                selectedMessages: selectedMessagesId,
-            }));
-            setMultiselecting(false);
+
+            // 点击转发按钮才会触发
+            // 你可能需要一个发送按钮的引用，这是一个例子：
+            const sendForwardButton = document.getElementById("send_forward_button");
+            if(sendForwardButton !== null)
+            {
+                if(selectRef.current !== null)
+                {
+                    //点击按钮时候选择的会话id  表示即将发送到那个会话中
+                    let selectedConversationId = selectRef.current.value;
+                    console.log("选中的会话id");
+                    console.log(selectedConversationId);
+                    sendForwardButton.addEventListener("click", () => {
+                        // 获取选中的对话ID
+                        // 当用户点击发送按钮时，发送选中的消息id
+                        socket.current!.send(JSON.stringify({
+                            message: msg_body, token: localStorage.getItem("token"),
+                            selectedMessages: selectedMessagesId,
+                            targetConversationId: selectedConversationId // 转发到哪个会话
+                        }));
+        
+                        // 清空选中的消息id列表并退出选择状态
+                        selectedMessagesId = [];
+                        setMultiselecting(false);
+                    });
+                }
+            }
+            // 后端收到消息后，将消息合并转发给所有人
+
+            // todo 什么时候结束多选
         });
         contextMenu.appendChild(multiselectItem);
 
@@ -506,7 +511,6 @@ const ChatScreen = () => {
             messageCb: (event: MessageEvent) => {
                 let currentUserid = myID;
                 console.log("当前用户id: ", currentUserid);
-                console.log("isgroup: ", isGroup);
                 // message是后端发过来的消息们
                 const messages = JSON.parse(event.data).messages;
                 // 消息列表
@@ -520,6 +524,12 @@ const ChatScreen = () => {
                 setmemberList(memberList
                     .map((val: any) => ({ ...val }))
                 );
+
+                const convList = JSON.parse(event.data).conversations;
+                setconvList(convList
+                    .map((val: any) => ({ ...val }))
+                );
+
                 const last_id = messages.length === 0 ? -1 : messages.at(-1).msg_id;
                 fetch(
                     "/api/user/set_read_message/",
@@ -607,7 +617,7 @@ const ChatScreen = () => {
             <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} />
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
-                    <div key={msg.msg_id} className="msg">
+                    <div key={msg.msg_id} className={msg.chosen?"msgchosen":"msg"}>
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
@@ -651,6 +661,18 @@ const ChatScreen = () => {
                     </div>
                 </div>
             )}
+            <div className="conversation-select">
+                <select id="conversation-select" ref={selectRef}>
+                    {convList.map((conv) => (
+                        <option key={conv.id} value={conv.id}>
+                            {conv.name} {/* 或者你的对话对象的其他属性，例如 title */}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <button id="send_forward_button"className="send_forward_button">
+                发送选中的信息
+            </button>
             <div className="inputdisplay">
                 <input
                     className="msginput"
