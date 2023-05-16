@@ -353,6 +353,7 @@ const ChatScreen = () => {
             multiselectItem.addEventListener("click", async (event) => {
                 event.stopPropagation();
                 const target = document.getElementById(`msg${msg_id}`);
+                // 把id打包起来
                 // // Toggle the selected state of the message
                 // if (selectedMessages.includes(msg_id)) {
                 //     // Remove the message from the selection if it's already selected
