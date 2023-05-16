@@ -57,7 +57,7 @@ export interface MsgMetaData {
     is_video: boolean,
     is_audio: boolean,
     msg_to_withdraw: number,
-    // chosen: boolean // 点击完确认发送就变成false
+    chosen?: boolean // 点击完确认发送就变成false ?指定为可选属性
 };
 
 export interface MemberMetaData {
@@ -65,3 +65,9 @@ export interface MemberMetaData {
     user_name: string,
     user_avatar: string,
 };
+
+export interface CovnMetaData{
+    id: number,
+    name: string,
+    avatar: string,
+}
