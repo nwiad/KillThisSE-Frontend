@@ -74,28 +74,43 @@ const ChatScreen = () => {
         if (message === "") {
             return;
         }
-
-        // 表示该条消息提及了谁
-        let mentioned_members = [];
-        // message表示消息内容 从中提取是否有@name
-        // 如果有，提取出来，然后发送消息
-        
-        // 有@ 才检查是否有名字
-        if(message.includes("@")) {
-            console.log("有@");
-            for (let member of memberList){
-                // 检查消息中是否包含用户名
-                if (message.includes(`@${member.user_name}`)) {
-                    // 如果包含，将用户名添加到提及成员的数组中
-                    mentioned_members.push(member.user_name);
-                }
-            }
+        // 私聊直接发
+        if (isGroup === "false") {
+            socket.current!.send(JSON.stringify({
+                message: inputValue, token: localStorage.getItem("token"),
+                isImg: false, isFile: false, isVideo: false
+            }));
         }
-        socket.current!.send(JSON.stringify({
-            message: inputValue, token: localStorage.getItem("token"),
-            isImg: false, isFile: false, isVideo: false,
-            mentioned_members: mentioned_members
-        }));
+        else{
+            // 群聊可能有@name
+            // 表示该条消息提及了谁
+            let mentioned_members = [];
+            // message表示消息内容 从中提取是否有@name
+            // 如果有，提取出来，然后发送消息
+            const all = "全体成员";
+            // 有@ 才检查是否有名字
+            if(message.includes("@")) {
+                console.log("有@");
+                if (message.includes(`@${all}`)) {
+                    // 如果包含全体成员，将所有用户名添加到提及成员的数组中
+                    mentioned_members.push(memberList.map(member => member.user_name));
+    
+                }
+                else //不是全体成员
+                    for (let member of memberList){
+                        // 检查消息中是否包含用户名
+                        if (message.includes(`@${member.user_name}`)) {
+                            // 如果包含，将用户名添加到提及成员的数组中
+                            mentioned_members.push(member.user_name);
+                        }
+                    }
+            }
+            socket.current!.send(JSON.stringify({
+                message: inputValue, token: localStorage.getItem("token"),
+                isImg: false, isFile: false, isVideo: false,
+                mentioned_members: mentioned_members
+            }));
+        }
     };
 
     const cleanUp = () => {
@@ -216,7 +231,9 @@ const ChatScreen = () => {
                     console.error("Failed to create audio URL from blob.");
                 }
             });
-            // 关闭录音
+            // 关闭音频流 释放麦克风资源
+            const tracks = mediaRecorder.current.stream.getTracks();
+            tracks.forEach(track => track.stop());
         });
     };
 
@@ -437,6 +454,7 @@ const ChatScreen = () => {
         setChatID(query.id as string);
         setChatName(query.name as string);
         setIsGroup(query.group as string);
+        
         setSticked(query.sticked as string);
         setSilent(query.silent as string);
 
@@ -453,6 +471,7 @@ const ChatScreen = () => {
             messageCb: (event: MessageEvent) => {
                 let currentUserid = myID;
                 console.log("当前用户id: ", currentUserid);
+                console.log("isgroup: ", isGroup);
                 const messages = JSON.parse(event.data).messages;
                 // 消息列表
                 setMsgList(messages
@@ -460,7 +479,7 @@ const ChatScreen = () => {
                     .filter((val: any) => !val.delete_members?.some((user: any) => user === currentUserid))
                     .map((val: any) => ({ ...val }))
                 );
-
+                
                 const memberList = JSON.parse(event.data).members;
                 setmemberList(memberList
                     .map((val: any) => ({ ...val }))
@@ -597,17 +616,20 @@ const ChatScreen = () => {
                         };
                         if (event.key === "@") {
                             setShowPopupMention(true);
-                            //TODO:验证是否为群聊
-                            if (inputRef.current !== null) {
-                                const startPos = inputRef.current.selectionStart;
-                                const endPos = inputRef.current.selectionEnd;
-                                Promise.resolve().then(async () => {
-                                    await setCursorPosStart(startPos);
-                                    await setCursorPosEnd(endPos);
-                                    //insertAtCursor(inputRef.current, "@");
-                                    setMsg(inputValue);
-                                    handleMention(event);
-                                });
+                            //验证是否为群聊
+                            if(isGroup==="1")
+                            {
+                                if (inputRef.current !== null) {
+                                    const startPos = inputRef.current.selectionStart;
+                                    const endPos = inputRef.current.selectionEnd;
+                                    Promise.resolve().then(async () => {
+                                        await setCursorPosStart(startPos);
+                                        await setCursorPosEnd(endPos);
+                                        //insertAtCursor(inputRef.current, "@");
+                                        setMsg(inputValue);
+                                        handleMention(event);
+                                    });
+                                }
                             }
                         }
                         else {
@@ -616,7 +638,7 @@ const ChatScreen = () => {
                     }}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
-                {showPopupMention && (
+                {showPopupMention &&  (
                     <div className="msgContextMenu">
                         {/* TODO:遍历群内好友 */}
                         {memberList.map((member) => (
@@ -632,6 +654,16 @@ const ChatScreen = () => {
                                    
                             </div>
                         ))}
+                        <div className="msg">
+                            <li className="ContextMenuLi" onClick={() => {
+                                if (document.getElementById("msginput"))
+                                    insertAtCursor(document.getElementById("msginput"), "全体成员");
+                                setMsg(inputValue);
+                                setShowPopupMention(false);
+                            }}>
+                                <li>全体成员</li>
+                            </li>
+                        </div>
                         <div>
                             <li className="ContextMenuLi">
                                 准备@的好友
