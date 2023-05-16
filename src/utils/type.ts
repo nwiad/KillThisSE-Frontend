@@ -55,7 +55,7 @@ export interface MsgMetaData {
     is_video: boolean,
     is_audio: boolean,
     msg_to_withdraw: number,
-    chosen: boolean // 点击完确认发送就变成false
+    // chosen: boolean // 点击完确认发送就变成false
 };
 
 export interface MemberMetaData {
