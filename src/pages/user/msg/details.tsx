@@ -557,7 +557,7 @@ const DetailsPage = (props: detailProps) => {
                     credentials: "include",
                     body: JSON.stringify({
                         token: localStorage.getItem("token"),
-                        gourp_id: props.chatID
+                        group: props.chatID
                     })
                 }
             )
