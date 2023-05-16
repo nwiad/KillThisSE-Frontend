@@ -19,6 +19,16 @@ interface Friend {
     chosen: boolean;
 }
 
+interface requestMetaData {
+    invitation_id: number,
+    inviter_id: number,
+    inviter_name: string,
+    inviter_avatar: string,
+    invitee_id: number,
+    invitee_name: string,
+    invitee_avatar: string
+}
+
 interface detailProps {
     chatID: string,
     chatName: string,
@@ -58,6 +68,9 @@ const DetailsPage = (props: detailProps) => {
     const [myFriends, setMyFriends] = useState<Friend[]>();
     const [groupName, setGroupName] = useState<string>("");
     const [who, setWho] = useState<number>();
+
+    const [showReq, setShowReq] = useState<boolean>(false);
+    const [requests, setRequests] = useState<requestMetaData[]>();
 
     useEffect(() => {
         if (!router.isReady) {
@@ -164,6 +177,27 @@ const DetailsPage = (props: detailProps) => {
                     }
                 })
                 .catch((err) => alert(err));
+            fetch(
+                "/api/user/get_group_invitations/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        group: props.chatID
+                    })
+                }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if(data.code === 0) {
+                        setRequests(data.invitations.map((invitation: any) => ({...invitation})));
+                    }
+                    else {
+                        throw new Error(`拉取入群邀请: ${data.info}`);
+                    }
+                })
+                .catch((err) => alert("拉取入群邀请: "+err));
         }
         // }
         // else if (props.group === "0") {
@@ -300,7 +334,7 @@ const DetailsPage = (props: detailProps) => {
 
     useEffect(() => {
         if(props.group === "1") {
-            if(otherFriends !== undefined) {
+            if(otherFriends !== undefined && requests !== undefined) {
                 setRefreshing(false);
             }
         }
@@ -309,7 +343,7 @@ const DetailsPage = (props: detailProps) => {
                 setRefreshing(false);
             }
         }
-    }, [myFriends, otherFriends, props, who]);
+    }, [myFriends, otherFriends, props, who, requests]);
 
     const closeNoticeBoard = () => {
         setShowPopUpNoticeBoard(false);
@@ -345,7 +379,7 @@ const DetailsPage = (props: detailProps) => {
     // 邀请新成员（能不能改成列表啊）
     const invite = () => {
         fetch(
-            "/api/user/invite_member_to_group/",
+            hasPermit ? "/api/user/admin_invite_member/" : "/api/user/invite_member_to_group/",
             {
                 method: "POST",
                 credentials: "include",
@@ -359,8 +393,9 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    alert("已发送邀请");
+                    alert(hasPermit ? "已拉取入群" : "已发送邀请");
                     console.log("邀请：", invitees);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -599,6 +634,84 @@ const DetailsPage = (props: detailProps) => {
         }
     };
 
+    const flushRequests = () => {
+        fetch(
+            "/api/user/get_group_invitations/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    group: props.chatID
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    setRequests(data.invitations.map((invitation: any) => ({...invitation})));
+                }
+                else {
+                    throw new Error(`拉取入群邀请: ${data.info}`);
+                }
+            })
+            .catch((err) => alert("拉取入群邀请: "+err));
+    };
+
+    const consent = (invitation_id: number) => {
+        fetch(
+            "/api/user/respond_group_invitation/", 
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    invitation: invitation_id,
+                    group: props.chatID,
+                    response: "accept"
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    console.log("同意进群邀请");
+                    flushRequests();
+                }
+                else {
+                    throw new Error(`同意进群邀请: ${data.info}`);
+                }
+            })
+            .catch((err) => alert("同意进群邀请"+err));
+    };
+
+    const reject = (invitation_id: number) => {
+        fetch(
+            "/api/user/respond_group_invitation/", 
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    invitation: invitation_id,
+                    group: props.chatID,
+                    response: "reject"
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    console.log("拒绝进群邀请");
+                    flushRequests();
+                }
+                else {
+                    throw new Error(`拒绝进群邀请: ${data.info}`);
+                }
+            })
+            .catch((err) => alert("拒绝进群邀请"+err));
+    };
+
 
     return refreshing ? (
         <div style={{ padding: 12 }}>
@@ -641,6 +754,10 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
                         <p className="admininfo">{props.myID === owner?.id.toString() ? "解散群聊" : "退出"}</p>
                     </div>
+                    {hasPermit && <div className="adminbutton" onClick={() => { setShowReq(true); }}>
+                        <FontAwesomeIcon className="quiticon" icon={faUserPlus} />
+                        <p className="admininfo">入群请求</p>
+                    </div>}
                 </div>
 
             </div>
@@ -760,6 +877,28 @@ const DetailsPage = (props: detailProps) => {
                     </button>
                     <button onClick={() => { remove(); closeRemove(); }} disabled={removed.length === 0 }>
                         完成
+                    </button>
+                </div>
+            )}
+            {/* 处理入群请求 */}
+            { (hasPermit && showReq) && (
+                <div className="popup" style={{padding: "20px", height: "auto"}}>
+                    <ul className="startgroupchoice">
+                        {requests?.map((item) => (
+                            <div className="startgroupchoicebox" key={item.invitation_id} style={{backgroundColor: "white"}}>
+                                <li
+                                    className="navbar_ele_info"
+                                    style={{ display: "flex", width: "100%" }}>
+                                    <img className="sender_avatar" src={`${item.invitee_avatar}`} alt="oops" />
+                                    <p style={{ color: "black" }}>{item.invitee_name}</p>
+                                </li>
+                                <button onClick={() => {consent(item.invitation_id);}}>同意</button>
+                                <button onClick={() => {reject(item.invitation_id);}}>拒绝</button>
+                            </div>
+                        ))}
+                    </ul>
+                    <button onClick={() => { setShowReq(false); router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`); }}>
+                        返回
                     </button>
                 </div>
             )}
