@@ -86,7 +86,7 @@ const InitPage = () => {
             <FriendBar />
             <div className="requests">
                 <li className="request">
-                    <img className="friendavatar" src={`${avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
+                    <img className="friendavatar" src={`${avatar}`} alt={""} />
                     <p>{friend}</p>
                     <button className="accept" onClick={() => { getNewFriend(); }} disabled={id === myID}>添加好友</button>
                 </li>

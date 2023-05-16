@@ -1,5 +1,5 @@
 import Picker from "@emoji-mart/react";
-import { faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo, faMicrophone } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -74,28 +74,43 @@ const ChatScreen = () => {
         if (message === "") {
             return;
         }
-
-        // 表示该条消息提及了谁
-        let mentioned_members = [];
-        // message表示消息内容 从中提取是否有@name
-        // 如果有，提取出来，然后发送消息
-        
-        // 有@ 才检查是否有名字
-        if(message.includes("@")) {
-            console.log("有@");
-            for (let member of memberList){
-                // 检查消息中是否包含用户名
-                if (message.includes(`@${member.user_name}`)) {
-                    // 如果包含，将用户名添加到提及成员的数组中
-                    mentioned_members.push(member.user_name);
-                }
-            }
+        // 私聊直接发
+        if (isGroup === "false") {
+            socket.current!.send(JSON.stringify({
+                message: inputValue, token: localStorage.getItem("token"),
+                isImg: false, isFile: false, isVideo: false
+            }));
         }
-        socket.current!.send(JSON.stringify({
-            message: inputValue, token: localStorage.getItem("token"),
-            isImg: false, isFile: false, isVideo: false,
-            mentioned_members: mentioned_members
-        }));
+        else{
+            // 群聊可能有@name
+            // 表示该条消息提及了谁
+            let mentioned_members = [];
+            // message表示消息内容 从中提取是否有@name
+            // 如果有，提取出来，然后发送消息
+            const all = "全体成员";
+            // 有@ 才检查是否有名字
+            if(message.includes("@")) {
+                console.log("有@");
+                if (message.includes(`@${all}`)) {
+                    // 如果包含全体成员，将所有用户名添加到提及成员的数组中
+                    mentioned_members.push(memberList.map(member => member.user_name));
+    
+                }
+                else //不是全体成员
+                    for (let member of memberList){
+                        // 检查消息中是否包含用户名
+                        if (message.includes(`@${member.user_name}`)) {
+                            // 如果包含，将用户名添加到提及成员的数组中
+                            mentioned_members.push(member.user_name);
+                        }
+                    }
+            }
+            socket.current!.send(JSON.stringify({
+                message: inputValue, token: localStorage.getItem("token"),
+                isImg: false, isFile: false, isVideo: false,
+                mentioned_members: mentioned_members
+            }));
+        }
     };
 
     const cleanUp = () => {
@@ -216,7 +231,9 @@ const ChatScreen = () => {
                     console.error("Failed to create audio URL from blob.");
                 }
             });
-            // 关闭录音
+            // 关闭音频流 释放麦克风资源
+            const tracks = mediaRecorder.current.stream.getTracks();
+            tracks.forEach(track => track.stop());
         });
     };
 
@@ -288,39 +305,57 @@ const ChatScreen = () => {
         // msg_owner指消息的发送者
         // 语音消息不能转发
         if (!msg_is_audio) {
-            // 只有自己能撤回自己的消息
-            if(user_id==msg_owner) {
-                const withdrawItem = document.createElement("li");
-                withdrawItem.className = "ContextMenuLi";
-                withdrawItem.innerHTML = "撤回";
-                withdrawItem.addEventListener("click", () => {
+            if (user_id == msg_owner) {
+                const deleteItem = document.createElement("li");
+                deleteItem.className = "ContextMenuLi";
+                deleteItem.innerHTML = "撤回";
+                deleteItem.addEventListener("click", () => {
                     //TODO
                     // 如果现在时间减去消息时间少于5分钟，可以撤回
                     event.stopPropagation();
                     const now_time_str = new Date();
 
+                    console.log("当前时间");
+                    console.log(now_time_str);
+                    // Mon May 15 2023 18:34:08 GMT+0800
+
+                    console.log(msg_time);
+                    // 将输入的时间字符串转化为 moment 对象
                     let now_time_use = moment(now_time_str, "ddd MMM DD YYYY HH:mm:ss Z");
                     let msg_time_use = moment(msg_time, "MM-DD HH:mm");
 
-                    // 因为 msg_time 没有年份，需要给它加上
+                    // 因为 msg_time 没有年份，我们需要给它加上
                     msg_time_use.year(now_time_use.year());
 
                     // 计算时间差，单位为分钟
                     let time_diff = now_time_use.diff(msg_time_use, "minutes");
-                    if(time_diff > 5) {
+                    if (time_diff > 5) {
                         alert("该消息发送超过5分钟，不能撤回");
                         return;
                     }
-                    socket.current!.send(JSON.stringify({
-                        message: msg_body, token: localStorage.getItem("token"),
-                        withdraw_msg_id: msg_id
-                    }));
+
+                    fetch(
+                        "/api/msg/withdraw_msg/",
+                        {
+                            method: "POST",
+                            credentials: "include",
+                            body: JSON.stringify({
+                                token: localStorage.getItem("token"),
+                                msg: msg_id
+                            })
+                        }
+                    )
+                        .then((res) => res.json())
+                        .then((data) => {
+                            socket.current!.send(JSON.stringify({
+                                message: msg_body, token: localStorage.getItem("token"),
+                                withdraw_msg_id: msg_id
+                            }));
+                        })
+                        .catch((err) => alert(err));
                 });
-                contextMenu.appendChild(withdrawItem);
+                contextMenu.appendChild(deleteItem);
             }
-
-
-            // 翻译按钮
             const translateItem = document.createElement("li");
             translateItem.className = "ContextMenuLi";
             translateItem.innerHTML = "翻译";
@@ -389,7 +424,7 @@ const ChatScreen = () => {
                     return;
                 }
                 const newElement = document.createElement("p");
-                newElement.className="transform";
+                newElement.className = "transform";
                 newElement.innerHTML = await transform(msg_body);
                 // newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
                 // newElement.innerHTML = "转文字结果";
@@ -401,21 +436,6 @@ const ChatScreen = () => {
             });
             contextMenu.appendChild(transformItem);
         }
-
-        
-        // 删除消息记录按钮
-        const deleteItem = document.createElement("li");
-        deleteItem.className = "ContextMenuLi";
-        deleteItem.innerHTML = "删除";
-        deleteItem.addEventListener("click", () => {
-            event.stopPropagation();
-            socket.current!.send(JSON.stringify({
-                message: msg_body, token: localStorage.getItem("token"),
-                deleted_msg_id: msg_id
-            }));
-        });
-        contextMenu.appendChild(deleteItem);
-
 
         document.body.appendChild(contextMenu);
 
@@ -430,13 +450,13 @@ const ChatScreen = () => {
     };
 
     useEffect(() => {
-        console.log("!!!!!!!!!刷新");
-        if (!router.isReady || myID === undefined) {
+        if (!router.isReady) {
             return;
         }
         setChatID(query.id as string);
         setChatName(query.name as string);
         setIsGroup(query.group as string);
+        
         setSticked(query.sticked as string);
         setSilent(query.silent as string);
 
@@ -453,6 +473,7 @@ const ChatScreen = () => {
             messageCb: (event: MessageEvent) => {
                 let currentUserid = myID;
                 console.log("当前用户id: ", currentUserid);
+                console.log("isgroup: ", isGroup);
                 const messages = JSON.parse(event.data).messages;
                 // 消息列表
                 setMsgList(messages
@@ -460,7 +481,7 @@ const ChatScreen = () => {
                     .filter((val: any) => !val.delete_members?.some((user: any) => user === currentUserid))
                     .map((val: any) => ({ ...val }))
                 );
-
+                
                 const memberList = JSON.parse(event.data).members;
                 setmemberList(memberList
                     .map((val: any) => ({ ...val }))
@@ -469,8 +490,8 @@ const ChatScreen = () => {
                 fetch(
                     "/api/user/set_read_message/",
                     {
-                        method:"POST",
-                        credentials:"include",
+                        method: "POST",
+                        credentials: "include",
                         body: JSON.stringify({
                             token: localStorage.getItem("token"),
                             conversation: router.query.id,
@@ -480,7 +501,7 @@ const ChatScreen = () => {
                 )
                     .then((res) => res.json())
                     .then((data) => {
-                        if(data.code === 0) {
+                        if (data.code === 0) {
                             console.log("设置已读消息成功:", last_id);
                         }
                         else {
@@ -493,7 +514,7 @@ const ChatScreen = () => {
         };
         socket.current = new Socket(options);
         return cleanUp;
-    }, [router, query, myID]);
+    }, [router, query]);
 
     useEffect(() => {
         const msgs = document.getElementById("msgdisplay");
@@ -519,18 +540,33 @@ const ChatScreen = () => {
     }, []);
 
     useEffect(() => {
-        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined && sticked !== undefined) {
+        if (showPopupMention) {
+            const contextMenu = document.getElementsByClassName("msgContextMenu");
+            document.addEventListener("click", hideMsgContextMenu);
+        }
+
+        function hideMsgContextMenu() {
+            if (document.getElementById("msginput"))
+                insertAtCursor(document.getElementById("msginput"), "@");
+            setMsg(inputValue);
+            setShowPopupMention(false);
+            document.removeEventListener("click", hideMsgContextMenu);
+        }
+    }, [showPopupMention]);
+
+    useEffect(() => {
+        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
             console.log("聊天视窗刷新");
             setRefreshing(false);
         }
-        else{
+        else {
             setRefreshing(true);
         }
     }, [chatID, chatName, isGroup, myID, sticked]);
 
     return refreshing ? (
         <div></div>
-    ):(
+    ) : (
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
@@ -543,7 +579,7 @@ const ChatScreen = () => {
                         </div>
                         <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
                             onContextMenu={(event) => {
-                                msgContextMenu(event, myID!, msg.msg_id, msg.msg_body, msg.is_audio, msg.sender_id,msg.create_time);
+                                msgContextMenu(event, myID!, msg.msg_id, msg.msg_body, msg.is_audio, msg.sender_id, msg.create_time);
                             }}>
                             <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
                             {msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
@@ -597,17 +633,20 @@ const ChatScreen = () => {
                         };
                         if (event.key === "@") {
                             setShowPopupMention(true);
-                            //TODO:验证是否为群聊
-                            if (inputRef.current !== null) {
-                                const startPos = inputRef.current.selectionStart;
-                                const endPos = inputRef.current.selectionEnd;
-                                Promise.resolve().then(async () => {
-                                    await setCursorPosStart(startPos);
-                                    await setCursorPosEnd(endPos);
-                                    //insertAtCursor(inputRef.current, "@");
-                                    setMsg(inputValue);
-                                    handleMention(event);
-                                });
+                            //验证是否为群聊
+                            if(isGroup==="1")
+                            {
+                                if (inputRef.current !== null) {
+                                    const startPos = inputRef.current.selectionStart;
+                                    const endPos = inputRef.current.selectionEnd;
+                                    Promise.resolve().then(async () => {
+                                        await setCursorPosStart(startPos);
+                                        await setCursorPosEnd(endPos);
+                                        //insertAtCursor(inputRef.current, "@");
+                                        setMsg(inputValue);
+                                        handleMention(event);
+                                    });
+                                }
                             }
                         }
                         else {
@@ -616,29 +655,39 @@ const ChatScreen = () => {
                     }}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
-                {showPopupMention && (
+                {showPopupMention &&  (
                     <div className="msgContextMenu">
                         {/* TODO:遍历群内好友 */}
                         {memberList.map((member) => (
-                            <div key = {member.user_id} className="msg">
+                            <div key={member.user_id} className="msg">
                                 <li className="ContextMenuLi" onClick={() => {
                                     if (document.getElementById("msginput"))
                                         insertAtCursor(document.getElementById("msginput"), member.user_name);
                                     setMsg(inputValue);
                                     setShowPopupMention(false);
                                 }}>
-                                    <li>{member.user_name}</li>
+                                    {member.user_name}
                                 </li>
                                    
                             </div>
                         ))}
+                        <div className="msg">
+                            <li className="ContextMenuLi" onClick={() => {
+                                if (document.getElementById("msginput"))
+                                    insertAtCursor(document.getElementById("msginput"), "全体成员");
+                                setMsg(inputValue);
+                                setShowPopupMention(false);
+                            }}>
+                                <li>全体成员</li>
+                            </li>
+                        </div>
                         <div>
                             <li className="ContextMenuLi">
                                 准备@的好友
                             </li>    
                         </div>
                     </div>
-                    
+
                 )}
                 <div style={{ display: "flex", flexDirection: "row" }}>
                     <button className="sendbutton" onClick={() => { toggleEmojiPicker(); }}>
@@ -715,7 +764,7 @@ const ChatScreen = () => {
                     )}
                     {/* 发送语音功能 */}
                     <button className="sendbutton" onClick={() => { handleRecording(); }}>
-                        <FontAwesomeIcon className="Icon" id={recording ? "notrcd" : "rcd"} icon={faFileAudio} />
+                        <FontAwesomeIcon className="Icon" id={recording ? "notrcd" : "rcd"} icon={faMicrophone} />
                     </button>
                 </div>
                 <button

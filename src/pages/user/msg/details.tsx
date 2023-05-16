@@ -8,13 +8,15 @@ interface memberMetaData {
     name: string,
     avatar: string,
     is_admin: boolean,
-    is_owner: boolean
+    is_owner: boolean,
+    chosen: boolean
 }
 
 interface Friend {
     user_id: number;
     name: string;
     avatar: string;
+    chosen: boolean;
 }
 
 interface detailProps {
@@ -187,7 +189,8 @@ const DetailsPage = (props: detailProps) => {
                         const friends = data.friends.map((friend: Friend) => ({
                             user_id: friend.user_id,
                             name: friend.name,
-                            avatar: friend.avatar
+                            avatar: friend.avatar,
+                            chosen: false
                         }));
                         // TODO: 筛选
                         let newArray: Friend[] = [];
@@ -649,15 +652,10 @@ const DetailsPage = (props: detailProps) => {
             )}
             {/* 邀请 */}
             {showInvite && (
-                <div className="popup">
+                <div className="popup" style={{padding: "20px", height: "auto"}}>
                     <ul className="startgroupchoice">
                         {otherFriends?.map((item) => (
-                            <div className="startgroupchoicebox" key={item.user_id} style={{ display: "flex", flexDirection: "row" }}>
-                                <input
-                                    type="checkbox"
-                                    className="startgroupcheckbox"
-                                    onClick={() => { addOrRemoveGroupMember(item.user_id); }}
-                                />
+                            <div className="startgroupchoicebox" key={item.user_id} style={{backgroundColor: `${item.chosen ? "#0660e9" : "white"}`}} onClick={() => { item.chosen=!item.chosen; addOrRemoveGroupMember(item.user_id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -677,16 +675,11 @@ const DetailsPage = (props: detailProps) => {
             )}
             {/* 踢人 */}
             {(hasPermit && showRemove) && (
-                <div className="popup">
+                <div className="popup"  style={{padding: "20px", height: "auto"}}>
                     <ul className="startgroupchoice">
                         {/* 只有群主可以移除管理员 */}
                         {(props.myID === owner?.id.toString()) && admins?.map((item) => ((
-                            <div className="startgroupchoicebox" key={item.id} style={{ display: "flex", flexDirection: "row" }}>
-                                <input
-                                    type="checkbox"
-                                    className="startgroupcheckbox"
-                                    onClick={() => { addOrRemoveSuckers(item.id); }}
-                                />
+                            <div className="startgroupchoicebox" key={item.id} style={{backgroundColor: `${item.chosen ? "#0660e9" : "white"}`}} onClick={() => { item.chosen=!item.chosen; addOrRemoveSuckers(item.id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
