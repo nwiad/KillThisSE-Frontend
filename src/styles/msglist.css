@@ -439,3 +439,15 @@
     text-align: center;
     color: #535353;
 }
+
+.silentcount {
+    margin: auto;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    font-size: 16px;
+    font-weight: 1000;
+    text-align: center;
+    color: #535353;
+}

@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { ChatMetaData, GroupChatMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+
 
 const MsgBar = () => {
     const [stickedPrivate, setStickedPrivate] = useState<ChatMetaData[]>();
@@ -404,7 +407,9 @@ const MsgBar = () => {
                                 <div className="msgpv">{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
                             </div>
                             {chat.silent ? (
-                                <div className="count" id={`silent_chat${chat.id}`}></div>
+                                <div className="silentcount" id={`silent_chat${chat.id}`}>
+                                    <FontAwesomeIcon className="silenticon" icon={faBellSlash}/>
+                                </div>
                             ) : (
                                 <div className="count" id={`chat${chat.id}`}>0</div>
                             )}
