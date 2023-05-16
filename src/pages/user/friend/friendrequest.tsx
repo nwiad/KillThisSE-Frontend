@@ -11,16 +11,36 @@ interface FriendRequest {
 }
 
 const InitPage = () => {
-    const [requests, setRequests] = useState<FriendRequest[]>([]);
+    const [requests, setRequests] = useState<FriendRequest[]>();
+    const [myID, setMyID] = useState<number>();
+    const [refreshing, setRefreshing] = useState<boolean>(true);
     const socket = useRef<Socket>();
 
     const router = useRouter();
 
     const cleanUp = () => {
+        console.log("到底有没有卸载");
         socket.current?.destroy();
     };
 
     useEffect(() => {
+        fetch(
+            "/api/user/get_profile/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    setMyID(data.user_id);
+                }
+            })
+            .catch((err) => alert(err));
         fetch(
             "/api/user/get_friend_requests/",
             {
@@ -77,7 +97,7 @@ const InitPage = () => {
                                 console.log("成功发起会话");
                                 socket.current = new Socket(
                                     {
-                                        url: suffix + `${chatID}/`,
+                                        url: suffix + `${chatID}/${myID}`,
                                         heartTime: 5000, // 心跳时间间隔
                                         heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
                                         sayHi: true,
@@ -91,7 +111,7 @@ const InitPage = () => {
                                         errorCb: () => { } // 错误的回调
                                     }
                                 );
-                                router.push(`/user/msg/chat?id=${chatID}&name=${name}&group=0`);
+                                router.push(`/user/msg/chat?id=${chatID}&name=${name}&group=0&sticked=0`);
                             }
                             else {
                                 throw new Error(`${data.info}`);
@@ -135,11 +155,19 @@ const InitPage = () => {
         }
     };
 
-    return (
+    useEffect(() => {
+        if(requests !== undefined && myID !== undefined) {
+            setRefreshing(false);
+        }
+    }, [requests, myID]);
+
+    return refreshing ? (
+        <div>正在加载好友请求</div>
+    ) : (
         <div>
             <FriendBar />
             <ul className="requests">
-                {requests.map((request) => (
+                {requests!.map((request) => (
                     <li key = {request.user_id}  className="request">
                         <img src={`${request.avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
                         <p>{request.name}</p>

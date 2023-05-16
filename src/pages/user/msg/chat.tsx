@@ -1,11 +1,11 @@
 import Picker from "@emoji-mart/react";
-import { faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faFaceSmile, faFile, faFileAudio, faImage, faPaperPlane, faVideo, faMicrophone } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
 import { uploadFile } from "../../../utils/oss";
-import { MsgMetaData, Options } from "../../../utils/type";
+import { MemberMetaData, MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import { transform } from "../../../utils/youdao";
 import Navbar from "../navbar";
@@ -20,6 +20,7 @@ const ChatScreen = () => {
     const [inputValue, setInput] = useState<string>("");
     const [message, setMsg] = useState<string>("");
     const [msgList, setMsgList] = useState<MsgMetaData[]>([]);
+    const [memberList, setmemberList] = useState<MemberMetaData[]>([]);
     const [myID, setID] = useState<number>();
     const chatBoxRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
@@ -53,6 +54,8 @@ const ChatScreen = () => {
     const [showPopupMention, setShowPopupMention] = useState(false);
     const [popupMentionPosition, setPopupMentionPosition] = useState({ x: 0, y: 0 });
 
+    const [sticked, setSticked] = useState<string>();
+
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
         setShowEmojiPicker(showEmojiPicker => !showEmojiPicker);
@@ -64,13 +67,36 @@ const ChatScreen = () => {
         setShowEmojiPicker(false);
     };
 
-    const sendPublic = (isImg?: boolean, isFile?: boolean, isVideo?: boolean) => {
+    const  sendPublic = (isImg?: boolean, isFile?: boolean, isVideo?: boolean) =>  {
         if (message === "") {
             return;
         }
+
+        // 创建一个空数组来存储成员的名字
+        let names = [];
+        for (let member of memberList) {
+            // 将每个成员的名字添加到names数组
+            names.push(member.user_name);
+        }
+
+        // 表示该条消息提及了谁
+        let mentioned_members = [];
+        // message表示消息内容 从中提取是否有@name
+        // 如果有，提取出来，然后发送消息
+
+        // 遍历用户列表
+        for (let user in names) {
+            // 检查消息中是否包含用户名
+            if (message.includes(`@${user}`)) {
+                // 如果包含，将用户名添加到提及成员的数组中
+                mentioned_members.push(user);
+            }
+        }
+
         socket.current!.send(JSON.stringify({
             message: message, token: localStorage.getItem("token"),
-            isImg: false, isFile: false, isVideo: false
+            isImg: false, isFile: false, isVideo: false,
+            mentioned_members: mentioned_members
         }));
     };
 
@@ -192,6 +218,7 @@ const ChatScreen = () => {
                     console.error("Failed to create audio URL from blob.");
                 }
             });
+            // 关闭录音
         });
     };
 
@@ -235,10 +262,19 @@ const ChatScreen = () => {
         const input = inputBase as HTMLInputElement;
         const currentValue = input?.value;
         if (cursorPosStart !== null && cursorPosEnd !== null) {
-            setInput(currentValue.substring(0, cursorPosStart) + textToInsert + currentValue.substring(cursorPosEnd));
+            setInput(currentValue.substring(0, cursorPosStart) +  textToInsert + currentValue.substring(cursorPosEnd));
         }
     }
 
+    // This could be a button click event or something similar
+    // async function forwardMessages() {
+    //     // Here you would implement the forwarding of the messages
+    //     // This will depend on your application's specific API or mechanism for forwarding messages
+    //     // After forwarding, clear the selection
+    //     selectedMessages = [];
+    //     // And also remove the 'selected' class from the forwarded messages
+    //     document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+    // }
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string) => {
         event.preventDefault();
@@ -248,6 +284,9 @@ const ChatScreen = () => {
         contextMenu.style.left = `${event.clientX}px`;
         contextMenu.style.top = `${event.clientY}px`;
 
+        // user_id指当前登录的用户
+        // msg_owner指消息的发送者
+        // 语音消息不能转发
         if (!msg_is_audio) {
             if (user_id == msg_owner) {
                 const deleteItem = document.createElement("li");
@@ -323,6 +362,31 @@ const ChatScreen = () => {
             });
             contextMenu.appendChild(translateItem);
 
+            // 多选
+            const multiselectItem = document.createElement("li");
+            multiselectItem.className = "ContextMenuLi";
+            multiselectItem.innerHTML = "多选";
+            // 被选中的消息
+            let selectedMessages = [];
+            multiselectItem.addEventListener("click", async (event) => {
+                event.stopPropagation();
+                const target = document.getElementById(`msg${msg_id}`);
+                // 把id打包起来
+                // // Toggle the selected state of the message
+                // if (selectedMessages.includes(msg_id)) {
+                //     // Remove the message from the selection if it's already selected
+                //     selectedMessages = selectedMessages.filter(id => id !== msg_id);
+                //     target.classList.remove('selected');
+                // } else {
+                //     // Add the message to the selection if it's not selected
+                //     selectedMessages.push(msg_id);
+                //     target.classList.add('selected');
+                // }
+
+                // // For debugging
+                // console.log(selectedMessages);
+            });
+            contextMenu.appendChild(multiselectItem);
         }
         else // 语音消息只能转文字
         {
@@ -375,9 +439,10 @@ const ChatScreen = () => {
         setChatID(query.id as string);
         setChatName(query.name as string);
         setIsGroup(query.group as string);
+        setSticked(query.sticked as string);
 
         const options: Options = {
-            url: suffix + `${router.query.id}/`,
+            url: suffix + `${router.query.id}/${myID}/`,
             heartTime: 5000, // 心跳时间间隔
             heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
             isReconnect: true, // 是否自动重连
@@ -387,7 +452,38 @@ const ChatScreen = () => {
             openCb: () => { }, // 连接成功的回调
             closeCb: () => { }, // 关闭的回调
             messageCb: (event: MessageEvent) => {
-                setMsgList(JSON.parse(event.data).messages.map((val: any) => ({ ...val })));
+                let currentUserid = myID;
+                console.log("当前用户id: ", currentUserid);
+                const messages = JSON.parse(event.data).messages;
+                // 消息列表
+                setMsgList(messages
+                    // 如果这个人的id在删除列表里，就不显示消息
+                    .filter((val: any) => !val.delete_members?.some((user: any) => user === currentUserid))
+                    .map((val: any) => ({ ...val }))
+                );
+                const last_id = messages.length === 0 ? -1 : messages.at(-1).msg_id;
+                fetch(
+                    "/api/user/set_read_message/",
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify({
+                            token: localStorage.getItem("token"),
+                            conversation: router.query.id,
+                            msg_id: last_id
+                        })
+                    }
+                )
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data.code === 0) {
+                            console.log("设置已读消息成功:", last_id);
+                        }
+                        else {
+                            throw new Error(`${data.info}`);
+                        }
+                    })
+                    .catch((err) => alert(err));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -441,7 +537,7 @@ const ChatScreen = () => {
         else {
             setRefreshing(true);
         }
-    }, [chatID, chatName, isGroup, myID]);
+    }, [chatID, chatName, isGroup, myID, sticked]);
 
     return refreshing ? (
         <div></div>
@@ -449,7 +545,7 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} />
+            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} />
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} className="msg">
@@ -532,17 +628,24 @@ const ChatScreen = () => {
                 />
                 {showPopupMention && (
                     <div className="msgContextMenu">
-                        TODO:遍历群内好友
-                        <li className="ContextMenuLi" onClick={(event) => {
-                            event.preventDefault();
-                            if (document.getElementById("msginput"))
-                                insertAtCursor(document.getElementById("msginput"), "你说的对");
-                            setMsg(inputValue);
-                            setShowPopupMention(false);
-                        }}>
+                        {/* TODO:遍历群内好友 */}
+                        {memberList.map((member) => (
+                            <div key={member.user_id} className="msg">
+                                <li className="ContextMenuLi" onClick={() => {
+                                    if (document.getElementById("msginput"))
+                                        insertAtCursor(document.getElementById("msginput"), member.user_name);
+                                    setMsg(inputValue);
+                                    setShowPopupMention(false);
+                                }}>
+                                    {member.user_name}
+                                </li>
+                            </div>
+                        ))}
+                        <li className="ContextMenuLi">
                             准备@的好友
                         </li>
                     </div>
+
                 )}
                 <div style={{ display: "flex", flexDirection: "row" }}>
                     <button className="sendbutton" onClick={() => { toggleEmojiPicker(); }}>
@@ -619,7 +722,7 @@ const ChatScreen = () => {
                     )}
                     {/* 发送语音功能 */}
                     <button className="sendbutton" onClick={() => { handleRecording(); }}>
-                        <FontAwesomeIcon className="Icon" id={recording ? "notrcd" : "rcd"} icon={faFileAudio} />
+                        <FontAwesomeIcon className="Icon" id={recording ? "notrcd" : "rcd"} icon={faMicrophone} />
                     </button>
                 </div>
                 <button

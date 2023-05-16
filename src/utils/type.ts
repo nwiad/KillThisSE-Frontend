@@ -26,7 +26,8 @@ export interface ChatMetaData {  // 私聊列表显示的信息
     friend_avatar: string,
     lastMsg: string,
     time: string,
-    unreadMsg: number
+    unreadMsg: number,
+    sticked: boolean
 };
 
 export interface GroupChatMetaData {
@@ -35,7 +36,8 @@ export interface GroupChatMetaData {
     avatar: string,
     lastMsg: string,
     time: string,
-    unreadMsg: number
+    unreadMsg: number,
+    sticked: boolean
 }
 
 export interface MsgMetaData {
@@ -50,4 +52,10 @@ export interface MsgMetaData {
     is_video: boolean,
     is_audio: boolean,
     msg_to_withdraw: number
+};
+
+export interface MemberMetaData {
+    user_id: number,
+    user_name: string,
+    user_avatar: string,
 };
