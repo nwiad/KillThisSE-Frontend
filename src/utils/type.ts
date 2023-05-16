@@ -27,7 +27,8 @@ export interface ChatMetaData {  // 私聊列表显示的信息
     lastMsg: string,
     time: string,
     unreadMsg: number,
-    sticked: boolean
+    sticked: boolean,
+    silent: boolean
 };
 
 export interface GroupChatMetaData {
@@ -38,6 +39,7 @@ export interface GroupChatMetaData {
     time: string,
     unreadMsg: number,
     sticked: boolean
+    silent: boolean
 }
 
 export interface MsgMetaData {

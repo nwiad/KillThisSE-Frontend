@@ -110,7 +110,7 @@ const InitPage = () => {
                                         errorCb: () => { } // 错误的回调
                                     }
                                 );
-                                router.push(`/user/msg/chat?id=${chatID}&name=${name}&group=0&sticked=0`);
+                                router.push(`/user/msg/chat?id=${chatID}&name=${name}&group=0&sticked=0&silent=0`);
                             }
                             else {
                                 throw new Error(`${data.info}`);
@@ -168,7 +168,7 @@ const InitPage = () => {
             <ul className="requests">
                 {requests!.map((request) => (
                     <li key = {request.user_id}  className="request">
-                        <img src={`${request.avatar}`} alt={"https://github.com/LTNSXD/LTNSXD.github.io/blob/main/img/favicon.jpg?raw=true"} />
+                        <img src={`${request.avatar}`} alt={""} />
                         <p>{request.name}</p>
                         <button className="reject" onClick={() => { sendRespond(request.user_id,"reject"); }}> 拒绝 </button>
                         <button className="accept" onClick={() => { sendRespond(request.user_id,"accept"); }}> 同意 </button>

@@ -25,6 +25,7 @@ interface detailProps {
     myID: string,
     group: string,
     sticked: string
+    silent: string
 }
 
 const DetailsPage = (props: detailProps) => {
@@ -44,7 +45,7 @@ const DetailsPage = (props: detailProps) => {
     const [showPopUpMembers, setShowPopUpMembers] = useState<boolean>(false);
     const [showPopUpNoticeBoard, setShowPopUpNoticeBoard] = useState<boolean>(false);
     const [showPopUpNotice, setShowPopUpNotice] = useState<boolean>(false);
-    const [remind, setRemind] = useState<boolean>(false);
+    const [silent, setSilent] = useState<boolean>(props.silent === "1");
     const [top, setTop] = useState<boolean>(props.sticked === "1");
     const [newNotice, setNewNOtice] = useState<string>("");
 
@@ -385,7 +386,7 @@ const DetailsPage = (props: detailProps) => {
             .then((data) => {
                 if(data.code === 0) {
                     alert("成功创建群聊");
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -453,7 +454,7 @@ const DetailsPage = (props: detailProps) => {
                 if (data.code === 0) {
                     alert("已移除成员");
                     console.log("移除：", removed);
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -463,7 +464,6 @@ const DetailsPage = (props: detailProps) => {
 
     const makeOrUnmakeTop = (isTop: boolean) => {
         const sticky = isTop ? "False" : "True";
-        console.log("how say");
         fetch(
             "/api/user/set_sticky_conversation/",
             {
@@ -489,12 +489,39 @@ const DetailsPage = (props: detailProps) => {
             .catch((err) => alert(err));
     };
 
+    const makeOrUnmakeSilent = (isSilent: boolean) => {
+        const silent = isSilent ? "False" : "True";
+        fetch(
+            "/api/user/set_silent_conversation/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    conversation: props.chatID,
+                    silent: silent
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    console.log(isSilent ? "取消免打扰" : "设为免打扰");
+                    setSilent(!isSilent);
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert(err));
+    };
+
     useEffect(() => {
-        if(top === undefined) {
+        if(top === undefined && silent === undefined) {
             return;
         }
-        router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}`);
-    }, [top]);
+        router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
+    }, [top, silent]);
 
 
     return refreshing ? (
@@ -518,9 +545,9 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faKey} />
                         <p className="admininfo">二级密码</p>
                     </div>
-                    <div className="adminbutton" onClick={() => { setRemind(!remind); }}>
-                        <FontAwesomeIcon className="adminicon" icon={remind ? faBellSlash : faBell} />
-                        <p className="admininfo">{remind ? "免打扰" : "解除免打扰"}</p>
+                    <div className="adminbutton" onClick={() => { makeOrUnmakeSilent(silent); }}>
+                        <FontAwesomeIcon className="adminicon" icon={silent ? faBell : faBellSlash} />
+                        <p className="admininfo">{silent ? "解除免打扰" : "设为免打扰"}</p>
                     </div>
                     <div className="adminbutton" onClick={() => {makeOrUnmakeTop(top); }}>
                         <FontAwesomeIcon className="adminicon" icon={top ? faArrowDown : faArrowsUpToLine} />
@@ -670,9 +697,9 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faKey} />
                         <p className="admininfo">二级密码</p>
                     </div>
-                    <div className="adminbutton" onClick={() => { setRemind(!remind); }}>
-                        <FontAwesomeIcon className="adminicon" icon={remind ? faBellSlash : faBell} />
-                        <p className="admininfo">{remind ? "免打扰" : "解除免打扰"}</p>
+                    <div className="adminbutton" onClick={() => { makeOrUnmakeSilent(silent); }}>
+                        <FontAwesomeIcon className="adminicon" icon={silent ? faBell : faBellSlash} />
+                        <p className="admininfo">{silent ? "解除免打扰" : "设为免打扰"}</p>
                     </div>
                     <div className="adminbutton" onClick={() => {makeOrUnmakeTop(top); }}>
                         <FontAwesomeIcon className="adminicon" icon={top ? faArrowDown : faArrowsUpToLine} />
