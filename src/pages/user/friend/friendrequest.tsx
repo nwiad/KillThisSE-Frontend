@@ -97,7 +97,7 @@ const InitPage = () => {
                                 console.log("成功发起会话");
                                 socket.current = new Socket(
                                     {
-                                        url: suffix + `${chatID}/${myID}`,
+                                        url: suffix + `${chatID}/${myID}/`,
                                         heartTime: 5000, // 心跳时间间隔
                                         heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
                                         sayHi: true,
