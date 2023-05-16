@@ -520,6 +520,32 @@ const DetailsPage = (props: detailProps) => {
         router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
     }, [top, silent]);
 
+    const deleteFriend = () => {
+        fetch(
+            "/api/user/del_friend",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    friend_user_id: who
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0){
+                    alert("删除成功");
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
+
+                }
+                else {
+                    throw new Error(`从详情页删除好友: ${data.info}`);
+                }
+            })
+            .catch((err) => alert("从详情页删除好友: "+err));
+    };
+
 
     return refreshing ? (
         <div style={{ padding: 12 }}>
@@ -560,7 +586,7 @@ const DetailsPage = (props: detailProps) => {
                     </div>}
                     <div className="adminbutton">
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
-                        <p className="admininfo">退出</p>
+                        <p className="admininfo">{props.myID === owner?.id.toString() ? "解散群聊" : "退出"}</p>
                     </div>
                 </div>
 
@@ -716,7 +742,7 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
                         <p className="admininfo">邀请好友建立群聊</p>
                     </div>
-                    <div className="adminbutton">
+                    <div className="adminbutton" onClick={() => {deleteFriend();}}>
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
                         <p className="admininfo">删除好友</p>
                     </div>
