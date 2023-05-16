@@ -7,7 +7,6 @@ import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "reac
 import { uploadFile } from "../../../utils/oss";
 import { MemberMetaData, MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
-import { transform } from "../../../utils/youdao";
 import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
@@ -67,6 +66,7 @@ const ChatScreen = () => {
         setInput(inputValue + emoji.native);
         setShowEmojiPicker(false);
     };
+    // 实时更新输入框内容
     useEffect(() => {
         setMsg(inputValue);
     }, [inputValue]);
@@ -361,31 +361,6 @@ const ChatScreen = () => {
             });
             contextMenu.appendChild(translateItem);
 
-            // 多选
-            const multiselectItem = document.createElement("li");
-            multiselectItem.className = "ContextMenuLi";
-            multiselectItem.innerHTML = "多选";
-            // 被选中的消息
-            let selectedMessages = [];
-            multiselectItem.addEventListener("click", async (event) => {
-                event.stopPropagation();
-                const target = document.getElementById(`msg${msg_id}`);
-                // 把id打包起来
-                // // Toggle the selected state of the message
-                // if (selectedMessages.includes(msg_id)) {
-                //     // Remove the message from the selection if it's already selected
-                //     selectedMessages = selectedMessages.filter(id => id !== msg_id);
-                //     target.classList.remove('selected');
-                // } else {
-                //     // Add the message to the selection if it's not selected
-                //     selectedMessages.push(msg_id);
-                //     target.classList.add('selected');
-                // }
-
-                // // For debugging
-                // console.log(selectedMessages);
-            });
-            contextMenu.appendChild(multiselectItem);
         }
         else // 语音消息只能转文字
         {
@@ -407,9 +382,9 @@ const ChatScreen = () => {
                 }
                 const newElement = document.createElement("p");
                 newElement.className="transform";
-                newElement.innerHTML = await transform(msg_body);
+                // newElement.innerHTML = await transform(msg_body);
                 // newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
-                // newElement.innerHTML = "转文字结果";
+                newElement.innerHTML = "转文字结果";
                 target?.insertAdjacentElement("beforeend", newElement);
                 hideContextMenu();
                 console.log("转换结果：" + newElement.innerHTML);
@@ -432,6 +407,32 @@ const ChatScreen = () => {
             }));
         });
         contextMenu.appendChild(deleteItem);
+
+        // 多选按钮--为了合并转发消息
+        const multiselectItem = document.createElement("li");
+        multiselectItem.className = "ContextMenuLi";
+        multiselectItem.innerHTML = "多选";
+        // 被选中的消息
+        // let selectedMessages = [];
+        multiselectItem.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            const target = document.getElementById(`msg${msg_id}`);
+            // 把id打包起来
+            // // Toggle the selected state of the message
+            // if (selectedMessages.includes(msg_id)) {
+            //     // Remove the message from the selection if it's already selected
+            //     selectedMessages = selectedMessages.filter(id => id !== msg_id);
+            //     target.classList.remove('selected');
+            // } else {
+            //     // Add the message to the selection if it's not selected
+            //     selectedMessages.push(msg_id);
+            //     target.classList.add('selected');
+            // }
+
+            // // For debugging
+            // console.log(selectedMessages);
+        });
+        contextMenu.appendChild(multiselectItem);
 
 
         document.body.appendChild(contextMenu);
@@ -472,6 +473,7 @@ const ChatScreen = () => {
                 let currentUserid = myID;
                 console.log("当前用户id: ", currentUserid);
                 console.log("isgroup: ", isGroup);
+                // message是后端发过来的消息们
                 const messages = JSON.parse(event.data).messages;
                 // 消息列表
                 setMsgList(messages

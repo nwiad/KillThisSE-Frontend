@@ -42,6 +42,7 @@ export interface GroupChatMetaData {
     silent: boolean
 }
 
+// 前端收到的消息列表的形式
 export interface MsgMetaData {
     create_time: string,
     msg_id: number,
@@ -53,7 +54,8 @@ export interface MsgMetaData {
     is_file: boolean,
     is_video: boolean,
     is_audio: boolean,
-    msg_to_withdraw: number
+    msg_to_withdraw: number,
+    chosen: boolean // 点击完确认发送就变成false
 };
 
 export interface MemberMetaData {
