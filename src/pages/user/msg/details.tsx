@@ -36,7 +36,8 @@ interface detailProps {
     myID: string,
     group: string,
     sticked: string
-    silent: string
+    silent: string,
+    validation: string
 }
 
 const DetailsPage = (props: detailProps) => {
@@ -58,6 +59,7 @@ const DetailsPage = (props: detailProps) => {
     const [showPopUpNotice, setShowPopUpNotice] = useState<boolean>(false);
     const [silent, setSilent] = useState<boolean>(props.silent === "1");
     const [top, setTop] = useState<boolean>(props.sticked === "1");
+    const [validation, setValidation] = useState<boolean>(props.validation === "1");
     const [newNotice, setNewNOtice] = useState<string>("");
 
     const [otherFriends, setOtherFriends] = useState<Friend[]>();
@@ -91,6 +93,10 @@ const DetailsPage = (props: detailProps) => {
     const [whoseAvatar, setWhoseAvatar] = useState<string>();
     const [myAvatar, setMyAvatar] = useState<string>();
     const [myName, setMyname] = useState<string>();
+
+    const [showSecondValid, setShowSecondValid] = useState<boolean>(false);
+    const [showPwdInput, setShowPwdInput] = useState<boolean>(false);
+    const [pwd, setPwd] = useState<string>("");
 
     useEffect(() => {
         if (!router.isReady) {
@@ -419,7 +425,7 @@ const DetailsPage = (props: detailProps) => {
                 if (data.code === 0) {
                     alert(hasPermit ? "已拉取入群" : "已发送邀请");
                     console.log("邀请：", invitees);
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -445,7 +451,7 @@ const DetailsPage = (props: detailProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     alert("成功创建群聊");
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -513,7 +519,7 @@ const DetailsPage = (props: detailProps) => {
                 if (data.code === 0) {
                     alert("已移除成员");
                     console.log("移除：", removed);
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -548,6 +554,92 @@ const DetailsPage = (props: detailProps) => {
             .catch((err) => alert(err));
     };
 
+    const setOrUnsetValidation = (validated: boolean) => {
+        const valid = validated ? "False" : "True";
+        if(validated) {
+            setShowPwdInput(true);
+        }
+        else {
+            fetch(
+                "/api/user/set_validation/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        conversation: props.chatID,
+                        valid: "True"
+                    })
+                }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if(data.code === 0) {
+                        setValidation(true);
+                        setShowSecondValid(false);
+                        alert("成功设置二次验证");
+                    }
+                    else {
+                        throw new Error(`${data.info}`);
+                    }
+                })
+                .catch((err) => alert("设置二次验证: "+err));
+        }
+    };
+
+    const checkPwd = (password: string) => {
+        fetch(
+            "/api/user/secondary_validate/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    password: password
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    if(data.Valid) {
+                        console.log("二级密码正确");
+                        setValidation(false);
+                        fetch(
+                            "/api/user/set_validation/",
+                            {
+                                method: "POST",
+                                credentials: "include",
+                                body: JSON.stringify({
+                                    token: localStorage.getItem("token"),
+                                    conversation: props.chatID,
+                                    valid: "False"
+                                })
+                            }
+                        )
+                            .then((res) => res.json())
+                            .then((data) => {
+                                if(data.code === 0) {
+                                    setShowSecondValid(false);
+                                    alert("解除二次验证"); 
+                                }
+                                else {
+                                    throw new Error(`${data.info}`);
+                                }
+                            })
+                            .catch((err) => alert("解除二次验证: "+err));
+                    }
+                    else {
+                        alert("密码错误");
+                    }
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert("检查二级密码: "+err));
+    };
+
     const makeOrUnmakeSilent = (isSilent: boolean) => {
         const silent = isSilent ? "False" : "True";
         fetch(
@@ -576,11 +668,11 @@ const DetailsPage = (props: detailProps) => {
     };
 
     useEffect(() => {
-        if (top === undefined && silent === undefined) {
+        if(top === undefined && silent === undefined && validation !== undefined) {
             return;
         }
-        router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
-    }, [top, silent]);
+        router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
+    }, [top, silent, validation]);
 
     const deleteFriend = () => {
         fetch(
@@ -791,134 +883,6 @@ const DetailsPage = (props: detailProps) => {
         setRefreshingRecords(true);
     };
 
-    const filter = () => {
-        if(selectRef.current === null) {
-            return;
-        }
-        const filterBy = selectRef.current.value;
-        if(filterBy === "filter_all") {
-            fetch(
-                "/api/user/query_all_records/",
-                {
-                    method: "POST",
-                    credentials: "include",
-                    body: JSON.stringify({
-                        token: localStorage.getItem("token"),
-                        conversation: props.chatID
-                    })
-                }
-            )
-                .then((res) => res.json())
-                .then((data) => {
-                    if(data.code === 0) {
-                        console.log("获取全部聊天记录成功");
-                        // message是后端发过来的消息们
-                        // 消息列表
-                        console.log(data.messages);
-                        setRecords(data.messages
-                            // 如果这个人的id在删除列表里，就不显示消息
-                            .filter((val: any) => !val.delete_members?.some((user: any) => user === props.myID))
-                            .map((val: any) => ({ ...val }))
-                        );
-                    }
-                    else {
-                        throw new Error(`获取全部聊天记录失败: ${data.info}`);
-                    }
-                })
-                .catch(((err) => alert("获取全部聊天记录: "+err)));
-        }
-        else if(filterBy === "filter_by_sender") {
-            console.log("按发送者筛选: ",sender);
-            fetch(
-                "/api/user/query_by_sender/",
-                {
-                    method: "POST",
-                    credentials: "include",
-                    body: JSON.stringify({
-                        token: localStorage.getItem("token"),
-                        conversation: props.chatID,
-                        sender: sender
-                    })
-                }
-            )
-                .then((res) => res.json())
-                .then((data) => {
-                    if(data.code === 0) {
-                        console.log("根据发送者筛选成功: ",data.messages);
-                        setRecords(data.messages
-                            // 如果这个人的id在删除列表里，就不显示消息
-                            .filter((val: any) => !val.delete_members?.some((user: any) => user === props.myID))
-                            .map((val: any) => ({ ...val }))
-                        );
-                    }
-                    else {
-                        throw new Error(`根据发送者筛选失败: ${data.info}` );
-                    }
-                })
-                .catch((err) => alert("根据发送者筛选失败: "+err));
-        }
-        else if(filterBy === "filter_by_image" || filterBy === "filter_by_video" || filterBy === "filter_by_audio" || filterBy === "filter_by_file") {
-            const type = filterBy.slice(10);
-            console.log(type);
-            fetch(
-                "/api/user/query_by_type/",
-                {
-                    method: "POST",
-                    credentials: "include",
-                    body: JSON.stringify({
-                        token: localStorage.getItem("token"),
-                        conversation: props.chatID,
-                        type: type
-                    })
-                }
-            )
-                .then((res) => res.json())
-                .then((data) => {
-                    if(data.code === 0) {
-                        console.log(`根据类型${type}筛选成功`);
-                        setRecords(data.messages
-                            // 如果这个人的id在删除列表里，就不显示消息
-                            .filter((val: any) => !val.delete_members?.some((user: any) => user === props.myID))
-                            .map((val: any) => ({ ...val }))
-                        );
-                    }
-                    else {
-                        throw new Error(`根据类型${type}筛选失败: ${data.info}`);
-                    }
-                })
-                .catch((err) => alert(`根据类型${type}筛选失败: `+err));
-        }
-        else if(filterBy === "filter_by_content") {
-            fetch(
-                "/api/user/query_by_content/",
-                {
-                    method: "POST",
-                    credentials: "include",
-                    body: JSON.stringify({
-                        token: localStorage.getItem("token"),
-                        conversation: props.chatID,
-                        content: content
-                    })
-                }
-            )
-                .then((res) => res.json())
-                .then((data) => {
-                    if(data.code === 0) {
-                        console.log(`根据类型${content}筛选成功`);
-                        setRecords(data.messages
-                            // 如果这个人的id在删除列表里，就不显示消息
-                            .filter((val: any) => !val.delete_members?.some((user: any) => user === props.myID))
-                            .map((val: any) => ({ ...val }))
-                        );
-                    }
-                    else {
-                        throw new Error(`根据内容${content}筛选失败: ${data.info}`);
-                    }
-                })
-                .catch((err) => alert(`根据类型${content}筛选失败: `+err));
-        }
-    };
-
     const handleSelect = (value: string) => {
         if(value === "filter_by_sender") {  // 按发送者筛选
             setShowSenders(true);
@@ -1047,7 +1011,7 @@ const DetailsPage = (props: detailProps) => {
                         <p className="admininfo">群公告</p>
                     </div>
                     <div className="adminbutton">
-                        <FontAwesomeIcon className="adminicon" icon={faKey} />
+                        <FontAwesomeIcon className="adminicon" icon={faKey} onClick={() => {setShowSecondValid(true);}} />
                         <p className="admininfo">二级密码</p>
                     </div>
                     <div className="adminbutton" onClick={() => { makeOrUnmakeSilent(silent); }}>
@@ -1221,7 +1185,7 @@ const DetailsPage = (props: detailProps) => {
                             </div>
                         ))}
                     </ul>
-                    <button onClick={() => { setShowReq(false); router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`); }}>
+                    <button onClick={() => { setShowReq(false); router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`); }}>
                         返回
                     </button>
                 </div>
@@ -1299,9 +1263,6 @@ const DetailsPage = (props: detailProps) => {
                         <button onClick={() => { closeFilter(); }}>
                             返回
                         </button>
-                        {/* <button onClick={() => { filter(); }}>
-                            筛选
-                        </button> */}
                     </div>
                 ))}
             {showSenders && (
@@ -1343,6 +1304,30 @@ const DetailsPage = (props: detailProps) => {
                         取消
                     </button>
                     <button onClick={() => { setContent(newContent); setShowContentInput(false); setNewContent(""); }} disabled={newContent.length === 0}>
+                        完成
+                    </button>
+                </div>
+            )}
+            {showSecondValid && (
+                <div className="popup">
+                    <button onClick={() => { setOrUnsetValidation(validation); }}>
+                        {validation ? "解除二次验证" : "开启二次验证"}
+                    </button>
+                    {/* <button onClick={() => { submitNotice(); setNotice(newNotice); closeNoticeBoard(); }} disabled={newNotice.length === 0}>
+                        完成
+                    </button> */}
+                </div>
+            )}
+            {showPwdInput && (
+                <div className="popup">
+                    <input
+                        placeholder="输入本账号的登录密码"
+                        onChange={(e) => { setPwd(e.target.value); }}
+                    />
+                    <button onClick={() => { setShowPwdInput(false); setPwd(""); }}>
+                        取消
+                    </button>
+                    <button onClick={() => { checkPwd(pwd); setShowPwdInput(false); setPwd(""); }} disabled={pwd.length !== 6}>
                         完成
                     </button>
                 </div>
@@ -1480,9 +1465,6 @@ const DetailsPage = (props: detailProps) => {
                         <button onClick={() => { closeFilter(); }}>
                             返回
                         </button>
-                        {/* <button onClick={() => { filter(); }}>
-                            筛选
-                        </button> */}
                     </div>
                 ))}
             {showSenders && (

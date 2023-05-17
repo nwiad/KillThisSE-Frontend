@@ -59,7 +59,8 @@ const ChatScreen = () => {
 
     const [sticked, setSticked] = useState<string>();
     const [silent, setSilent] = useState<string>();
-    // 选中的待转发的消息列表
+    const [validation, setValidation] = useState<string>();
+
     const selected = useRef<number[]>([]);
 
     // 功能：切换emoji显示
@@ -530,6 +531,7 @@ const ChatScreen = () => {
 
         setSticked(query.sticked as string);
         setSilent(query.silent as string);
+        setValidation(query.validation as string);
 
         const options: Options = {
             url: suffix + `${router.query.id}/${myID}/`,
@@ -633,24 +635,34 @@ const ChatScreen = () => {
     }, [showPopupMention]);
 
     useEffect(() => {
-        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined && silent !== undefined) {
+        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined && sticked !== undefined && silent !== undefined && validation !== undefined) {
             console.log("聊天视窗刷新");
             setRefreshing(false);
         }
         else {
             setRefreshing(true);
         }
-    }, [chatID, chatName, isGroup, myID, sticked, silent]);
-
+    }, [chatID, chatName, isGroup, myID, sticked, silent, validation]);
 
     return refreshing ? (
-        <div></div>
+        <div style={{padding: 12}}>
+            正在加载会话窗口......
+        </div>
+    ) : (validation === "1" ? (
+        <div style={{ padding: 12 }}>
+            <Navbar />
+            <MsgBar />
+            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!}/>
+            <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
+                当前会话已加密
+            </div>
+        </div>
     ) : (
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} />
-            <div ref={chatBoxRef} id="msgdisplay" className="msgdpbox" style={{ display: "flex", flexDirection: "column" }}>
+            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!}/>
+            <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} id={`msgbg${msg.msg_id}`} className={"msg"}>
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
@@ -923,7 +935,7 @@ const ChatScreen = () => {
                 </div>
             )}
         </div>
-    );
+    ));
 };
 
 export default ChatScreen;
