@@ -273,6 +273,7 @@ const DetailsPage = (props: detailProps) => {
             console.log("聊天详情刷新");
             getOtherFriends();
             setHasPermit(checkPermission());
+            console.log("不是我的锅");
             // setRefreshing(false);
         }
         else if (props.group === "0") {

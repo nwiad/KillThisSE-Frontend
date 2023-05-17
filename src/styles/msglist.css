@@ -101,6 +101,17 @@
     background-position: center;
 }
 
+.multidisplay{
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    width: 55%;
+    max-height: 20%;
+    right: 22%;
+    bottom: 30%;
+    background-size: cover;
+    background-position: center;
+}
 .msginput {
     float: right;
     text-align:left;
