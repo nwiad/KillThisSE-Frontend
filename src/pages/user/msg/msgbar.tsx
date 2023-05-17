@@ -21,6 +21,7 @@ const MsgBar = () => {
     const [pwd, setPwd] = useState<string>("");
 
     const [chatInfo, setChatInfo] = useState<string[]>();
+    const [globalLength, setGlobalLength] = useState<number>();
 
     const router = useRouter();
     const query = router.query;
@@ -45,6 +46,7 @@ const MsgBar = () => {
             .then((data) => {
                 if (data.code === 0) {
                     setMyID(data.user_id);
+                    setGlobalLength(data.conversation_len);
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -116,10 +118,11 @@ const MsgBar = () => {
             console.log("列表不存在");
             return;
         }
-        if (myID === undefined) {
+        if (myID === undefined || globalLength === undefined) {
             return;
         }
-        setChatInfo(Array(chatList.length + groupChatList.length + stickedPrivate.length + stickedGroup.length).fill(""));
+        // setChatInfo(Array(chatList.length + groupChatList.length + stickedPrivate.length + stickedGroup.length).fill(""));
+        setChatInfo(Array(globalLength).fill(""));
         const options: Options = {
             url: "",
             heartTime: 5000, // 心跳时间间隔
@@ -146,15 +149,17 @@ const MsgBar = () => {
                         return [];
                     }
                     let newArray = [...array];
-                    const index = JSON.parse(event.data).messages.length;
-                    if (index === 0) {
-                        return [];
+                    const data = JSON.parse(event.data);
+                    const msg_len = data.len_of_msgs;
+                    const last_msg = JSON.parse(event.data).last_msg;
+                    if(msg_len === 0) {
+                        return;
                     }
-                    if (JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                    if(last_msg.is_transmit === true) {
                         newArray[chat.id] = "合并转发消息";
                     }
                     else {
-                        newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                        newArray[chat.id] = last_msg.msg_body;
                     }
                     return newArray;
                 });
@@ -195,15 +200,17 @@ const MsgBar = () => {
                         return [];
                     }
                     let newArray = [...array];
-                    const index = JSON.parse(event.data).messages.length;
-                    if (index === 0) {
-                        return [];
+                    const data = JSON.parse(event.data);
+                    const msg_len = data.len_of_msgs;
+                    const last_msg = JSON.parse(event.data).last_msg;
+                    if(msg_len === 0) {
+                        return;
                     }
-                    if (JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                    if(last_msg.is_transmit === true) {
                         newArray[chat.id] = "合并转发消息";
                     }
                     else {
-                        newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                        newArray[chat.id] = last_msg.msg_body;
                     }
                     return newArray;
                 });
@@ -244,15 +251,17 @@ const MsgBar = () => {
                         return [];
                     }
                     let newArray = [...array];
-                    const index = JSON.parse(event.data).messages.length;
-                    if (index === 0) {
-                        return [];
+                    const data = JSON.parse(event.data);
+                    const msg_len = data.len_of_msgs;
+                    const last_msg = JSON.parse(event.data).last_msg;
+                    if(msg_len === 0) {
+                        return;
                     }
-                    if (JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                    if(last_msg.is_transmit === true) {
                         newArray[chat.id] = "合并转发消息";
                     }
                     else {
-                        newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                        newArray[chat.id] = last_msg.msg_body;
                     }
                     return newArray;
                 });
@@ -295,15 +304,17 @@ const MsgBar = () => {
                         return [];
                     }
                     let newArray = [...array];
-                    const index = JSON.parse(event.data).messages.length;
-                    if (index === 0) {
-                        return [];
+                    const data = JSON.parse(event.data);
+                    const msg_len = data.len_of_msgs;
+                    const last_msg = JSON.parse(event.data).last_msg;
+                    if(msg_len === 0) {
+                        return;
                     }
-                    if (JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                    if(last_msg.is_transmit === true) {
                         newArray[chat.id] = "合并转发消息";
                     }
                     else {
-                        newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                        newArray[chat.id] = last_msg.msg_body;
                     }
                     return newArray;
                 });
@@ -335,7 +346,7 @@ const MsgBar = () => {
         });
 
         return cleanUp;
-    }, [chatList, groupChatList, stickedPrivate, stickedGroup, myID]);
+    }, [chatList, groupChatList, stickedPrivate, stickedGroup, myID, globalLength]);
 
     const fetchList = async () => {
         setRefreshing(true);
