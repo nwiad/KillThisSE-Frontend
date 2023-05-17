@@ -76,7 +76,7 @@ const MsgBar = () => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    router.push(`/user/msg/chat?id=${currentChat?.id}&name=${currentChat?.friend_name}&group=0&sticked=${currentChat?.sticked ? 1 : 0}&silent=${currentChat?.silent ? 1 : 0}&validation=${0}`);
+                    router.push(`/user/msg/chat?id=${currentChat?.id}&name=${currentChat?.friend_name}&group=0&sticked=${currentChat?.sticked ? 1 : 0}&silent=${currentChat?.silent ? 1 : 0}&validation=${currentChat?.validation ? 1 : 0}`);
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -100,7 +100,7 @@ const MsgBar = () => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    router.push(`/user/msg/chat?id=${currentGroupChat?.id}&name=${currentGroupChat?.name}&group=1&sticked=${currentGroupChat?.sticked ? 1 : 0}&silent=${currentGroupChat?.silent ? 1 : 0}&validation=${0}`);
+                    router.push(`/user/msg/chat?id=${currentGroupChat?.id}&name=${currentGroupChat?.name}&group=1&sticked=${currentGroupChat?.sticked ? 1 : 0}&silent=${currentGroupChat?.silent ? 1 : 0}&validation=${currentGroupChat?.validation ? 1 : 0}`);
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -452,7 +452,7 @@ const MsgBar = () => {
                         (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#434343" }}
                             onClick={() => {
                                 if (!chat.validation)
-                                    router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${0}`);
+                                    router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${chat.validation ? 1 : 0}`);
                                 else {
                                     setShowPopupValidFriend(true);
                                     setCurrentChat(chat);
@@ -476,7 +476,7 @@ const MsgBar = () => {
                         (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#434343" }}
                             onClick={() => {
                                 if (!chat.validation)
-                                    router.push(`/user/msg/chat?id=${chat?.id}&name=${chat?.name}&group=1&sticked=${chat?.sticked ? 1 : 0}&silent=${chat?.silent ? 1 : 0}&validation=${0}`);
+                                    router.push(`/user/msg/chat?id=${chat?.id}&name=${chat?.name}&group=1&sticked=${chat?.sticked ? 1 : 0}&silent=${chat?.silent ? 1 : 0}&validation=${chat?.validation ? 1 : 0}`);
                                 else {
                                     setShowPopupValidGroup(true);
                                     setCurrentGroupChat(chat);
@@ -500,7 +500,7 @@ const MsgBar = () => {
                         (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row" }}
                             onClick={() => {
                                 if (!chat.validation)
-                                    router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${0}`);
+                                    router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${chat.validation ? 1 : 0}`);
                                 else {
                                     setShowPopupValidFriend(true);
                                     setCurrentChat(chat);
@@ -524,7 +524,7 @@ const MsgBar = () => {
                         (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row" }}
                             onClick={() => {
                                 if (!chat.validation)
-                                    router.push(`/user/msg/chat?id=${chat?.id}&name=${chat?.name}&group=1&sticked=${chat?.sticked ? 1 : 0}&silent=${chat?.silent ? 1 : 0}&validation=${0}`);
+                                    router.push(`/user/msg/chat?id=${chat?.id}&name=${chat?.name}&group=1&sticked=${chat?.sticked ? 1 : 0}&silent=${chat?.silent ? 1 : 0}&validation=${chat?.validation ? 1 : 0}`);
                                 else {
                                     setShowPopupValidGroup(true);
                                     setCurrentGroupChat(chat);

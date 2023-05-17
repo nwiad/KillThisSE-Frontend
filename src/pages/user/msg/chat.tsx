@@ -723,16 +723,7 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             正在加载会话窗口......
         </div>
-    ) : (validation === "1" ? (
-        <div style={{ padding: 12 }}>
-            <Navbar />
-            <MsgBar />
-            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!} />
-            <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
-                当前会话已加密
-            </div>
-        </div>
-    ) : (
+    ) : ((
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />

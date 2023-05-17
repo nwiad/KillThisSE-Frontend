@@ -1,4 +1,4 @@
-import { faLock, faClockRotateLeft, faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserCheck, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faLock, faClockRotateLeft, faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserCheck, faUserGroup, faUserMinus, faUserPlus, faXmark, faL } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -35,7 +35,7 @@ interface detailProps {
     chatName: string,
     myID: string,
     group: string,
-    sticked: string
+    sticked: string,
     silent: string,
     validation: string
 }
@@ -57,9 +57,9 @@ const DetailsPage = (props: detailProps) => {
     const [showPopUpMembers, setShowPopUpMembers] = useState<boolean>(false);
     const [showPopUpNoticeBoard, setShowPopUpNoticeBoard] = useState<boolean>(false);
     const [showPopUpNotice, setShowPopUpNotice] = useState<boolean>(false);
-    const [silent, setSilent] = useState<boolean>(props.silent === "1");
-    const [top, setTop] = useState<boolean>(props.sticked === "1");
-    const [validation, setValidation] = useState<boolean>(props.validation === "1");
+    const [silent, setSilent] = useState<string>();
+    const [top, setTop] = useState<string>();
+    const [validation, setValidation] = useState<string>();
     const [newNotice, setNewNOtice] = useState<string>("");
 
     const [otherFriends, setOtherFriends] = useState<Friend[]>();
@@ -110,6 +110,10 @@ const DetailsPage = (props: detailProps) => {
         // setChatName(query.name as string);
         // setIsGroup(query.group as string);
         // setID(query.myID as string);
+        setSilent(query.silent as string);
+        setTop(query.sticked as string);
+        setValidation(query.validation as string);
+        //alert(props.silent);
         console.log(router.query.id);
     }, [router, query]);
 
@@ -428,7 +432,7 @@ const DetailsPage = (props: detailProps) => {
                 if (data.code === 0) {
                     alert(hasPermit ? "已拉取入群" : "已发送邀请");
                     console.log("邀请：", invitees);
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top==="1" ? 1 : 0}&silent=${silent==="1" ? 1 : 0}&validation=${validation==="1" ? 1 : 0}`);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -454,7 +458,7 @@ const DetailsPage = (props: detailProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     alert("成功创建群聊");
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top==="1" ? 1 : 0}&silent=${silent==="1" ? 1 : 0}&validation=${validation==="1" ? 1 : 0}`);
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -522,7 +526,7 @@ const DetailsPage = (props: detailProps) => {
                 if (data.code === 0) {
                     alert("已移除成员");
                     console.log("移除：", removed);
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top==="1" ? 1 : 0}&silent=${silent==="1" ? 1 : 0}&validation=${validation==="1" ? 1 : 0}`);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -548,7 +552,7 @@ const DetailsPage = (props: detailProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     console.log(isTop ? "取消置顶" : "设为置顶");
-                    setTop(!isTop);
+                    setTop(isTop ? "0" : "1");
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -578,7 +582,7 @@ const DetailsPage = (props: detailProps) => {
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.code === 0) {
-                        setValidation(true);
+                        setValidation("1");
                         setShowSecondValid(false);
                         alert("成功设置二次验证");
                     }
@@ -607,7 +611,7 @@ const DetailsPage = (props: detailProps) => {
                 if (data.code === 0) {
                     if (data.Valid) {
                         console.log("二级密码正确");
-                        setValidation(false);
+                        setValidation("0");
                         fetch(
                             "/api/user/set_validation/",
                             {
@@ -661,7 +665,7 @@ const DetailsPage = (props: detailProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     console.log(isSilent ? "取消免打扰" : "设为免打扰");
-                    setSilent(!isSilent);
+                    setSilent(isSilent ? "0" : "1");
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -674,7 +678,7 @@ const DetailsPage = (props: detailProps) => {
         if (top === undefined && silent === undefined && validation !== undefined) {
             return;
         }
-        router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
+        router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation==="1" ? 1 : 0}`);
     }, [top, silent, validation]);
 
     const deleteFriend = () => {
@@ -1073,16 +1077,16 @@ const DetailsPage = (props: detailProps) => {
                         <p className="admininfo">筛选消息</p>
                     </div>
                     <div className="adminbutton">
-                        <FontAwesomeIcon className="adminicon" icon={showSecondValid ? faKey : faLock} onClick={() => { setShowSecondValid(true); setOrUnsetValidation(validation); }} />
-                        <p className="admininfo">二级密码</p>
+                        <FontAwesomeIcon className="adminicon" icon={validation === "1" ? faKey : faLock} onClick={() => { setValidation(validation==="1"?"0" : "1"); setOrUnsetValidation(validation === "1" ? true : false); }} />
+                        <p className="admininfo">{validation === "1" ? "解除二级验证" : "设置二级验证"}</p>
                     </div>
-                    <div className="adminbutton" onClick={() => { makeOrUnmakeSilent(silent); }}>
-                        <FontAwesomeIcon className="adminicon" icon={silent ? faBell : faBellSlash} />
-                        <p className="admininfo">{silent ? "解除免打扰" : "设为免打扰"}</p>
+                    <div className="adminbutton" onClick={() => { makeOrUnmakeSilent(silent === "1" ? true : false); }}>
+                        <FontAwesomeIcon className="adminicon" icon={silent === "1" ? faBell : faBellSlash} />
+                        <p className="admininfo">{silent === "1" ? "解除免打扰" : "设为免打扰"}</p>
                     </div>
-                    <div className="adminbutton" onClick={() => { makeOrUnmakeTop(top); }}>
-                        <FontAwesomeIcon className="adminicon" icon={top ? faArrowDown : faArrowsUpToLine} />
-                        <p className="admininfo">{top ? "取消置顶" : "置顶"}</p>
+                    <div className="adminbutton" onClick={() => { makeOrUnmakeTop(top === "1" ? true : false); }}>
+                        <FontAwesomeIcon className="adminicon" icon={top === "1" ? faArrowDown : faArrowsUpToLine} />
+                        <p className="admininfo">{top === "1" ? "取消置顶" : "置顶"}</p>
                     </div>
                     <div className="adminbutton" onClick={() => { setShowInvite(true); }}>
                         <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
@@ -1235,7 +1239,7 @@ const DetailsPage = (props: detailProps) => {
                             </div>
                         ))}
                     </ul>
-                    <button onClick={() => { setShowReq(false); router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`); }}>
+                    <button onClick={() => { setShowReq(false); router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation==="1" ? 1 : 0}`); }}>
                         返回
                     </button>
                 </div>
@@ -1453,16 +1457,16 @@ const DetailsPage = (props: detailProps) => {
                 <p className="chatname"> {props.chatName}</p>
                 <div className="groupadminbuttons">
                     <div className="adminbutton">
-                        <FontAwesomeIcon className="adminicon" icon={faKey} />
-                        <p className="admininfo">二级密码</p>
+                        <FontAwesomeIcon className="adminicon" icon={validation === "1" ? faKey : faLock} onClick={() => { setValidation(validation === "1" ? "0" : "1"); setOrUnsetValidation(validation === "1" ? true : false); }} />
+                        <p className="admininfo">{validation === "1" ? "解除二级验证" : "设置二级验证"}</p>
                     </div>
-                    <div className="adminbutton" onClick={() => { makeOrUnmakeSilent(silent); }}>
-                        <FontAwesomeIcon className="adminicon" icon={silent ? faBell : faBellSlash} />
-                        <p className="admininfo">{silent ? "解除免打扰" : "设为免打扰"}</p>
+                    <div className="adminbutton" onClick={() => { makeOrUnmakeSilent(silent === "1" ? true : false); }}>
+                        <FontAwesomeIcon className="adminicon" icon={silent === "1" ? faBell : faBellSlash} />
+                        <p className="admininfo">{silent === "1" ? "解除免打扰" : "设为免打扰"}</p>
                     </div>
-                    <div className="adminbutton" onClick={() => { makeOrUnmakeTop(top); }}>
-                        <FontAwesomeIcon className="adminicon" icon={top ? faArrowDown : faArrowsUpToLine} />
-                        <p className="admininfo">{top ? "取消置顶" : "置顶"}</p>
+                    <div className="adminbutton" onClick={() => { makeOrUnmakeTop(top === "1" ? true : false); }}>
+                        <FontAwesomeIcon className="adminicon" icon={top === "1" ? faArrowDown : faArrowsUpToLine} />
+                        <p className="admininfo">{top === "1" ? "取消置顶" : "置顶"}</p>
                     </div>
                     <div className="adminbutton" onClick={() => { setShowInvite(true); }}>
                         <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
