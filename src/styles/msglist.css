@@ -112,6 +112,11 @@
     background-size: cover;
     background-position: center;
 }
+
+.multidisplay select option[disabled]:checked {
+    display: none;
+}
+
 .msginput {
     float: right;
     text-align:left;

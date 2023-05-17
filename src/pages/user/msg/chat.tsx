@@ -58,7 +58,7 @@ const ChatScreen = () => {
 
     const [sticked, setSticked] = useState<string>();
     const [silent, setSilent] = useState<string>();
-
+    // 选中的待转发的消息列表
     const selected = useRef<number[]>([]);
 
     // 功能：切换emoji显示
@@ -490,7 +490,7 @@ const ChatScreen = () => {
             // 弹出字幕 正在进行多选
             setMultiselecting(true);
 
-            // 遍历消息的id 
+            // 遍历消息的id 添加监听事件
             for (let msg of msgList) {
                 const id = msg.msg_id;
                 const target = document.getElementById(`msg${id}`);
@@ -499,11 +499,10 @@ const ChatScreen = () => {
                 {   
                     target.addEventListener("click",() => addOrRemoveSelected(id, target));
                 }
-            }
-            // 点击转发按钮才会触发  合并转发消息       
+            } 
         });
         contextMenu.appendChild(multiselectItem);
-
+        // todo 移除黄色+ 发送过去？？
 
         document.body.appendChild(contextMenu);
 
@@ -554,7 +553,7 @@ const ChatScreen = () => {
                 setmemberList(memberList
                     .map((val: any) => ({ ...val }))
                 );
-
+                // 是这里没有调用还是后端发过来的东西没变？
                 const convList = JSON.parse(event.data).conversations;
                 setconvList(convList
                     .map((val: any) => ({ ...val }))
@@ -639,6 +638,7 @@ const ChatScreen = () => {
         }
     }, [chatID, chatName, isGroup, myID, sticked]);
 
+
     return refreshing ? (
         <div></div>
     ) : (
@@ -657,22 +657,25 @@ const ChatScreen = () => {
                                 msgContextMenu(event, myID!, msg.msg_id, msg.msg_body, msg.is_audio, msg.sender_id, msg.create_time);
                             }}>
                             <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
-                            {msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
-                                (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
-                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
-                                        style={{ width: "100%", height: "auto" }} />
-                                </a> :
-                                    (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                            {msg.is_transmit === true ? <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}>
+                                这是一个多选消息 转发的消息id是{msg.msg_body}
+                            </p>:
+                                (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
+                                    (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
+                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
                                             style={{ width: "100%", height: "auto" }} />
                                     </a> :
-                                        (msg.is_audio === true ? <a>
-                                            {<audio src={msg.msg_body} controls />}
+                                        (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
+                                            <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                                                style={{ width: "100%", height: "auto" }} />
                                         </a> :
-                                            <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
-                                                dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
-                                            ></p>)))
-                            }
+                                            (msg.is_audio === true ? <a>
+                                                {<audio src={msg.msg_body} controls />}
+                                            </a> :
+                                                <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                                    dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
+                                                ></p>)))
+                                )}
                             <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
                         </div>
                     </div>
@@ -696,6 +699,9 @@ const ChatScreen = () => {
                 <div >
                     <div className="multidisplay">
                         <select id="conversation-select" ref={selectRef}>
+                            <option value="" disabled selected>
+                            请选择转发的目标
+                            </option>
                             {convList.map((conv) => (
                                 <option key={conv.id} value={conv.id}>
                                     {conv.name} {conv.is_group === true ? "(群)" : "(私聊)"}

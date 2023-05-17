@@ -66,14 +66,14 @@ export class Socket extends Heart {
             if(this.OPTIONS.sayHi === true) {
                 this.send(JSON.stringify({
                     message: "我通过了你的好友申请，我们开始聊天吧！", token: localStorage.getItem("token"),
-                    isImg: false, isFile: false, isVideo: false
+                    is_image: false, is_file: false, is_video: false
                 }));
             }
             else if(this.OPTIONS.forward === true && this.OPTIONS.forwardMsg !== undefined) {
                 console.log("我转发了: "+this.OPTIONS.forwardMsg);
                 this.send(JSON.stringify({
                     message: this.OPTIONS.forwardMsg, token: localStorage.getItem("token"),
-                    isImg: false, isFile: false, isVideo: false, forward: true
+                    is_image: false, is_file: false, is_video: false, forward: true
                 }));
             }
             clearTimeout(this.RECONNECT_TIMER); // 清除重连定时器

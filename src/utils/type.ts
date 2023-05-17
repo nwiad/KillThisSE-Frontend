@@ -60,6 +60,7 @@ export interface MsgMetaData {
     is_audio: boolean,
     msg_to_withdraw: number,
     chosen?: boolean // 点击完确认发送就变成false ?指定为可选属性
+    is_transmit: boolean,
 };
 
 export interface MemberMetaData {
