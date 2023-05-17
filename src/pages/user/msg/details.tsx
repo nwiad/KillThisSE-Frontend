@@ -1526,7 +1526,7 @@ const DetailsPage = (props: detailProps) => {
             {/* 二次验证窗口 */}
             {showSecondValid && (
                 <div className="popup">
-                    <button onClick={() => { setOrUnsetValidation(validation); }}>
+                    <button onClick={() => { setOrUnsetValidation(validation==="1" ? true : false); }}>
                         {validation ? "解除二次验证" : "开启二次验证"}
                     </button>
                     {/* <button onClick={() => { submitNotice(); setNotice(newNotice); closeNoticeBoard(); }} disabled={newNotice.length === 0}>
