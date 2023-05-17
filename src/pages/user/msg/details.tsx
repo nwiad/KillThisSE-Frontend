@@ -1708,12 +1708,7 @@ const DetailsPage = (props: detailProps) => {
                     <ul className="startgroupchoice">
                         <input onChange={(e) => setGroupName(e.target.value)} placeholder="群聊名称" />
                         {myFriends?.map((item) => (
-                            <div className="startgroupchoicebox" key={item.user_id} style={{ display: "flex", flexDirection: "row" }}>
-                                <input
-                                    type="checkbox"
-                                    className="startgroupcheckbox"
-                                    onClick={() => { addOrRemoveGroupMember(item.user_id); }}
-                                />
+                            <div className="startgroupchoicebox" key={item.user_id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveGroupMember(item.user_id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
