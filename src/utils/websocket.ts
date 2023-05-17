@@ -69,6 +69,13 @@ export class Socket extends Heart {
                     isImg: false, isFile: false, isVideo: false
                 }));
             }
+            else if(this.OPTIONS.forward === true && this.OPTIONS.forwardMsg !== undefined) {
+                console.log("我转发了: "+this.OPTIONS.forwardMsg);
+                this.send(JSON.stringify({
+                    message: this.OPTIONS.forwardMsg, token: localStorage.getItem("token"),
+                    isImg: false, isFile: false, isVideo: false, forward: true
+                }));
+            }
             clearTimeout(this.RECONNECT_TIMER); // 清除重连定时器
             this.OPTIONS.reconnectCount = this.RECONNECT_COUNT; // 计数器重置
             // 建立心跳机制
@@ -95,7 +102,11 @@ export class Socket extends Heart {
         }
         this.ws!.onclose = (event) => {
             console.log("WebSocket 已关闭" + " " + event.code + " " + event.reason + " " + event.wasClean);
+            if(this.OPTIONS.forward === true || this.OPTIONS.sayHi === true) {
+                return;
+            }
             super.reset();
+
             !this.OPTIONS.isDestroy && this.onreconnect();
             if (typeof callback === "function") {
                 callback(event);
