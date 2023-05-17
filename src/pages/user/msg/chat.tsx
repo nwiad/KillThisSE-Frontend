@@ -80,7 +80,7 @@ const ChatScreen = () => {
     // 正在回复的某条消息
     const [ReplyingMsg, setReplyingMsg] = useState<MsgMetaData>();
     // 是否正在有消息被提及
-    const [replying,setreplying] = useState<boolean>(false);
+    const [replying, setreplying] = useState<boolean>(false);
 
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
@@ -103,14 +103,13 @@ const ChatScreen = () => {
         // 是否有回复 只有文字信息才可能有回复某消息
         // 私聊直接发
         if (isGroup === "false") {
-            if(replying)
-            {
+            if (replying) {
                 socket.current!.send(JSON.stringify({
                     message: inputValue, token: localStorage.getItem("token"),
                     isImg: false, isFile: false, isVideo: false, quote_with: ReplyingMsg?.msg_id
                 }));
             }
-            else{
+            else {
                 socket.current!.send(JSON.stringify({
                     message: inputValue, token: localStorage.getItem("token"),
                     isImg: false, isFile: false, isVideo: false
@@ -141,14 +140,14 @@ const ChatScreen = () => {
                         }
                     }
             }
-            if(replying) {                
+            if (replying) {
                 socket.current!.send(JSON.stringify({
                     message: inputValue, token: localStorage.getItem("token"),
                     isImg: false, isFile: false, isVideo: false,
                     mentioned_members: mentioned_members, quote_with: ReplyingMsg?.msg_id
                 }));
             }
-            else{
+            else {
 
                 socket.current!.send(JSON.stringify({
                     message: inputValue, token: localStorage.getItem("token"),
@@ -324,11 +323,10 @@ const ChatScreen = () => {
     function insertAtCursor(inputBase: HTMLElement | null, textToInsert: string) {
         const input = inputBase as HTMLInputElement;
         const currentValue = input?.value;
-        if (cursorPosStart !== null && cursorPosEnd !== null) {
-            setInput(currentValue.substring(0, cursorPosStart) + textToInsert + currentValue.substring(cursorPosEnd));
-            // setMsg(currentValue.substring(0, cursorPosStart) + "@"+ textToInsert + currentValue.substring(cursorPosEnd));
-        }
-
+        const startPos = input?.selectionStart;
+        const endPos = input?.selectionEnd;
+        if (startPos !== null && endPos !== null)
+            setInput(currentValue.substring(0, startPos) + "@" + textToInsert + currentValue.substring(endPos));
     }
 
     const addOrRemoveSelected = (id: number, target: HTMLElement) => {
@@ -742,17 +740,13 @@ const ChatScreen = () => {
     }, []);
 
     useEffect(() => {
-        if (showPopupMention) {
-            const contextMenu = document.getElementsByClassName("msgContextMenu");
-            document.addEventListener("click", hideMsgContextMenu);
-        }
+
 
         function hideMsgContextMenu() {
             if (document.getElementById("msginput"))
                 insertAtCursor(document.getElementById("msginput"), "@");
             setMsg(inputValue);
             setShowPopupMention(false);
-            document.removeEventListener("click", hideMsgContextMenu);
         }
     }, [showPopupMention]);
 
@@ -783,8 +777,8 @@ const ChatScreen = () => {
                         </div>
                         {msg.quote_with !== -1 && (
                             <div>
-                            在回复的消息id：{msg.quote_with}&nbsp;
-                            内容：{findRepliedMessageContent(msg.quote_with)}
+                                在回复的消息id：{msg.quote_with}&nbsp;
+                                内容：{findRepliedMessageContent(msg.quote_with)}
                             </div>
                         )}
                         <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
@@ -998,13 +992,8 @@ const ChatScreen = () => {
                                 if (inputRef.current !== null) {
                                     const startPos = inputRef.current.selectionStart;
                                     const endPos = inputRef.current.selectionEnd;
-                                    Promise.resolve().then(async () => {
-                                        await setCursorPosStart(startPos);
-                                        await setCursorPosEnd(endPos);
-                                        //insertAtCursor(inputRef.current, "@");
-                                        setMsg(inputValue);
-                                        handleMention(event);
-                                    });
+                                    setMsg(inputValue);
+                                    handleMention(event);
                                 }
                             }
                         }
@@ -1018,7 +1007,7 @@ const ChatScreen = () => {
                     <div className="msgContextMenu">
                         {/* TODO:遍历群内好友 */}
                         {memberList.map((member) => (
-                            <div key={member.user_id} className="msg">
+                            <div key={member.user_id}>
                                 <li className="ContextMenuLi" onClick={() => {
                                     if (document.getElementById("msginput"))
                                         insertAtCursor(document.getElementById("msginput"), member.user_name);
@@ -1030,7 +1019,7 @@ const ChatScreen = () => {
 
                             </div>
                         ))}
-                        <div className="msg">
+                        <div>
                             <li className="ContextMenuLi" onClick={() => {
                                 if (document.getElementById("msginput"))
                                     insertAtCursor(document.getElementById("msginput"), "全体成员");
@@ -1041,8 +1030,12 @@ const ChatScreen = () => {
                             </li>
                         </div>
                         <div>
-                            <li className="ContextMenuLi">
-                                准备@的好友
+                            <li className="ContextMenuLi" onClick={() => {
+                                if (document.getElementById("msginput"))
+                                    insertAtCursor(document.getElementById("msginput"), "");
+                                setMsg(inputValue);
+                                setShowPopupMention(false);}}>
+                                取消
                             </li>
                         </div>
                     </div>
