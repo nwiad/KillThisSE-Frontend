@@ -599,14 +599,14 @@ const ChatScreen = () => {
     }, [showPopupMention]);
 
     useEffect(() => {
-        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
+        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined && silent !== undefined) {
             console.log("聊天视窗刷新");
             setRefreshing(false);
         }
         else {
             setRefreshing(true);
         }
-    }, [chatID, chatName, isGroup, myID, sticked]);
+    }, [chatID, chatName, isGroup, myID, sticked, silent]);
 
     return refreshing ? (
         <div></div>

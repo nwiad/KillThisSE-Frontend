@@ -1,4 +1,4 @@
-import { faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faUserCheck,  faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -190,14 +190,14 @@ const DetailsPage = (props: detailProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
-                        setRequests(data.invitations.map((invitation: any) => ({...invitation})));
+                    if (data.code === 0) {
+                        setRequests(data.invitations.map((invitation: any) => ({ ...invitation })));
                     }
                     else {
                         throw new Error(`拉取入群邀请: ${data.info}`);
                     }
                 })
-                .catch((err) => alert("拉取入群邀请: "+err));
+                .catch((err) => alert("拉取入群邀请: " + err));
         }
         // }
         // else if (props.group === "0") {
@@ -229,7 +229,7 @@ const DetailsPage = (props: detailProps) => {
                         // TODO: 筛选
                         let newArray: Friend[] = [];
                         friends.forEach((friend: Friend) => {
-                            if(!alreadyInGroup(friend.user_id)) {
+                            if (!alreadyInGroup(friend.user_id)) {
                                 newArray.push(friend);
                             }
                         });
@@ -240,19 +240,19 @@ const DetailsPage = (props: detailProps) => {
                 })
                 .catch((err) => alert(err));
         };
-    
+
         // 筛选不在群里的好友
         const alreadyInGroup = (friend_id: number): boolean => {
             if (owner?.id === friend_id) {
                 return true;
             }
-            for(let admin of admins!) {
-                if(admin.id === friend_id) {
+            for (let admin of admins!) {
+                if (admin.id === friend_id) {
                     return true;
                 }
             }
-            for(let memeber of members!) {
-                if(memeber.id === friend_id) {
+            for (let memeber of members!) {
+                if (memeber.id === friend_id) {
                     return true;
                 }
             }
@@ -289,8 +289,8 @@ const DetailsPage = (props: detailProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
-                        console.log("对方是："+data.friend.user_id);
+                    if (data.code === 0) {
+                        console.log("对方是：" + data.friend.user_id);
                         setWho(data.friend.user_id);
                         fetch(
                             "/api/user/get_friends/",
@@ -312,7 +312,7 @@ const DetailsPage = (props: detailProps) => {
                                     }));
                                     const friendsButOppo: Friend[] = [];
                                     friends.forEach((friend: Friend) => {
-                                        if(friend.user_id !== data.friend.user_id) {
+                                        if (friend.user_id !== data.friend.user_id) {
                                             friendsButOppo.push(friend);
                                         }
                                     });
@@ -323,7 +323,7 @@ const DetailsPage = (props: detailProps) => {
                             })
                             .catch((err) => alert(err));
                     }
-                    else{ 
+                    else {
                         throw new Error(`聊天获取对方id: ${data.info}`);
                     }
                 })
@@ -333,13 +333,13 @@ const DetailsPage = (props: detailProps) => {
     }, [owner, admins, members, props]);
 
     useEffect(() => {
-        if(props.group === "1") {
-            if(otherFriends !== undefined && requests !== undefined) {
+        if (props.group === "1") {
+            if (otherFriends !== undefined && requests !== undefined) {
                 setRefreshing(false);
             }
         }
-        else if(props.group === "0") {
-            if(myFriends !== undefined && who !== undefined) {
+        else if (props.group === "0") {
+            if (myFriends !== undefined && who !== undefined) {
                 setRefreshing(false);
             }
         }
@@ -404,7 +404,7 @@ const DetailsPage = (props: detailProps) => {
     };
 
     const startGroup = () => {
-        console.log("拉取建群的人: ",invitees);
+        console.log("拉取建群的人: ", invitees);
         fetch(
             "/api/user/create_group_conversation/",
             {
@@ -419,7 +419,7 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     alert("成功创建群聊");
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
                 }
@@ -451,7 +451,7 @@ const DetailsPage = (props: detailProps) => {
         else {
             setInvitees((memeberList) => [...memeberList, id]);
         }
-        if(props.group === "0") {
+        if (props.group === "0") {
             setInvitees((memberList) => [...memberList, who!]);
         }
     };
@@ -513,7 +513,7 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     console.log(isTop ? "取消置顶" : "设为置顶");
                     setTop(!isTop);
                 }
@@ -540,7 +540,7 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     console.log(isSilent ? "取消免打扰" : "设为免打扰");
                     setSilent(!isSilent);
                 }
@@ -552,7 +552,7 @@ const DetailsPage = (props: detailProps) => {
     };
 
     useEffect(() => {
-        if(top === undefined && silent === undefined) {
+        if (top === undefined && silent === undefined) {
             return;
         }
         router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}`);
@@ -572,7 +572,7 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0){
+                if (data.code === 0) {
                     alert("删除成功");
                     router.push("/user");
                 }
@@ -580,11 +580,11 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`从详情页删除好友: ${data.info}`);
                 }
             })
-            .catch((err) => alert("从详情页删除好友: "+err));
+            .catch((err) => alert("从详情页删除好友: " + err));
     };
 
     const dismissOrQuit = () => {
-        if(props.myID === owner?.id.toString()) {  // 群主解散群聊
+        if (props.myID === owner?.id.toString()) {  // 群主解散群聊
             fetch(
                 "/api/user/dismiss_group_conversation/",
                 {
@@ -598,7 +598,7 @@ const DetailsPage = (props: detailProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
+                    if (data.code === 0) {
                         alert("解散成功");
                         router.push("/user");
                     }
@@ -606,7 +606,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`解散群聊: ${data.info}`);
                     }
                 })
-                .catch((err) => alert("解散群聊: "+err));
+                .catch((err) => alert("解散群聊: " + err));
         }
         else {  // 非群主退出群聊
             fetch(
@@ -622,7 +622,7 @@ const DetailsPage = (props: detailProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
+                    if (data.code === 0) {
                         alert("已退出群聊");
                         router.push("/user");
                     }
@@ -630,7 +630,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`退出群聊${data.info}`);
                     }
                 })
-                .catch((err) => alert("退出群聊"+err));
+                .catch((err) => alert("退出群聊" + err));
         }
     };
 
@@ -648,19 +648,19 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
-                    setRequests(data.invitations.map((invitation: any) => ({...invitation})));
+                if (data.code === 0) {
+                    setRequests(data.invitations.map((invitation: any) => ({ ...invitation })));
                 }
                 else {
                     throw new Error(`拉取入群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => alert("拉取入群邀请: "+err));
+            .catch((err) => alert("拉取入群邀请: " + err));
     };
 
     const consent = (invitation_id: number) => {
         fetch(
-            "/api/user/respond_group_invitation/", 
+            "/api/user/respond_group_invitation/",
             {
                 method: "POST",
                 credentials: "include",
@@ -674,7 +674,7 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     console.log("同意进群邀请");
                     flushRequests();
                 }
@@ -682,12 +682,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`同意进群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => alert("同意进群邀请"+err));
+            .catch((err) => alert("同意进群邀请" + err));
     };
 
     const reject = (invitation_id: number) => {
         fetch(
-            "/api/user/respond_group_invitation/", 
+            "/api/user/respond_group_invitation/",
             {
                 method: "POST",
                 credentials: "include",
@@ -701,7 +701,7 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     console.log("拒绝进群邀请");
                     flushRequests();
                 }
@@ -709,7 +709,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`拒绝进群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => alert("拒绝进群邀请"+err));
+            .catch((err) => alert("拒绝进群邀请" + err));
     };
 
 
@@ -738,7 +738,7 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={silent ? faBell : faBellSlash} />
                         <p className="admininfo">{silent ? "解除免打扰" : "设为免打扰"}</p>
                     </div>
-                    <div className="adminbutton" onClick={() => {makeOrUnmakeTop(top); }}>
+                    <div className="adminbutton" onClick={() => { makeOrUnmakeTop(top); }}>
                         <FontAwesomeIcon className="adminicon" icon={top ? faArrowDown : faArrowsUpToLine} />
                         <p className="admininfo">{top ? "取消置顶" : "置顶"}</p>
                     </div>
@@ -746,18 +746,19 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
                         <p className="admininfo">邀请</p>
                     </div>
-                    { hasPermit &&  <div className="adminbutton" onClick={() => { setShowRemove(true); } }>
+                    {hasPermit && <div className="adminbutton" onClick={() => { setShowRemove(true); }}>
                         <FontAwesomeIcon className="adminicon" icon={faUserMinus} />
                         <p className="admininfo">移除成员</p>
                     </div>}
-                    <div className="adminbutton" onClick={() => {dismissOrQuit();}}>
+                    {hasPermit && <div className="adminbutton" onClick={() => { setShowReq(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faUserCheck} />
+                        <p className="admininfo">入群请求</p>
+                    </div>}
+                    <div className="adminbutton" onClick={() => { dismissOrQuit(); }}>
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
                         <p className="admininfo">{props.myID === owner?.id.toString() ? "解散群聊" : "退出"}</p>
                     </div>
-                    {hasPermit && <div className="adminbutton" onClick={() => { setShowReq(true); }}>
-                        <FontAwesomeIcon className="quiticon" icon={faUserPlus} />
-                        <p className="admininfo">入群请求</p>
-                    </div>}
+
                 </div>
 
             </div>
@@ -819,10 +820,10 @@ const DetailsPage = (props: detailProps) => {
             )}
             {/* 邀请 */}
             {showInvite && (
-                <div className="popup" style={{padding: "20px", height: "auto"}}>
+                <div className="popup" style={{ padding: "20px", height: "auto" }}>
                     <ul className="startgroupchoice">
                         {otherFriends?.map((item) => (
-                            <div className="startgroupchoicebox" key={item.user_id} style={{backgroundColor: `${item.chosen ? "#0660e9" : "white"}`}} onClick={() => { item.chosen=!item.chosen; addOrRemoveGroupMember(item.user_id); }}>
+                            <div className="startgroupchoicebox" key={item.user_id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveGroupMember(item.user_id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -835,18 +836,18 @@ const DetailsPage = (props: detailProps) => {
                     <button onClick={() => { closeInvite(); }}>
                         取消
                     </button>
-                    <button onClick={() => { invite(); closeInvite(); }} disabled={invitees.length === 0 }>
+                    <button onClick={() => { invite(); closeInvite(); }} disabled={invitees.length === 0}>
                         完成
                     </button>
                 </div>
             )}
             {/* 踢人 */}
             {(hasPermit && showRemove) && (
-                <div className="popup"  style={{padding: "20px", height: "auto"}}>
+                <div className="popup" style={{ padding: "20px", height: "auto" }}>
                     <ul className="startgroupchoice">
                         {/* 只有群主可以移除管理员 */}
                         {(props.myID === owner?.id.toString()) && admins?.map((item) => ((
-                            <div className="startgroupchoicebox" key={item.id} style={{backgroundColor: `${item.chosen ? "#0660e9" : "white"}`}} onClick={() => { item.chosen=!item.chosen; addOrRemoveSuckers(item.id); }}>
+                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveSuckers(item.id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -875,25 +876,25 @@ const DetailsPage = (props: detailProps) => {
                     <button onClick={() => { closeRemove(); }}>
                         取消
                     </button>
-                    <button onClick={() => { remove(); closeRemove(); }} disabled={removed.length === 0 }>
+                    <button onClick={() => { remove(); closeRemove(); }} disabled={removed.length === 0}>
                         完成
                     </button>
                 </div>
             )}
             {/* 处理入群请求 */}
-            { (hasPermit && showReq) && (
-                <div className="popup" style={{padding: "20px", height: "auto"}}>
+            {(hasPermit && showReq) && (
+                <div className="popup" style={{ padding: "20px", height: "auto", width: "auto" }}>
                     <ul className="startgroupchoice">
                         {requests?.map((item) => (
-                            <div className="startgroupchoicebox" key={item.invitation_id} style={{backgroundColor: "white"}}>
+                            <div className="startgroupchoicebox" key={item.invitation_id} style={{ backgroundColor: "white", border: "0" }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
                                     <img className="sender_avatar" src={`${item.invitee_avatar}`} alt="oops" />
                                     <p style={{ color: "black" }}>{item.invitee_name}</p>
                                 </li>
-                                <button onClick={() => {consent(item.invitation_id);}}>同意</button>
-                                <button onClick={() => {reject(item.invitation_id);}}>拒绝</button>
+                                <button className="accept" onClick={() => { consent(item.invitation_id); }} style={{fontSize:"15px", border:"0", margin: "auto 10px"}}>同意</button>
+                                <button className="reject" onClick={() => { reject(item.invitation_id); }} style={{fontSize:"15px", border:"0", margin: "auto 10px"}}>拒绝</button>
                             </div>
                         ))}
                     </ul>
@@ -916,7 +917,7 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={silent ? faBell : faBellSlash} />
                         <p className="admininfo">{silent ? "解除免打扰" : "设为免打扰"}</p>
                     </div>
-                    <div className="adminbutton" onClick={() => {makeOrUnmakeTop(top); }}>
+                    <div className="adminbutton" onClick={() => { makeOrUnmakeTop(top); }}>
                         <FontAwesomeIcon className="adminicon" icon={top ? faArrowDown : faArrowsUpToLine} />
                         <p className="admininfo">{top ? "取消置顶" : "置顶"}</p>
                     </div>
@@ -924,7 +925,7 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
                         <p className="admininfo">邀请好友建立群聊</p>
                     </div>
-                    <div className="adminbutton" onClick={() => {deleteFriend();}}>
+                    <div className="adminbutton" onClick={() => { deleteFriend(); }}>
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
                         <p className="admininfo">删除好友</p>
                     </div>
