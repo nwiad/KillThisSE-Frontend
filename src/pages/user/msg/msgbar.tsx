@@ -1,10 +1,10 @@
+import { faBellSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { ChatMetaData, GroupChatMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 
 const MsgBar = () => {
@@ -97,7 +97,12 @@ const MsgBar = () => {
                     if (index === 0) {
                         return [];
                     }
-                    newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                    if(JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                        newArray[chat.id] = "合并转发消息";
+                    }
+                    else{
+                        newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                    }
                     return newArray;
                 });
                 fetch(
@@ -141,7 +146,12 @@ const MsgBar = () => {
                     if (index === 0) {
                         return [];
                     }
-                    newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                    if(JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                        newArray[chat.id] = "合并转发消息";
+                    }
+                    else{
+                        newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                    }
                     return newArray;
                 });
                 fetch(
@@ -185,7 +195,12 @@ const MsgBar = () => {
                     if (index === 0) {
                         return [];
                     }
-                    newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                    if(JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                        newArray[chat.id] = "合并转发消息";
+                    }
+                    else{
+                        newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                    }
                     return newArray;
                 });
                 fetch(
@@ -231,7 +246,12 @@ const MsgBar = () => {
                     if (index === 0) {
                         return [];
                     }
-                    newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                    if(JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                        newArray[chat.id] = "合并转发消息";
+                    }
+                    else{
+                        newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
+                    }
                     return newArray;
                 });
                 fetch(

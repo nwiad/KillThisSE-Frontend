@@ -1,4 +1,4 @@
-import { faUserCheck,  faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserCheck, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -299,7 +299,6 @@ const DetailsPage = (props: detailProps) => {
             console.log("聊天详情刷新");
             getOtherFriends();
             setHasPermit(checkPermission());
-            console.log("不是我的锅");
             // setRefreshing(false);
         }
         else if (props.group === "0") {
@@ -1214,22 +1213,33 @@ const DetailsPage = (props: detailProps) => {
                                     </div>
                                     <div id={`msg${msg.msg_id}`} className={msg.sender_id.toString() !== props.myID ? "msgmain" : "mymsgmain"}>
                                         <p className={msg.sender_id.toString() !== props.myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
-                                        {msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
-                                            (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
-                                                <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
-                                                    style={{ width: "100%", height: "auto" }} />
-                                            </a> :
-                                                (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                                        {msg.is_transmit === true ? (
+                                            <p
+                                                className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                                onClick={() => {
+                                                    openFilter(msg.msg_body);
+                                                    setDisplayForwardMsgs(true);
+                                                }}
+                                            >
+                                                点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
+                                            </p>
+                                        ):                        
+                                            (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
+                                                (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
+                                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
                                                         style={{ width: "100%", height: "auto" }} />
                                                 </a> :
-                                                    (msg.is_audio === true ? <a>
-                                                        {<audio src={msg.msg_body} controls />}
+                                                    (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
+                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                                                            style={{ width: "100%", height: "auto" }} />
                                                     </a> :
-                                                        <p className={msg.sender_id.toString() !== props.myID ? "msgbody" : "mymsgbody"}
-                                                            dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
-                                                        ></p>)))
-                                        }
+                                                        (msg.is_audio === true ? <a>
+                                                            {<audio src={msg.msg_body} controls />}
+                                                        </a> :
+                                                            <p className={msg.sender_id.toString() !== props.myID ? "msgbody" : "mymsgbody"}
+                                                                dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
+                                                            ></p>)))
+                                            )}
                                         <p className={msg.sender_id.toString() !== props.myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
                                     </div>
                                 </div>
