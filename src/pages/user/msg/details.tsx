@@ -102,6 +102,12 @@ const DetailsPage = (props: detailProps) => {
     const [displayForwardMsgs, setDisplayForwardMsgs] = useState<boolean>(false); //展示转发来的多条信息
     const [refreshingFwdRecords, setRefreshingFwdRecords] = useState<boolean>(true);
 
+    const [showTransfer, setShowTransfer] = useState<boolean>(false);
+    const [newOwner, setNewOwner] = useState<number>();
+
+    const [showAssign, setShowAssign] = useState<boolean>(false);
+    const [assignees, setAssignees] = useState<number[]>([]);
+
     useEffect(() => {
         if (!router.isReady) {
             return;
@@ -504,6 +510,51 @@ const DetailsPage = (props: detailProps) => {
         else {
             setRemoved((memeberList) => [...memeberList, id]);
         }
+    };
+
+    const addOrRemoveAssignee = (id: number) => {
+        console.log("新增管理员", assignees);
+        const index = assignees.indexOf(id);
+        if (index !== -1) {
+            let newArray = [...assignees];
+            newArray.splice(index, 1);
+            setAssignees(newArray);
+        }
+        else {
+            setAssignees((memeberList) => [...memeberList, id]);
+        }
+    };
+
+    const assign = () => {
+        console.log("assignees", assignees);
+        fetch(
+            "/api/user/add_administrators/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    group: props.chatID,
+                    admins: assignees
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    alert("增设管理员成功");
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert("增设管理员"+err));
+    };
+
+    const closeAssign = () => {
+        setShowAssign(false);
+        setAssignees([]);
     };
 
     const remove = () => {
@@ -1041,6 +1092,7 @@ const DetailsPage = (props: detailProps) => {
                 .then((data) => {
                     if (data.code === 0) {
                         console.log(`根据类型${content}筛选成功`);
+                        setContent(undefined);
                         setRecords(data.messages
                             // 如果这个人的id在删除列表里，就不显示消息
                             .filter((val: any) => !val.delete_members?.some((user: any) => user === props.myID))
@@ -1054,6 +1106,35 @@ const DetailsPage = (props: detailProps) => {
                 .catch((err) => alert(`根据类型${content}筛选失败: ` + err));
         }
     }, [content, props]);
+
+    useEffect(() => {
+        if(newOwner !== undefined) {
+            fetch(
+                "/api/user/transfer_owner/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        group: props.chatID,
+                        owner: newOwner
+                    })
+                }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if(data.code === 0) {
+                        alert("转让群主成功");
+                        setNewOwner(undefined);
+                        router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
+                    }
+                    else {
+                        throw new Error(`${data.info}`);
+                    }
+                })
+                .catch((err) => alert("转让群主失败: "+err));
+        }
+    }, [newOwner, props]);
 
     return refreshing ? (
         <div style={{ padding: 12 }}>
@@ -1104,7 +1185,14 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
                         <p className="admininfo">{props.myID === owner?.id.toString() ? "解散群聊" : "退出群聊"}</p>
                     </div>
-
+                    { props.myID === owner?.id.toString() && <div className="adminbutton" onClick={() => { setShowTransfer(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
+                        <p className="admininfo">转让群主</p>
+                    </div>}
+                    { props.myID === owner?.id.toString() && <div className="adminbutton" onClick={() => { setShowAssign(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
+                        <p className="admininfo">增设管理员</p>
+                    </div>}
                 </div>
 
             </div>
@@ -1394,7 +1482,6 @@ const DetailsPage = (props: detailProps) => {
 
             {showSenders && (
                 <p className="members">
-                    {/* <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowSenders(false); }} /> */}
                     <div className="membersort">
                         <div key={0} className="member" onClick={() => { setSender(owner?.id); setShowSenders(false); }}>
                             <img className="sender_avatar" style={{ borderColor: "#0660e9" }} src={`${owner?.avatar}`} alt="oops" />
@@ -1421,6 +1508,7 @@ const DetailsPage = (props: detailProps) => {
                     </div>
                 </p>
             )}
+            {/* 选择要筛选的文字内容 */}
             {showContentInput && (
                 <div className="popup">
                     <input
@@ -1435,7 +1523,18 @@ const DetailsPage = (props: detailProps) => {
                     </button>
                 </div>
             )}
-
+            {/* 二次验证窗口 */}
+            {showSecondValid && (
+                <div className="popup">
+                    <button onClick={() => { setOrUnsetValidation(validation); }}>
+                        {validation ? "解除二次验证" : "开启二次验证"}
+                    </button>
+                    {/* <button onClick={() => { submitNotice(); setNotice(newNotice); closeNoticeBoard(); }} disabled={newNotice.length === 0}>
+                        完成
+                    </button> */}
+                </div>
+            )}
+            {/* 输入二级密码 */}
             {showPwdInput && (
                 <div className="popup">
                     <input
@@ -1446,6 +1545,52 @@ const DetailsPage = (props: detailProps) => {
                         取消
                     </button>
                     <button onClick={() => { checkPwd(pwd); setShowPwdInput(false); setPwd(""); }} disabled={pwd.length !== 6}>
+                        完成
+                    </button>
+                </div>
+            )}
+            {/* 转让群主 */}
+            {( showTransfer && props.myID === owner?.id.toString()) && (
+                <p className="members">
+                    <div className="membersort">
+                        {admins?.map((admin) => (
+                            <div key={admin.id} className="member" onClick={() => { setNewOwner(admin.id); setShowTransfer(false); }}>
+                                <img className="sender_avatar" src={`${admin?.avatar}`} alt="oops" />
+                                <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{admin?.name}</p>
+                                <p className="admin">管理员</p>
+                            </div>
+                        ))}
+                        {members?.map((member) => (
+                            <div key={member.id} className="member" onClick={() => { setNewOwner(member.id); setShowTransfer(false); }}>
+                                <img className="sender_avatar" src={`${member?.avatar}`} alt="oops" />
+                                <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{member?.name}</p>
+                            </div>
+                        ))}
+                        <button onClick={() => { setShowTransfer(false); }}>
+                            取消
+                        </button>
+                    </div>
+                </p>
+            )}
+            {/* 增设管理员 */}
+            {showAssign && (
+                <div className="popup" style={{ padding: "20px", height: "auto" }}>
+                    <ul className="startgroupchoice">
+                        {members?.map((item) => (
+                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveAssignee(item.id); }}>
+                                <li
+                                    className="navbar_ele_info"
+                                    style={{ display: "flex", width: "100%" }}>
+                                    <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
+                                    <p style={{ color: "black" }}>{item.name}</p>
+                                </li>
+                            </div>
+                        ))}
+                    </ul>
+                    <button onClick={() => { closeAssign(); }}>
+                        取消
+                    </button>
+                    <button onClick={() => { assign(); closeAssign(); }} disabled={assignees.length === 0}>
                         完成
                     </button>
                 </div>

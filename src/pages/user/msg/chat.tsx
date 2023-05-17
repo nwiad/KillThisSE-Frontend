@@ -542,7 +542,6 @@ const ChatScreen = () => {
     };
 
     const openFilter = (idlist: string) => {
-        // string转为number list
         setDisplayForwardMsgs(true);
         setRefreshingRecords(true);
 
