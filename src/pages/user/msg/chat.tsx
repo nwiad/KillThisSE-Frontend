@@ -1,5 +1,5 @@
 import Picker from "@emoji-mart/react";
-import { faFaceSmile, faFile, faImage, faMicrophone, faPaperPlane, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faFaceSmile, faFile, faImage, faMicrophone, faPaperPlane, faVideo, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -42,6 +42,7 @@ const ChatScreen = () => {
     // audio
     const [recording, setRecording] = useState(false);
     const [multiselecting, setMultiselecting] = useState(false);
+    const [multiselected, setMultiselected] = useState(false);
     const [audioURL, setAudioURL] = useState("");
 
     // const [mediaRecorder,setmediaRecorder]= useRef<MediaRecorder>(new MediaRecorder(new MediaStream()));
@@ -86,7 +87,7 @@ const ChatScreen = () => {
                 isImg: false, isFile: false, isVideo: false
             }));
         }
-        else{
+        else {
             // 群聊可能有@name
             // 表示该条消息提及了谁
             let mentioned_members = [];
@@ -94,15 +95,15 @@ const ChatScreen = () => {
             // 如果有，提取出来，然后发送消息
             const all = "全体成员";
             // 有@ 才检查是否有名字
-            if(message.includes("@")) {
+            if (message.includes("@")) {
                 console.log("有@");
                 if (message.includes(`@${all}`)) {
                     // 如果包含全体成员，将所有用户名添加到提及成员的数组中
                     mentioned_members.push(memberList.map(member => member.user_name));
-    
+
                 }
                 else //不是全体成员
-                    for (let member of memberList){
+                    for (let member of memberList) {
                         // 检查消息中是否包含用户名
                         if (message.includes(`@${member.user_name}`)) {
                             // 如果包含，将用户名添加到提及成员的数组中
@@ -292,23 +293,25 @@ const ChatScreen = () => {
         const index = selected.current.indexOf(id);
         console.log("index", index);
         console.log("id", id);
-        if(index !== -1) {
+        if (index !== -1) {
             const newArray = [...selected.current];
             newArray.splice(index, 1);
             console.log("index  newArray", newArray);
             selected.current = newArray;
             console.log("selected", selected.current);
-            target.className = "msg";
-            console.log("----nowselected+"+selected.current);
+            const bgtarget = document.getElementById(`msgbg${id}`);
+            if (bgtarget) bgtarget.className = "msg";
+            console.log("----nowselected+" + selected.current);
 
         }
         else {
-            const newArray = [...selected.current, id];                            
+            const newArray = [...selected.current, id];
             console.log("else  newArray", newArray);//newArray正常
             selected.current = newArray;
             console.log("selected", selected.current);// 这里的selected没有变
-            target.className = "msgchosen";
-            console.log("+++++nowselected+"+selected.current);
+            const bgtarget = document.getElementById(`msgbg${id}`);
+            if (bgtarget) bgtarget.className = "msgchosen";
+            console.log("+++++nowselected+" + selected.current);
         }
     };
 
@@ -317,7 +320,7 @@ const ChatScreen = () => {
         let selectedConversationId = selectRef.current!.value;
         console.log("选中的会话id");
         console.log(selectedConversationId);
-        if(selected.current.length === 0) {
+        if (selected.current.length === 0) {
             return;
         }
         // 给目标会话发送这个消息
@@ -345,14 +348,15 @@ const ChatScreen = () => {
         // 清空选中的消息id列表并退出选择状态
         selected.current = [];
         setMultiselecting(false);
+        setMultiselected(false);
 
         // 遍历消息的id 
         // 恢复初始状态+移除监听事件
+
         for (let msg of msgList) {
             const id = msg.msg_id;
-            const target = document.getElementById(`msg${id}`);
-            if(target !== null)
-            {   
+            const target = document.getElementById(`msgbg${id}`);
+            if (target !== null) {
                 target.className = "msg";
                 target.removeEventListener("click", () => addOrRemoveSelected(id, target));
             }
@@ -407,7 +411,7 @@ const ChatScreen = () => {
                         message: msg_body, token: localStorage.getItem("token"),
                         withdraw_msg_id: msg_id
                     }));
-                    
+
                 });
                 contextMenu.appendChild(deleteItem);
             }
@@ -454,7 +458,7 @@ const ChatScreen = () => {
                     return;
                 }
                 const newElement = document.createElement("p");
-                newElement.className="transform";
+                newElement.className = "transform";
                 // newElement.innerHTML = await transform(msg_body);
                 // newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
                 newElement.innerHTML = "转文字结果";
@@ -467,7 +471,7 @@ const ChatScreen = () => {
             contextMenu.appendChild(transformItem);
         }
 
-        
+
         // 删除消息记录按钮
         const deleteItem = document.createElement("li");
         deleteItem.className = "ContextMenuLi";
@@ -487,17 +491,17 @@ const ChatScreen = () => {
         multiselectItem.innerHTML = "多选";
         multiselectItem.addEventListener("click", async (event) => {
             event.stopPropagation();
-            // 弹出字幕 正在进行多选
+            hideContextMenu();
             setMultiselecting(true);
-
-            // 遍历消息的id 添加监听事件
+            const msgdp = document.getElementById("msgdisplay");
+            if (msgdp) msgdp.className = "msgselecting";
+            // 遍历消息的id 
             for (let msg of msgList) {
                 const id = msg.msg_id;
                 const target = document.getElementById(`msg${id}`);
                 // 如果消息已经被选中，就不再添加点击事件监听器
-                if(target !== null)
-                {   
-                    target.addEventListener("click",() => addOrRemoveSelected(id, target));
+                if (target !== null) {
+                    target.addEventListener("click", () => addOrRemoveSelected(id, target));
                 }
             } 
         });
@@ -523,7 +527,7 @@ const ChatScreen = () => {
         setChatID(query.id as string);
         setChatName(query.name as string);
         setIsGroup(query.group as string);
-        
+
         setSticked(query.sticked as string);
         setSilent(query.silent as string);
 
@@ -548,7 +552,7 @@ const ChatScreen = () => {
                     .filter((val: any) => !val.delete_members?.some((user: any) => user === currentUserid))
                     .map((val: any) => ({ ...val }))
                 );
-                
+
                 const memberList = JSON.parse(event.data).members;
                 setmemberList(memberList
                     .map((val: any) => ({ ...val }))
@@ -558,7 +562,7 @@ const ChatScreen = () => {
                 setconvList(convList
                     .map((val: any) => ({ ...val }))
                 );
-                console.log("convList"+convList);
+                console.log("convList" + convList);
 
                 const last_id = messages.length === 0 ? -1 : messages.at(-1).msg_id;
                 fetch(
@@ -629,14 +633,14 @@ const ChatScreen = () => {
     }, [showPopupMention]);
 
     useEffect(() => {
-        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined) {
+        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined && silent !== undefined) {
             console.log("聊天视窗刷新");
             setRefreshing(false);
         }
         else {
             setRefreshing(true);
         }
-    }, [chatID, chatName, isGroup, myID, sticked]);
+    }, [chatID, chatName, isGroup, myID, sticked, silent]);
 
 
     return refreshing ? (
@@ -646,9 +650,9 @@ const ChatScreen = () => {
             <Navbar />
             <MsgBar />
             <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} />
-            <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
+            <div ref={chatBoxRef} id="msgdisplay" className="msgdpbox" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
-                    <div key={msg.msg_id} className={"msg"}>
+                    <div key={msg.msg_id} id={`msgbg${msg.msg_id}`} className={"msg"}>
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
@@ -680,24 +684,56 @@ const ChatScreen = () => {
                         </div>
                     </div>
                 ))}
+                {recording && (
+                    <div className="popuprecord">
+                        <div className="popup-title">
+                            &nbsp;&nbsp;正在录音......&nbsp;&nbsp;
+                        </div>
+                    </div>
+                )}
+
             </div>
-            {recording && (
-                <div className="popuprecord">
-                    <div className="popup-title">
-                        &nbsp;&nbsp;正在录音......&nbsp;&nbsp;
-                    </div>
+
+            {multiselecting && (
+                <div className="selectbuttons">
+                    <button onClick={() => {
+                        const msgdp = document.getElementById("msgdisplay");
+                        if (msgdp) msgdp.className = "msgdpbox";
+                        setMultiselected(true);
+                        setMultiselecting(false);
+                    }}>完成</button>
+                    <button className="delete" onClick={() => {
+                        const msgdp = document.getElementById("msgdisplay");
+                        if (msgdp) msgdp.className = "msgdpbox";
+                        setMultiselecting(false);
+                        for (let msg of msgList) {
+                            const id = msg.msg_id;
+                            const target = document.getElementById(`msgbg${id}`);
+                            if (target !== null) {
+                                target.className = "msg";
+                                target.removeEventListener("click", () => addOrRemoveSelected(id, target));
+                            }
+                        }
+                    }}>取消</button>
                 </div>
             )}
-            {multiselecting && (
-                <div className="popuprecord">
-                    <div className="popup-title">
-                        &nbsp;&nbsp;正在进行多选&nbsp;&nbsp;
-                    </div>
-                </div>
-            )}
-            {multiselecting && (
-                <div >
-                    <div className="multidisplay">
+            {multiselected && (
+                <div className="popup">
+                    <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => {
+                        const msgdp = document.getElementById("msgdisplay");
+                        if (msgdp) msgdp.className = "msgdpbox"; 
+                        for (let msg of msgList) {
+                            const id = msg.msg_id;
+                            const target = document.getElementById(`msgbg${id}`);
+                            if (target !== null) {
+                                target.className = "msg";
+                                target.removeEventListener("click", () => addOrRemoveSelected(id, target));
+                            }
+                        }
+                        setMultiselected(false);
+                    }} />
+                    <p style={{fontSize: "20px", margin: " 20px auto"}}>请选择要转发的聊天</p>
+                    <div >
                         <select id="conversation-select" ref={selectRef}>
                             <option value="" disabled selected>
                             请选择转发的目标
@@ -709,11 +745,12 @@ const ChatScreen = () => {
                             ))}
                         </select>
                     </div>
-                    <button id="send_forward_button" className="send_forward_button" onClick={()=> sendForward()}>
+                    <button className="sendforward" style={{fontSize: "15px", width: "200px", margin: " 20px auto"}} onClick={() => sendForward()}>
                         发送选中的信息
                     </button>
                 </div>
             )}
+
             <div className="inputdisplay">
                 <input
                     className="msginput"
@@ -738,8 +775,7 @@ const ChatScreen = () => {
                         if (event.key === "@") {
                             setShowPopupMention(true);
                             //验证是否为群聊
-                            if(isGroup==="1")
-                            {
+                            if (isGroup === "1") {
                                 if (inputRef.current !== null) {
                                     const startPos = inputRef.current.selectionStart;
                                     const endPos = inputRef.current.selectionEnd;
@@ -759,7 +795,7 @@ const ChatScreen = () => {
                     }}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 />
-                {showPopupMention &&  (
+                {showPopupMention && (
                     <div className="msgContextMenu">
                         {/* TODO:遍历群内好友 */}
                         {memberList.map((member) => (
@@ -772,7 +808,7 @@ const ChatScreen = () => {
                                 }}>
                                     {member.user_name}
                                 </li>
-                                   
+
                             </div>
                         ))}
                         <div className="msg">
@@ -788,7 +824,7 @@ const ChatScreen = () => {
                         <div>
                             <li className="ContextMenuLi">
                                 准备@的好友
-                            </li>    
+                            </li>
                         </div>
                     </div>
 

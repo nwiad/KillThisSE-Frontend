@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { ChatMetaData, GroupChatMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+
 
 const MsgBar = () => {
     const [stickedPrivate, setStickedPrivate] = useState<ChatMetaData[]>();
@@ -35,7 +38,7 @@ const MsgBar = () => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     setMyID(data.user_id);
                 }
                 else {
@@ -60,7 +63,7 @@ const MsgBar = () => {
             console.log("列表不存在");
             return;
         }
-        if(myID === undefined) {
+        if (myID === undefined) {
             return;
         }
         setChatInfo(Array(chatList.length + groupChatList.length + stickedPrivate.length + stickedGroup.length).fill(""));
@@ -275,7 +278,7 @@ const MsgBar = () => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     console.log("获取置顶私聊成功");
                     setStickedPrivate(data.conversations.map((val: any) => ({ ...val })));
                 }
@@ -296,7 +299,7 @@ const MsgBar = () => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     console.log("获取置顶群聊成功");
                     setStickedGroup(data.conversations.map((val: any) => ({ ...val })));
                 }
@@ -317,7 +320,7 @@ const MsgBar = () => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     console.log("获取私聊消息列表成功");
                     // console.log(data);
                     setChatList(data.conversations.map((val: any) => ({ ...val })));
@@ -343,11 +346,11 @@ const MsgBar = () => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     console.log("获取群聊消息列表成功");
                     // console.log(data);
                     setGroupChatList(data.conversations.map((val: any) => ({ ...val })));
-                    setRefreshing(false);                    
+                    setRefreshing(false);
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -369,28 +372,32 @@ const MsgBar = () => {
             ) : (
                 <ul className="friendlist">
                     {stickedPrivate!.map((chat) => (
-                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor:"#434343" }} onClick={() => { router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`); }}>
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#434343" }} onClick={() => { router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`); }}>
                             <img src={`${chat.friend_avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.friend_name.length > 6 ? `${chat.friend_name.slice(0, 6)}...` : chat.friend_name}</div>
                                 <div className="msgpv">{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
                             </div>
                             {chat.silent ? (
-                                <div className="count" id={`silent_chat${chat.id}`}></div>
+                                <div className="silentcount" id={`silent_chat${chat.id}`}>
+                                    <FontAwesomeIcon style={{ color: "white" }} className="silenticon" icon={faBellSlash} />
+                                </div>
                             ) : (
                                 <div className="count" id={`chat${chat.id}`}>0</div>
                             )}
                         </li>)
                     ))}
                     {stickedGroup!.map((chat) => (
-                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor:"#434343" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`)}>
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#434343" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`)}>
                             <img src={`${chat.avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0, 6)}...` : chat.name}</div>
                                 <div className="msgpv">{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
                             </div>
                             {chat.silent ? (
-                                <div className="count" id={`silent_chat${chat.id}`}></div>
+                                <div className="silentcount" id={`silent_chat${chat.id}`}>
+                                    <FontAwesomeIcon style={{ color: "white" }} className="silenticon" icon={faBellSlash} />
+                                </div>
                             ) : (
                                 <div className="count" id={`chat${chat.id}`}>0</div>
                             )}
@@ -404,21 +411,25 @@ const MsgBar = () => {
                                 <div className="msgpv">{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
                             </div>
                             {chat.silent ? (
-                                <div className="count" id={`silent_chat${chat.id}`}></div>
+                                <div className="silentcount" id={`silent_chat${chat.id}`}>
+                                    <FontAwesomeIcon style={{ color: "white" }} className="silenticon" icon={faBellSlash} />
+                                </div>
                             ) : (
                                 <div className="count" id={`chat${chat.id}`}>0</div>
                             )}
                         </li>)
                     ))}
                     {groupChatList!.map((chat) => (
-                        (!chat.disabled &&<li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`)}>
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}`)}>
                             <img src={`${chat.avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0, 6)}...` : chat.name}</div>
                                 <div className="msgpv">{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div>
                             </div>
                             {chat.silent ? (
-                                <div className="count" id={`silent_chat${chat.id}`}></div>
+                                <div className="silentcount" id={`silent_chat${chat.id}`}>
+                                    <FontAwesomeIcon style={{ color: "white" }} className="silenticon" icon={faBellSlash} />
+                                </div>
                             ) : (
                                 <div className="count" id={`chat${chat.id}`}>0</div>
                             )}

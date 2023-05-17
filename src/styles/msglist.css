@@ -258,9 +258,10 @@
     height: auto;
     right: 0;
     margin-left: 0;
-    margin-top: auto;
+    margin-top: 10px;
     background-size: cover;
     background-position: center;
+    border-radius: 15px;
 }
 
 .msgchosen{
@@ -269,10 +270,11 @@
     height: auto;
     right: 0;
     margin-left: 0;
-    margin-top: auto;
+    margin-top: 10px;
     background-size: cover;
     background-position: center;
-    background-color: yellow;
+    background-color: #0661e957;
+    border-radius: 15px;
 }
 
 .mymsgavatar {
@@ -367,7 +369,7 @@
     color: #7d7d7d;
 }
 
-#msgdisplay {
+.msgdpbox {
     display: flex;
     flex-direction: column-reverse;
     position: fixed;
@@ -375,6 +377,23 @@
     height: auto;
     top: 115px;
     bottom: 80px;
+    right: 22%;
+    background-size: cover;
+    background-position: center;
+    float: right;
+    overflow-y: auto;
+    border-radius: 15px;
+    background-color: #f0f0f0;
+}
+
+.msgselecting {
+    display: flex;
+    flex-direction: column-reverse;
+    position: fixed;
+    width: 55%;
+    height: auto;
+    top: 115px;
+    bottom: 150px;
     right: 22%;
     background-size: cover;
     background-position: center;
@@ -490,4 +509,38 @@
     font-weight: 1000;
     text-align: center;
     color: #535353;
+}
+
+.silentcount {
+    margin: auto;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    font-size: 16px;
+    font-weight: 1000;
+    text-align: center;
+    color: #535353;
+}
+
+.selectbuttons {
+    display: flex;
+    flex-direction: row;
+    width: 60%;
+    position: fixed;
+    bottom: 70px;
+    right: 20%;
+}
+
+#conversation-select {
+    margin-top: 20px;
+    width: 200px;
+    height: 50px;
+}
+
+.sendforward {
+    height: 50px;
+    width: 100px;
+    font-size: 10px;
+    padding: 10px;
 }
