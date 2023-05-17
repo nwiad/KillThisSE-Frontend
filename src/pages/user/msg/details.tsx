@@ -97,6 +97,10 @@ const DetailsPage = (props: detailProps) => {
     const [showSecondValid, setShowSecondValid] = useState<boolean>(false);
     const [showPwdInput, setShowPwdInput] = useState<boolean>(false);
     const [pwd, setPwd] = useState<string>("");
+    // 用于点开多选
+    const [ForwardMsgs, setForwardMsgs] = useState<MsgMetaData[]>();
+    const [displayForwardMsgs,setDisplayForwardMsgs] = useState<boolean>(false); //展示转发来的多条信息
+    const [refreshingFwdRecords, setRefreshingFwdRecords] = useState<boolean>(true);
 
     useEffect(() => {
         if (!router.isReady) {
@@ -927,6 +931,61 @@ const DetailsPage = (props: detailProps) => {
         setDisplaySelect(false);
     };
 
+    // 计算转发消息的数量
+    const countCommas = (str: string): number => {
+        const pattern = /,/g;
+        const matches = str.match(pattern);
+        const count = matches ? matches.length : 0;
+        return count + 1;
+    };
+
+    
+    const openFilterforward = (idlist:string) => {
+        // string转为number list
+        setDisplayForwardMsgs(true);
+        setRefreshingFwdRecords(true);
+
+        const msgidList: number[] = JSON.parse(idlist);
+        fetch(
+            "/api/user/query_forward_records/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    msgidlist: msgidList
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    console.log("获取转发的聊天记录成功");
+                    // message是后端发过来的消息们
+                    // 消息列表
+                    console.log(data.messages);
+                    setForwardMsgs(data.messages
+                        .map((val: any) => ({ ...val }))
+                    );
+                }
+                else {
+                    throw new Error(`获取转发的聊天记录失败: ${data.info}`);
+                }
+            })
+            .catch(((err) => alert("获取转发的聊天记录: "+err)));
+    };    
+
+    const closeFwdFilter = () => {
+        setDisplayForwardMsgs(false);
+        setRefreshingFwdRecords(true);
+    };
+    useEffect(() => {
+        if(ForwardMsgs !== undefined) {
+            console.log("ForwardMsgs: ", ForwardMsgs);
+            setRefreshingFwdRecords(false);
+        }
+    }, [ForwardMsgs]);
+
     useEffect(() => {
         if(sender !== undefined) {
             console.log("按发送者筛选: ",sender);
@@ -1215,9 +1274,9 @@ const DetailsPage = (props: detailProps) => {
                                         <p className={msg.sender_id.toString() !== props.myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
                                         {msg.is_transmit === true ? (
                                             <p
-                                                className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                                className={msg.sender_id.toString() !== props.myID ? "msgbody" : "mymsgbody"}
                                                 onClick={() => {
-                                                    openFilter(msg.msg_body);
+                                                    openFilterforward(msg.msg_body);
                                                     setDisplayForwardMsgs(true);
                                                 }}
                                             >
@@ -1275,6 +1334,63 @@ const DetailsPage = (props: detailProps) => {
                         </button>
                     </div>
                 ))}
+            {displayForwardMsgs &&(
+                refreshingFwdRecords ? (
+                    <div className="popup" style={{padding: "20px", height: "auto"}}>
+                    正在加载聊天记录......
+                        <button onClick={() => { closeFwdFilter(); }}>
+                            取消
+                        </button>
+                    </div>
+                ) : (
+                    <div className="popup" style={{padding: "20px", height: "auto"}}>
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            {ForwardMsgs?.map((msg) => (
+                                <div key={msg.msg_id} className={msg.chosen?"msgchosen":"msg"}>
+                                    <div className={msg.sender_id.toString() !== props.myID ? "msgavatar" : "mymsgavatar"}>
+                                        <img className="sender_avatar" src={msg.sender_avatar} />
+                                    </div>
+                                    <div id={`msg${msg.msg_id}`} className={msg.sender_id.toString() !== props.myID ? "msgmain" : "mymsgmain"}>
+                                        <p className={msg.sender_id.toString() !== props.myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
+                                        {msg.is_transmit === true ? (
+                                            <p
+                                                className={msg.sender_id.toString() !== props.myID ? "msgbody" : "mymsgbody"}
+                                                onClick={() => {
+                                                    openFilterforward(msg.msg_body);
+                                                    setDisplayForwardMsgs(true);
+                                                }}
+                                            >
+                                                点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
+                                            </p>
+                                        ):
+                                            (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
+                                                (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
+                                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
+                                                        style={{ width: "100%", height: "auto" }} />
+                                                </a> :
+                                                    (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
+                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                                                            style={{ width: "100%", height: "auto" }} />
+                                                    </a> :
+                                                        (msg.is_audio === true ? <a>
+                                                            {<audio src={msg.msg_body} controls />}
+                                                        </a> :
+                                                            <p className={msg.sender_id.toString() !== props.myID ? "msgbody" : "mymsgbody"}
+                                                                dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
+                                                            ></p>)))
+                                            )}
+                                        <p className={msg.sender_id.toString() !== props.myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                                        
+                        <button onClick={() => { closeFilter(); }}>
+                            返回
+                        </button>
+                    </div>
+                ))}
+
             {showSenders && (
                 <p className="members">
                     {/* <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowSenders(false); }} /> */}
