@@ -1184,6 +1184,39 @@ const DetailsPage = (props: detailProps) => {
         }
     }, [newOwner, props]);
 
+    const sendFriendRequest = (id: number | undefined) => {
+        if(id === undefined) {
+            alert("发送好友请求: 非法id");
+        }
+        fetch(
+            "/api/user/send_friend_request/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    friend_user_id: id
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    alert("成功发送好友请求");
+                }
+                else if(data.code === 3) {
+                    alert("你们已经是好友了");
+                }
+                else if(data.code === 4) {
+                    alert("已发送过好友请求，请耐心等候对方回复");
+                }
+                else {
+                    throw new Error(`${data.infp}`);
+                }
+            })
+            .catch((err) => alert("发送好友请求: "+err));
+    };
+
     return refreshing ? (
         <div style={{ padding: 12 }}>
             <p>Loading...</p>
@@ -1256,6 +1289,7 @@ const DetailsPage = (props: detailProps) => {
                             <img className="sender_avatar" style={{ borderColor: "#0660e9" }} src={`${owner?.avatar}`} alt="oops" />
                             <p style={{ color: "black", margin: "auto 10px", fontSize: "30px" }}>{owner?.name}</p>
                             <p className="owner">群主</p>
+                            { owner?.id.toString() !== props.myID && <button style={{width: "8%"}} onClick={() => {sendFriendRequest(owner?.id);}}>+</button>}
                         </div>
                     </div>
                     <div className="membersort">
@@ -1264,6 +1298,7 @@ const DetailsPage = (props: detailProps) => {
                                 <img className="sender_avatar" src={`${admin?.avatar}`} alt="oops" />
                                 <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{admin?.name}</p>
                                 <p className="admin">管理员</p>
+                                {admin?.id.toString() !== props.myID && <button style={{width: "8%"}} onClick={() => {sendFriendRequest(admin?.id);}}>+</button>}
                             </div>
                         ))}
                     </div>
@@ -1272,6 +1307,7 @@ const DetailsPage = (props: detailProps) => {
                             <div key={member.id} className="member">
                                 <img className="sender_avatar" src={`${member?.avatar}`} alt="oops" />
                                 <p style={{ color: "black", margin: "auto 10px" }}>{member?.name}</p>
+                                {member?.id.toString() !== props.myID && <button style={{width: "8%"}} onClick={() => {sendFriendRequest(member?.id);}}>+</button>}
                             </div>
                         ))}
                     </div>
@@ -1700,7 +1736,6 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
                         <p className="admininfo">删除好友</p>
                     </div>
-
                 </div>
             </div>
             {showInvite && (
