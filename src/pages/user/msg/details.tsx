@@ -1,4 +1,4 @@
-import { faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserCheck, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faLock, faClockRotateLeft, faArrowDown, faArrowsUpToLine, faBell, faBellSlash, faKey, faNoteSticky, faPenToSquare, faUserCheck, faUserGroup, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -99,7 +99,7 @@ const DetailsPage = (props: detailProps) => {
     const [pwd, setPwd] = useState<string>("");
     // 用于点开多选
     const [ForwardMsgs, setForwardMsgs] = useState<MsgMetaData[]>();
-    const [displayForwardMsgs,setDisplayForwardMsgs] = useState<boolean>(false); //展示转发来的多条信息
+    const [displayForwardMsgs, setDisplayForwardMsgs] = useState<boolean>(false); //展示转发来的多条信息
     const [refreshingFwdRecords, setRefreshingFwdRecords] = useState<boolean>(true);
 
     const [showTransfer, setShowTransfer] = useState<boolean>(false);
@@ -377,8 +377,8 @@ const DetailsPage = (props: detailProps) => {
                 setRefreshing(false);
             }
         }
-        else if(props.group === "0") {
-            if(myFriends !== undefined && who !== undefined && whoseAvatar !== undefined) {
+        else if (props.group === "0") {
+            if (myFriends !== undefined && who !== undefined && whoseAvatar !== undefined) {
                 setRefreshing(false);
             }
         }
@@ -610,7 +610,7 @@ const DetailsPage = (props: detailProps) => {
 
     const setOrUnsetValidation = (validated: boolean) => {
         const valid = validated ? "False" : "True";
-        if(validated) {
+        if (validated) {
             setShowPwdInput(true);
         }
         else {
@@ -628,7 +628,7 @@ const DetailsPage = (props: detailProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
+                    if (data.code === 0) {
                         setValidation(true);
                         setShowSecondValid(false);
                         alert("成功设置二次验证");
@@ -637,7 +637,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("设置二次验证: "+err));
+                .catch((err) => alert("设置二次验证: " + err));
         }
     };
 
@@ -655,8 +655,8 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
-                    if(data.Valid) {
+                if (data.code === 0) {
+                    if (data.Valid) {
                         console.log("二级密码正确");
                         setValidation(false);
                         fetch(
@@ -673,15 +673,15 @@ const DetailsPage = (props: detailProps) => {
                         )
                             .then((res) => res.json())
                             .then((data) => {
-                                if(data.code === 0) {
+                                if (data.code === 0) {
                                     setShowSecondValid(false);
-                                    alert("解除二次验证"); 
+                                    alert("解除二次验证");
                                 }
                                 else {
                                     throw new Error(`${data.info}`);
                                 }
                             })
-                            .catch((err) => alert("解除二次验证: "+err));
+                            .catch((err) => alert("解除二次验证: " + err));
                     }
                     else {
                         alert("密码错误");
@@ -691,7 +691,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("检查二级密码: "+err));
+            .catch((err) => alert("检查二级密码: " + err));
     };
 
     const makeOrUnmakeSilent = (isSilent: boolean) => {
@@ -722,7 +722,7 @@ const DetailsPage = (props: detailProps) => {
     };
 
     useEffect(() => {
-        if(top === undefined && silent === undefined && validation !== undefined) {
+        if (top === undefined && silent === undefined && validation !== undefined) {
             return;
         }
         router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
@@ -900,7 +900,7 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     console.log("获取聊天记录成功");
                     // message是后端发过来的消息们
                     // 消息列表
@@ -915,11 +915,11 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`获取全部聊天记录失败: ${data.info}`);
                 }
             })
-            .catch(((err) => alert("获取聊天记录: "+err)));
+            .catch(((err) => alert("获取聊天记录: " + err)));
     };
 
     useEffect(() => {
-        if(records !== undefined) {
+        if (records !== undefined) {
             console.log("records: ", records);
             setRefreshingRecords(false);
         }
@@ -938,10 +938,10 @@ const DetailsPage = (props: detailProps) => {
     };
 
     const handleSelect = (value: string) => {
-        if(value === "filter_by_sender") {  // 按发送者筛选
+        if (value === "filter_by_sender") {  // 按发送者筛选
             setShowSenders(true);
         }
-        else if(value === "filter_by_image" || value === "filter_by_video" || value === "filter_by_audio" || value === "filter_by_file") {
+        else if (value === "filter_by_image" || value === "filter_by_video" || value === "filter_by_audio" || value === "filter_by_file") {
             // 按类型筛选
             const type = value.slice(10);
             console.log("按类型筛选: ", type);
@@ -959,7 +959,7 @@ const DetailsPage = (props: detailProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
+                    if (data.code === 0) {
                         console.log(`根据类型${type}筛选成功`);
                         setRecords(data.messages
                             // 如果这个人的id在删除列表里，就不显示消息
@@ -971,9 +971,9 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`根据类型${type}筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => alert(`根据类型${type}筛选失败: `+err));
+                .catch((err) => alert(`根据类型${type}筛选失败: ` + err));
         }
-        else if(value === "filter_by_content") {  // 按内容筛选
+        else if (value === "filter_by_content") {  // 按内容筛选
             setShowContentInput(true);
         }
         else {
@@ -990,8 +990,8 @@ const DetailsPage = (props: detailProps) => {
         return count + 1;
     };
 
-    
-    const openFilterforward = (idlist:string) => {
+
+    const openFilterforward = (idlist: string) => {
         // string转为number list
         setDisplayForwardMsgs(true);
         setRefreshingFwdRecords(true);
@@ -1010,7 +1010,7 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     console.log("获取转发的聊天记录成功");
                     // message是后端发过来的消息们
                     // 消息列表
@@ -1023,23 +1023,23 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`获取转发的聊天记录失败: ${data.info}`);
                 }
             })
-            .catch(((err) => alert("获取转发的聊天记录: "+err)));
-    };    
+            .catch(((err) => alert("获取转发的聊天记录: " + err)));
+    };
 
     const closeFwdFilter = () => {
         setDisplayForwardMsgs(false);
         setRefreshingFwdRecords(true);
     };
     useEffect(() => {
-        if(ForwardMsgs !== undefined) {
+        if (ForwardMsgs !== undefined) {
             console.log("ForwardMsgs: ", ForwardMsgs);
             setRefreshingFwdRecords(false);
         }
     }, [ForwardMsgs]);
 
     useEffect(() => {
-        if(sender !== undefined) {
-            console.log("按发送者筛选: ",sender);
+        if (sender !== undefined) {
+            console.log("按发送者筛选: ", sender);
             fetch(
                 "/api/user/query_by_sender/",
                 {
@@ -1054,8 +1054,8 @@ const DetailsPage = (props: detailProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
-                        console.log("根据发送者筛选成功: ",data.messages);
+                    if (data.code === 0) {
+                        console.log("根据发送者筛选成功: ", data.messages);
                         setRecords(data.messages
                             // 如果这个人的id在删除列表里，就不显示消息
                             .filter((val: any) => !val.delete_members?.some((user: any) => user === props.myID))
@@ -1063,15 +1063,15 @@ const DetailsPage = (props: detailProps) => {
                         );
                     }
                     else {
-                        throw new Error(`根据发送者筛选失败: ${data.info}` );
+                        throw new Error(`根据发送者筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => alert("根据发送者筛选失败: "+err));
+                .catch((err) => alert("根据发送者筛选失败: " + err));
         }
     }, [sender, props]);
 
     useEffect(() => {
-        if(content !== undefined) {
+        if (content !== undefined) {
             fetch(
                 "/api/user/query_by_content/",
                 {
@@ -1086,7 +1086,7 @@ const DetailsPage = (props: detailProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
+                    if (data.code === 0) {
                         console.log(`根据类型${content}筛选成功`);
                         setContent(undefined);
                         setRecords(data.messages
@@ -1099,7 +1099,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`根据内容${content}筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => alert(`根据类型${content}筛选失败: `+err));
+                .catch((err) => alert(`根据类型${content}筛选失败: ` + err));
         }
     }, [content, props]);
 
@@ -1149,8 +1149,12 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faNoteSticky} />
                         <p className="admininfo">群公告</p>
                     </div>
+                    <div className="adminbutton" onClick={() => { openFilter(); setDisplaySelect(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faClockRotateLeft} />
+                        <p className="admininfo">筛选消息</p>
+                    </div>
                     <div className="adminbutton">
-                        <FontAwesomeIcon className="adminicon" icon={faKey} onClick={() => {setShowSecondValid(true);}} />
+                        <FontAwesomeIcon className="adminicon" icon={showSecondValid ? faKey : faLock} onClick={() => { setShowSecondValid(true); setOrUnsetValidation(validation); }} />
                         <p className="admininfo">二级密码</p>
                     </div>
                     <div className="adminbutton" onClick={() => { makeOrUnmakeSilent(silent); }}>
@@ -1175,15 +1179,7 @@ const DetailsPage = (props: detailProps) => {
                     </div>}
                     <div className="adminbutton" onClick={() => { dismissOrQuit(); }}>
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
-                        <p className="admininfo">{props.myID === owner?.id.toString() ? "解散群聊" : "退出"}</p>
-                    </div>
-                    {hasPermit && <div className="adminbutton" onClick={() => { setShowReq(true); }}>
-                        <FontAwesomeIcon className="quiticon" icon={faUserPlus} />
-                        <p className="admininfo">入群请求</p>
-                    </div>}
-                    <div className="adminbutton" onClick={() => { openFilter(); setDisplaySelect(true); }}>
-                        <FontAwesomeIcon className="adminicon" icon={faNoteSticky} />
-                        <p className="admininfo">筛选消息</p>
+                        <p className="admininfo">{props.myID === owner?.id.toString() ? "解散群聊" : "退出群聊"}</p>
                     </div>
                     { props.myID === owner?.id.toString() && <div className="adminbutton" onClick={() => { setShowTransfer(true); }}>
                         <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
@@ -1292,12 +1288,7 @@ const DetailsPage = (props: detailProps) => {
                         )))}
                         {/* 管理员和群主都可以移除其他成员 */}
                         {members?.map((item) => ((
-                            <div className="startgroupchoicebox" key={item.id} style={{ display: "flex", flexDirection: "row" }}>
-                                <input
-                                    type="checkbox"
-                                    className="startgroupcheckbox"
-                                    onClick={() => { addOrRemoveSuckers(item.id); }}
-                                />
+                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveSuckers(item.id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -1327,8 +1318,8 @@ const DetailsPage = (props: detailProps) => {
                                     <img className="sender_avatar" src={`${item.invitee_avatar}`} alt="oops" />
                                     <p style={{ color: "black" }}>{item.invitee_name}</p>
                                 </li>
-                                <button className="accept" onClick={() => { consent(item.invitation_id); }} style={{fontSize:"15px", border:"0", margin: "auto 10px"}}>同意</button>
-                                <button className="reject" onClick={() => { reject(item.invitation_id); }} style={{fontSize:"15px", border:"0", margin: "auto 10px"}}>拒绝</button>
+                                <button className="accept" onClick={() => { consent(item.invitation_id); }} style={{ fontSize: "15px", border: "0", margin: "auto 10px" }}>同意</button>
+                                <button className="reject" onClick={() => { reject(item.invitation_id); }} style={{ fontSize: "15px", border: "0", margin: "auto 10px" }}>拒绝</button>
                             </div>
                         ))}
                     </ul>
@@ -1340,60 +1331,18 @@ const DetailsPage = (props: detailProps) => {
             {/* 查看聊天记录 */}
             {showFilter && (
                 refreshingRecords ? (
-                    <div className="popup" style={{padding: "20px", height: "auto"}}>
+                    <div className="popup" style={{ padding: "20px", height: "auto" }}>
+                        <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowFilter(false); }} />
                         正在加载聊天记录......
                         <button onClick={() => { closeFilter(); }}>
                             取消
                         </button>
                     </div>
                 ) : (
-                    <div className="popup" style={{padding: "20px", height: "auto"}}>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
-                            {records?.length === 0 && (
-                                <div className="msg">
-                                    无相关记录
-                                </div>
-                            )}
-                            {records?.map((msg) => (
-                                <div key={msg.msg_id} className={msg.chosen?"msgchosen":"msg"}>
-                                    <div className={msg.sender_id.toString() !== props.myID ? "msgavatar" : "mymsgavatar"}>
-                                        <img className="sender_avatar" src={msg.sender_avatar} />
-                                    </div>
-                                    <div id={`msg${msg.msg_id}`} className={msg.sender_id.toString() !== props.myID ? "msgmain" : "mymsgmain"}>
-                                        <p className={msg.sender_id.toString() !== props.myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
-                                        {msg.is_transmit === true ? (
-                                            <p
-                                                className={msg.sender_id.toString() !== props.myID ? "msgbody" : "mymsgbody"}
-                                                onClick={() => {
-                                                    openFilterforward(msg.msg_body);
-                                                    setDisplayForwardMsgs(true);
-                                                }}
-                                            >
-                                                点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
-                                            </p>
-                                        ):                        
-                                            (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
-                                                (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
-                                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
-                                                        style={{ width: "100%", height: "auto" }} />
-                                                </a> :
-                                                    (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
-                                                            style={{ width: "100%", height: "auto" }} />
-                                                    </a> :
-                                                        (msg.is_audio === true ? <a>
-                                                            {<audio src={msg.msg_body} controls />}
-                                                        </a> :
-                                                            <p className={msg.sender_id.toString() !== props.myID ? "msgbody" : "mymsgbody"}
-                                                                dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
-                                                            ></p>)))
-                                            )}
-                                        <p className={msg.sender_id.toString() !== props.myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        { displaySelect && <div className="multidisplay">
+                    <div className="historypopup" style={{ padding: "20px", }}>
+                        <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowFilter(false); }} />
+                        {displaySelect && <div className="multidisplay">
+                            请选择要筛选的内容：
                             <select name="filter_by" ref={selectRef} onChange={(e) => handleSelect(e.target.value)}>
                                 <option value={"filter_all"}>
                                     全部
@@ -1415,27 +1364,20 @@ const DetailsPage = (props: detailProps) => {
                                 </option>
                                 <option value={"filter_by_content"}>
                                     内容
-                                </option>                                                                
+                                </option>
                             </select>
                         </div>}
-                        <button onClick={() => { closeFilter(); }}>
-                            返回
-                        </button>
-                    </div>
-                ))}
-            {displayForwardMsgs &&(
-                refreshingFwdRecords ? (
-                    <div className="popup" style={{padding: "20px", height: "auto"}}>
-                    正在加载聊天记录......
-                        <button onClick={() => { closeFwdFilter(); }}>
-                            取消
-                        </button>
-                    </div>
-                ) : (
-                    <div className="popup" style={{padding: "20px", height: "auto"}}>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
-                            {ForwardMsgs?.map((msg) => (
-                                <div key={msg.msg_id} className={msg.chosen?"msgchosen":"msg"}>
+                        <div style={{ display: "flex", flexDirection: "column", overflowY: "auto", height: "400px" }}>
+                            {records?.length === 0 && (
+                                <div className="msg">
+                                    无相关记录
+                                </div>
+                            )}
+
+                            {records?.map((msg) => (
+
+                                <div key={msg.msg_id} className={msg.chosen ? "msgchosen" : "msg"}>
+
                                     <div className={msg.sender_id.toString() !== props.myID ? "msgavatar" : "mymsgavatar"}>
                                         <img className="sender_avatar" src={msg.sender_avatar} />
                                     </div>
@@ -1448,10 +1390,11 @@ const DetailsPage = (props: detailProps) => {
                                                     openFilterforward(msg.msg_body);
                                                     setDisplayForwardMsgs(true);
                                                 }}
+                                                style={{ color: "#0baaf9" }}
                                             >
                                                 点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
                                             </p>
-                                        ):
+                                        ) :
                                             (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
                                                 (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
                                                     <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
@@ -1473,7 +1416,60 @@ const DetailsPage = (props: detailProps) => {
                                 </div>
                             ))}
                         </div>
-                                        
+                    </div>
+                ))}
+            {displayForwardMsgs && (
+                refreshingFwdRecords ? (
+                    <div className="popup" style={{ padding: "20px", height: "auto" }}>
+                        正在加载聊天记录......
+                        <button onClick={() => { closeFwdFilter(); }}>
+                            取消
+                        </button>
+                    </div>
+                ) : (
+                    <div className="hostorypopup" style={{ padding: "20px" }}>
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            {ForwardMsgs?.map((msg) => (
+                                <div key={msg.msg_id} className={msg.chosen ? "msgchosen" : "msg"}>
+                                    <div className={msg.sender_id.toString() !== props.myID ? "msgavatar" : "mymsgavatar"}>
+                                        <img className="sender_avatar" src={msg.sender_avatar} />
+                                    </div>
+                                    <div id={`msg${msg.msg_id}`} className={msg.sender_id.toString() !== props.myID ? "msgmain" : "mymsgmain"}>
+                                        <p className={msg.sender_id.toString() !== props.myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
+                                        {msg.is_transmit === true ? (
+                                            <p
+                                                className={msg.sender_id.toString() !== props.myID ? "msgbody" : "mymsgbody"}
+                                                onClick={() => {
+                                                    openFilterforward(msg.msg_body);
+                                                    setDisplayForwardMsgs(true);
+                                                }}
+                                                style={{ color: "#0baaf9" }}
+                                            >
+                                                点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
+                                            </p>
+                                        ) :
+                                            (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
+                                                (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
+                                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
+                                                        style={{ width: "100%", height: "auto" }} />
+                                                </a> :
+                                                    (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
+                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                                                            style={{ width: "100%", height: "auto" }} />
+                                                    </a> :
+                                                        (msg.is_audio === true ? <a>
+                                                            {<audio src={msg.msg_body} controls />}
+                                                        </a> :
+                                                            <p className={msg.sender_id.toString() !== props.myID ? "msgbody" : "mymsgbody"}
+                                                                dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
+                                                            ></p>)))
+                                            )}
+                                        <p className={msg.sender_id.toString() !== props.myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
                         <button onClick={() => { closeFilter(); }}>
                             返回
                         </button>
@@ -1617,14 +1613,15 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
                         <p className="admininfo">邀请好友建立群聊</p>
                     </div>
+                    <div className="adminbutton" onClick={() => { openFilter(); setDisplaySelect(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faClockRotateLeft} />
+                        <p className="admininfo">筛选消息</p>
+                    </div>
                     <div className="adminbutton" onClick={() => { deleteFriend(); }}>
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
                         <p className="admininfo">删除好友</p>
                     </div>
-                    <div className="adminbutton" onClick={() => { openFilter(); setDisplaySelect(true); }}>
-                        <FontAwesomeIcon className="adminicon" icon={faNoteSticky} />
-                        <p className="admininfo">筛选消息</p>
-                    </div>
+
                 </div>
             </div>
             {showInvite && (
@@ -1658,22 +1655,49 @@ const DetailsPage = (props: detailProps) => {
             {/* 查看聊天记录 */}
             {showFilter && (
                 refreshingRecords ? (
-                    <div className="popup" style={{padding: "20px", height: "auto"}}>
+                    <div className="popup" style={{ padding: "20px", height: "auto" }}>
                         正在加载聊天记录......
                         <button onClick={() => { closeFilter(); }}>
                             取消
                         </button>
                     </div>
                 ) : (
-                    <div className="popup" style={{padding: "20px", height: "auto"}}>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div className="historypopup" style={{ padding: "20px", }}>
+                        <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowFilter(false); }} />
+                        {displaySelect && <div className="multidisplay">
+                            请选择要筛选的内容：
+                            <select name="filter_by" ref={selectRef} onChange={(e) => handleSelect(e.target.value)}>
+                                <option value={"filter_all"}>
+                                    全部
+                                </option>
+                                <option value={"filter_by_sender"}>
+                                    发送者
+                                </option>
+                                <option value={"filter_by_image"}>
+                                    图片
+                                </option>
+                                <option value={"filter_by_video"}>
+                                    视频
+                                </option>
+                                <option value={"filter_by_audio"}>
+                                    语音
+                                </option>
+                                <option value={"filter_by_file"}>
+                                    文件
+                                </option>
+                                <option value={"filter_by_content"}>
+                                    内容
+                                </option>
+                            </select>
+                        </div>}
+                        <div style={{ display: "flex", flexDirection: "column", overflowY: "auto", height: "400px" }}>
                             {records?.length === 0 && (
                                 <div className="msg">
                                     无相关记录
                                 </div>
                             )}
                             {records?.map((msg) => (
-                                <div key={msg.msg_id} className={msg.chosen?"msgchosen":"msg"}>
+                                <div key={msg.msg_id} className={msg.chosen ? "msgchosen" : "msg"}>
                                     <div className={msg.sender_id.toString() !== props.myID ? "msgavatar" : "mymsgavatar"}>
                                         <img className="sender_avatar" src={msg.sender_avatar} />
                                     </div>
@@ -1700,34 +1724,7 @@ const DetailsPage = (props: detailProps) => {
                                 </div>
                             ))}
                         </div>
-                        { displaySelect && <div className="multidisplay">
-                            <select name="filter_by" ref={selectRef} onChange={(e) => handleSelect(e.target.value)}>
-                                <option value={"filter_all"}>
-                                    全部
-                                </option>
-                                <option value={"filter_by_sender"}>
-                                    发送者
-                                </option>
-                                <option value={"filter_by_image"}>
-                                    图片
-                                </option>
-                                <option value={"filter_by_video"}>
-                                    视频
-                                </option>
-                                <option value={"filter_by_audio"}>
-                                    语音
-                                </option>
-                                <option value={"filter_by_file"}>
-                                    文件
-                                </option>
-                                <option value={"filter_by_content"}>
-                                    内容
-                                </option>                                                                
-                            </select>
-                        </div>}
-                        <button onClick={() => { closeFilter(); }}>
-                            返回
-                        </button>
+
                     </div>
                 ))}
             {showSenders && (

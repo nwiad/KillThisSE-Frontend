@@ -11,9 +11,14 @@ const MsgBar = () => {
     const [stickedPrivate, setStickedPrivate] = useState<ChatMetaData[]>();
     const [stickedGroup, setStickedGroup] = useState<GroupChatMetaData[]>();
     const [chatList, setChatList] = useState<ChatMetaData[]>();
+    const [currentChat, setCurrentChat] = useState<ChatMetaData>();
+    const [currentGroupChat, setCurrentGroupChat] = useState<GroupChatMetaData>();
     const [groupChatList, setGroupChatList] = useState<GroupChatMetaData[]>();
     const [refreshing, setRefreshing] = useState<boolean>(true);
     const [myID, setMyID] = useState<number>();
+    const [showPopupValidFriend, setShowPopupValidFriend] = useState<boolean>(false);
+    const [showPopupValidGroup, setShowPopupValidGroup] = useState<boolean>(false);
+    const [pwd, setPwd] = useState<string>("");
 
     const [chatInfo, setChatInfo] = useState<string[]>();
 
@@ -54,6 +59,54 @@ const MsgBar = () => {
             socket.destroy();
             console.log("回收列表连接");
         });
+    };
+
+    const checkPwdFriend = (password: string) => {
+        fetch(
+            "/api/user/secondary_validate/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    password: password
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.code === 0) {
+                    router.push(`/user/msg/chat?id=${currentChat?.id}&name=${currentChat?.friend_name}&group=0&sticked=${currentChat?.sticked ? 1 : 0}&silent=${currentChat?.silent ? 1 : 0}&validation=${0}`);
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert("检查二级密码: " + err));
+    };
+
+    const checkPwdGroup = (password: string) => {
+        fetch(
+            "/api/user/secondary_validate/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    password: password
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.code === 0) {
+                    router.push(`/user/msg/chat?id=${currentGroupChat?.id}&name=${currentGroupChat?.name}&group=1&sticked=${currentGroupChat?.sticked ? 1 : 0}&silent=${currentGroupChat?.silent ? 1 : 0}&validation=${0}`);
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert("检查二级密码: " + err));
     };
 
     useEffect(() => {
@@ -97,10 +150,10 @@ const MsgBar = () => {
                     if (index === 0) {
                         return [];
                     }
-                    if(JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                    if (JSON.parse(event.data).messages[index - 1].is_transmit === true) {
                         newArray[chat.id] = "合并转发消息";
                     }
-                    else{
+                    else {
                         newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
                     }
                     return newArray;
@@ -146,10 +199,10 @@ const MsgBar = () => {
                     if (index === 0) {
                         return [];
                     }
-                    if(JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                    if (JSON.parse(event.data).messages[index - 1].is_transmit === true) {
                         newArray[chat.id] = "合并转发消息";
                     }
-                    else{
+                    else {
                         newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
                     }
                     return newArray;
@@ -195,10 +248,10 @@ const MsgBar = () => {
                     if (index === 0) {
                         return [];
                     }
-                    if(JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                    if (JSON.parse(event.data).messages[index - 1].is_transmit === true) {
                         newArray[chat.id] = "合并转发消息";
                     }
-                    else{
+                    else {
                         newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
                     }
                     return newArray;
@@ -246,10 +299,10 @@ const MsgBar = () => {
                     if (index === 0) {
                         return [];
                     }
-                    if(JSON.parse(event.data).messages[index - 1].is_transmit === true) {
+                    if (JSON.parse(event.data).messages[index - 1].is_transmit === true) {
                         newArray[chat.id] = "合并转发消息";
                     }
-                    else{
+                    else {
                         newArray[chat.id] = JSON.parse(event.data).messages[index - 1].msg_body;
                     }
                     return newArray;
@@ -388,11 +441,23 @@ const MsgBar = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             {chatList!.length + groupChatList!.length + stickedPrivate!.length + stickedGroup!.length === 0 ? (
-                <ul className="friendlist" style={{ color: "white", textAlign: "center" }}> 当前没有会话 </ul>
+                <ul className="friendlist">
+                    <li>
+                        当前没有会话
+                    </li>
+                </ul>
             ) : (
                 <ul className="friendlist">
                     {stickedPrivate!.map((chat) => (
-                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor:"#434343" }} onClick={() => { router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${chat.validation ? 1 : 0}`); }}>
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#434343" }}
+                            onClick={() => {
+                                if (!chat.validation)
+                                    router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${0}`);
+                                else {
+                                    setShowPopupValidFriend(true);
+                                    setCurrentChat(chat);
+                                }
+                            }}>
                             <img src={`${chat.friend_avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.friend_name.length > 6 ? `${chat.friend_name.slice(0, 6)}...` : chat.friend_name}</div>
@@ -408,7 +473,15 @@ const MsgBar = () => {
                         </li>)
                     ))}
                     {stickedGroup!.map((chat) => (
-                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor:"#434343" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${chat.validation ? 1 : 0}`)}>
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#434343" }}
+                            onClick={() => {
+                                if (!chat.validation)
+                                    router.push(`/user/msg/chat?id=${chat?.id}&name=${chat?.name}&group=1&sticked=${chat?.sticked ? 1 : 0}&silent=${chat?.silent ? 1 : 0}&validation=${0}`);
+                                else {
+                                    setShowPopupValidGroup(true);
+                                    setCurrentGroupChat(chat);
+                                }
+                            }}>
                             <img src={`${chat.avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0, 6)}...` : chat.name}</div>
@@ -424,7 +497,15 @@ const MsgBar = () => {
                         </li>)
                     ))}
                     {chatList!.map((chat) => (
-                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => { router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${chat.validation ? 1 : 0}`); }}>
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row" }}
+                            onClick={() => {
+                                if (!chat.validation)
+                                    router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${0}`);
+                                else {
+                                    setShowPopupValidFriend(true);
+                                    setCurrentChat(chat);
+                                }
+                            }}>
                             <img src={`${chat.friend_avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.friend_name.length > 6 ? `${chat.friend_name.slice(0, 6)}...` : chat.friend_name}</div>
@@ -440,7 +521,15 @@ const MsgBar = () => {
                         </li>)
                     ))}
                     {groupChatList!.map((chat) => (
-                        (!chat.disabled &&<li key={chat.id} style={{ display: "flex", flexDirection: "row" }} onClick={() => router.push(`/user/msg/chat?id=${chat.id}&name=${chat.name}&group=1&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${chat.validation ? 1 : 0}`)}>
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row" }}
+                            onClick={() => {
+                                if (!chat.validation)
+                                    router.push(`/user/msg/chat?id=${chat?.id}&name=${chat?.name}&group=1&sticked=${chat?.sticked ? 1 : 0}&silent=${chat?.silent ? 1 : 0}&validation=${0}`);
+                                else {
+                                    setShowPopupValidGroup(true);
+                                    setCurrentGroupChat(chat);
+                                }
+                            }}>
                             <img src={`${chat.avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0, 6)}...` : chat.name}</div>
@@ -456,8 +545,38 @@ const MsgBar = () => {
                         </li>)
                     ))}
                 </ul>
-            )}
 
+            )}
+            {showPopupValidFriend && (
+                <div className="popup">
+                    <p>已开启二级验证，请输入密码</p>
+                    <input
+                        placeholder="输入本账号的登录密码"
+                        onChange={(e) => { setPwd(e.target.value); }}
+                    />
+                    <button onClick={() => { setShowPopupValidFriend(false); setPwd(""); }}>
+                        取消
+                    </button>
+                    <button onClick={() => { checkPwdFriend(pwd); setShowPopupValidFriend(false); setPwd(""); }}>
+                        完成
+                    </button>
+                </div>
+            )}
+            {showPopupValidGroup && (
+                <div className="popup">
+                    <p>已开启二级验证，请输入密码</p>
+                    <input
+                        placeholder="输入本账号的登录密码"
+                        onChange={(e) => { setPwd(e.target.value); }}
+                    />
+                    <button onClick={() => { setShowPopupValidGroup(false); setPwd(""); }}>
+                        取消
+                    </button>
+                    <button onClick={() => { checkPwdGroup(pwd); setShowPopupValidGroup(false); setPwd(""); }}>
+                        完成
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

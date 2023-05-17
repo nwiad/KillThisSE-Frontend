@@ -14,8 +14,8 @@ import MsgBar from "./msgbar";
 interface EventListenerInfo {
     id: number;
     listener: () => void;
-  }
-  
+}
+
 const ChatScreen = () => {
     const selectRef = useRef<HTMLSelectElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -69,14 +69,14 @@ const ChatScreen = () => {
     const selected = useRef<number[]>([]);// 用于存储即将被转发的消息id列表
 
     // 功能：获取+展示转发的消息
-    const [displayForwardMsgs,setDisplayForwardMsgs] = useState<boolean>(false); //展示转发来的多条信息
+    const [displayForwardMsgs, setDisplayForwardMsgs] = useState<boolean>(false); //展示转发来的多条信息
     const [refreshingRecords, setRefreshingRecords] = useState<boolean>(true);
     const [ForwardMsgs, setForwardMsgs] = useState<MsgMetaData[]>();
     // 在添加事件监听器时，将事件处理程序函数保存在变量中
 
     // 声明 eventListeners 数组的类型为 EventListenerInfo[]
     const eventListeners: EventListenerInfo[] = [];
-    
+
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
         setShowEmojiPicker(showEmojiPicker => !showEmojiPicker);
@@ -525,7 +525,7 @@ const ChatScreen = () => {
                     target.addEventListener("click", eventListener);
                     eventListeners.push({ id, listener: eventListener });
                 }
-            } 
+            }
         });
         contextMenu.appendChild(multiselectItem);
 
@@ -541,8 +541,7 @@ const ChatScreen = () => {
         document.addEventListener("click", hideContextMenu);
     };
 
-    const openFilter = (idlist:string) => {
-        // string转为number list
+    const openFilter = (idlist: string) => {
         setDisplayForwardMsgs(true);
         setRefreshingRecords(true);
 
@@ -560,7 +559,7 @@ const ChatScreen = () => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     console.log("获取转发的聊天记录成功");
                     // message是后端发过来的消息们
                     // 消息列表
@@ -573,7 +572,7 @@ const ChatScreen = () => {
                     throw new Error(`获取转发的聊天记录失败: ${data.info}`);
                 }
             })
-            .catch(((err) => alert("获取转发的聊天记录: "+err)));
+            .catch(((err) => alert("获取转发的聊天记录: " + err)));
     };
 
     // 计算转发消息的数量
@@ -585,7 +584,7 @@ const ChatScreen = () => {
     };
 
     useEffect(() => {
-        if(ForwardMsgs !== undefined) {
+        if (ForwardMsgs !== undefined) {
             console.log("ForwardMsgs: ", ForwardMsgs);
             setRefreshingRecords(false);
         }
@@ -720,14 +719,14 @@ const ChatScreen = () => {
     }, [chatID, chatName, isGroup, myID, sticked, silent, validation]);
 
     return refreshing ? (
-        <div style={{padding: 12}}>
+        <div style={{ padding: 12 }}>
             正在加载会话窗口......
         </div>
     ) : (validation === "1" ? (
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!}/>
+            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!} />
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 当前会话已加密
             </div>
@@ -736,8 +735,8 @@ const ChatScreen = () => {
         <div style={{ padding: 12 }}>
             <Navbar />
             <MsgBar />
-            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!}/>
-            <div ref={chatBoxRef} id="msgdisplay" className = "msgdpbox" style={{ display: "flex", flexDirection: "column" }}>
+            <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!} />
+            <div ref={chatBoxRef} id="msgdisplay" className="msgdpbox" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} id={`msgbg${msg.msg_id}`} className={"msg"}>
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
@@ -758,14 +757,15 @@ const ChatScreen = () => {
                                             openFilter(msg.msg_body);
                                             setDisplayForwardMsgs(true);
                                         }}
+                                        style={{ color: "#0baaf9" }}
                                     >
                                         点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
                                     </p>
                                 ) : (
-                                    <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}>
+                                    <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"} style={{ color: "#0baaf9" }}>
                                         点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
                                     </p>
-                                )):
+                                )) :
                                 (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
                                     (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
                                         <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
@@ -795,19 +795,20 @@ const ChatScreen = () => {
                 )}
 
             </div>
-            {displayForwardMsgs &&(
+            {displayForwardMsgs && (
                 refreshingRecords ? (
-                    <div className="popup" style={{padding: "20px", height: "auto"}}>
-                    正在加载聊天记录......
+                    <div className="popup" style={{ padding: "20px", height: "auto" }}>
+                        正在加载聊天记录......
                         <button onClick={() => { closeFilter(); }}>
                             取消
                         </button>
                     </div>
                 ) : (
-                    <div className="popup" style={{padding: "20px", height: "auto"}}>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div className="popup" style={{ padding: "20px", height: "auto" }}>
+                        <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setDisplayForwardMsgs(false); }} />
+                        <div style={{ display: "flex", flexDirection: "column", overflowY: "auto" }}>
                             {ForwardMsgs?.map((msg) => (
-                                <div key={msg.msg_id} className={msg.chosen?"msgchosen":"msg"}>
+                                <div key={msg.msg_id} className={msg.chosen ? "msgchosen" : "msg"}>
                                     <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                                         <img className="sender_avatar" src={msg.sender_avatar} />
                                     </div>
@@ -820,10 +821,11 @@ const ChatScreen = () => {
                                                     openFilter(msg.msg_body);
                                                     setDisplayForwardMsgs(true);
                                                 }}
+                                                style={{ color: "#0baaf9" }}
                                             >
                                                 点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
                                             </p>
-                                        ):
+                                        ) :
                                             (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
                                                 (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
                                                     <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
@@ -845,10 +847,6 @@ const ChatScreen = () => {
                                 </div>
                             ))}
                         </div>
-                                        
-                        <button onClick={() => { closeFilter(); }}>
-                            返回
-                        </button>
                     </div>
                 ))}
             {multiselecting && (
@@ -884,7 +882,7 @@ const ChatScreen = () => {
                 <div className="popup">
                     <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => {
                         const msgdp = document.getElementById("msgdisplay");
-                        if (msgdp) msgdp.className = "msgdpbox"; 
+                        if (msgdp) msgdp.className = "msgdpbox";
                         for (let msg of msgList) {
                             const id = msg.msg_id;
                             const targetbg = document.getElementById(`msgbg${id}`);
@@ -901,11 +899,11 @@ const ChatScreen = () => {
                         }
                         setMultiselected(false);
                     }} />
-                    <p style={{fontSize: "20px", margin: " 20px auto"}}>请选择要转发的聊天</p>
+                    <p style={{ fontSize: "20px", margin: " 20px auto" }}>请选择要转发的聊天</p>
                     <div >
                         <select id="conversation-select" ref={selectRef}>
                             <option value="" disabled selected>
-                            请选择转发的目标
+                                请选择转发的目标
                             </option>
                             {convList.map((conv) => (
                                 <option key={conv.id} value={conv.id}>
@@ -914,7 +912,7 @@ const ChatScreen = () => {
                             ))}
                         </select>
                     </div>
-                    <button className="sendforward" style={{fontSize: "15px", width: "200px", margin: " 20px auto"}} onClick={() => sendForward()}>
+                    <button className="sendforward" style={{ fontSize: "15px", width: "200px", margin: " 20px auto" }} onClick={() => sendForward()}>
                         发送选中的信息
                     </button>
                 </div>

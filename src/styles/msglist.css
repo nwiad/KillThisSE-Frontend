@@ -103,14 +103,19 @@
 
 .multidisplay{
     display: flex;
-    flex-direction: row;
-    position: fixed;
-    width: 55%;
+    flex-direction: column;
+    margin: 20px auto;
+    font-size: 20px;
     max-height: 20%;
-    right: 22%;
-    bottom: 30%;
-    background-size: cover;
-    background-position: center;
+    background-color: #e5e5e5;
+    padding: 15px;
+    border-radius: 15px;
+    width: 500px;
+}
+
+.multidisplay select{
+    width: 100px;
+    margin: 10px auto;
 }
 
 .multidisplay select option[disabled]:checked {
