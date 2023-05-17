@@ -32,6 +32,12 @@ const ChatScreen = () => {
     const router = useRouter();
     const query = router.query;
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+    const [nowuserowner, setnowuserowner] = useState<string>();
+    const [nowuseradmin, setnowuseradmin] = useState<string>();
+    const [msg_owneradmin, setmsg_owneradmin] = useState<string>();
+    const [msg_ownerowner, setmsg_ownerowner] = useState<string>();
+
     // image
     const [newimg, setNewImg] = useState<File>();
     const [isImgUploaded, setIsImgUploaded] = useState(false);
@@ -82,6 +88,10 @@ const ChatScreen = () => {
     // 是否正在有消息被提及
     const [replying, setreplying] = useState<boolean>(false);
 
+    // can 设置撤回消息的权限
+    const [can, setcan] = useState<boolean>(false);
+    const [msg_owner,setmsg_owner] = useState<number>();
+
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
         setShowEmojiPicker(showEmojiPicker => !showEmojiPicker);
@@ -102,8 +112,9 @@ const ChatScreen = () => {
         }
         // 是否有回复 只有文字信息才可能有回复某消息
         // 私聊直接发
-        if (isGroup === "false") {
-            if (replying) {
+        if (isGroup === "0") {
+            if(replying)
+            {
                 socket.current!.send(JSON.stringify({
                     message: inputValue, token: localStorage.getItem("token"),
                     isImg: false, isFile: false, isVideo: false, quote_with: ReplyingMsg?.msg_id
@@ -414,6 +425,16 @@ const ChatScreen = () => {
         console.log("Updated selected:", selected.current);//这里的selected变了
     }, [selected]);
 
+    useEffect(() => {
+        if (nowuserowner)
+            setcan(true);
+        else if (nowuseradmin && ((msg_owner === myID)||(!msg_ownerowner && !msg_owneradmin)))
+            setcan(true);
+        else
+            setcan(false);
+
+    },[nowuserowner!==undefined,nowuseradmin!==undefined,msg_ownerowner!==undefined,msg_owneradmin!==undefined]);
+    
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string) => {
         event.preventDefault();
@@ -422,11 +443,67 @@ const ChatScreen = () => {
         contextMenu.className = "msgContextMenu";
         contextMenu.style.left = `${event.clientX}px`;
         contextMenu.style.top = `${event.clientY}px`;
-
+        setmsg_owner(msg_owner);
         // user_id指当前登录的用户
         // msg_owner指消息的发送者
+        // 如果当前登录的用户是消息的发送者，可以撤回
+        const chatID_num = parseInt(chatID!);
+        fetch(
+            "/api/user/get_member_status/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    member: user_id,
+                    group: chatID_num
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.code === 0) {
+                    console.log("获取该用户在本会话中的身份");
+                    setnowuseradmin(data.is_admin);
+                    setnowuserowner(data.is_owner);
+                }
+                else {
+                    throw new Error(`获取该用户在本会话中的身份: ${data.info}`);
+                }
+            })
+            .catch(((err) => alert("获取该用户在本会话中的身份: " + err)));
+
+        fetch(
+            "/api/user/get_member_status/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    member: msg_owner,
+                    group: chatID_num
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.code === 0) {
+                    console.log("获取该用户在本会话中的身份");
+                    setmsg_owneradmin(data.is_admin);
+                    setmsg_ownerowner(data.is_owner);
+                }
+                else {
+                    throw new Error(`获取该用户在本会话中的身份: ${data.info}`);
+                }
+            })
+            .catch(((err) => alert("获取该用户在本会话中的身份: " + err)));
+            
+
+
         if (!msg_is_audio) {
-            if (user_id == msg_owner) {
+            // 撤回按钮
+            if ((isGroup==="0" )&& user_id === msg_owner) {
+                // 自己撤回自己有时间限制
                 const deleteItem = document.createElement("li");
                 deleteItem.className = "ContextMenuLi";
                 deleteItem.innerHTML = "撤回";
@@ -462,6 +539,22 @@ const ChatScreen = () => {
                 });
                 contextMenu.appendChild(deleteItem);
             }
+            else if(can && isGroup==="1")
+            {
+                // 管理员和群主无视时间
+                const deleteItem = document.createElement("li");
+                deleteItem.className = "ContextMenuLi";
+                deleteItem.innerHTML = "撤回";
+                deleteItem.addEventListener("click", () => {
+                    event.stopPropagation();
+                    socket.current!.send(JSON.stringify({
+                        message: msg_body, token: localStorage.getItem("token"),
+                        withdraw_msg_id: msg_id
+                    }));
+
+                });
+                contextMenu.appendChild(deleteItem);
+            }
             const translateItem = document.createElement("li");
             translateItem.className = "ContextMenuLi";
             translateItem.innerHTML = "翻译";
@@ -486,7 +579,7 @@ const ChatScreen = () => {
             contextMenu.appendChild(translateItem);
 
         }
-        else // 语音消息只能转文字
+        else // 语音消息不能撤回 只能转文字
         {
             console.log("语音消息");
             console.log(msg_body);
