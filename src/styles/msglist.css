@@ -479,11 +479,11 @@
     display: flex;
     flex-direction: row;
     position: fixed;
-    width: 80%;
-    height: 11%;
-    right: 0;
-    left: 20%;
-    bottom: 75%;
+    width: 30%;
+    height: 40px;
+    padding: 5px;
+    left: 25%;
+    bottom: 10%;
     background-size: cover;
     background-position: center;
     display: flex;
@@ -496,8 +496,11 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: 24px;
-    font-family: KaiTi;
+    height: 40px;
+    font-size: 15px;
+    padding: 10px;
+    margin: 20px auto;
+    overflow-y: auto;
     background-color: #ccc; /* 设置底色为灰色 */
     border-radius: 10px; /* 设置圆角矩形的半径 */
     padding: 10px; /* 可选：设置内边距 */

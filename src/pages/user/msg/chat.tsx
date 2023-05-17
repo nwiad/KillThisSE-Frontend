@@ -775,17 +775,19 @@ const ChatScreen = () => {
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
-                        {msg.quote_with !== -1 && (
-                            <div>
-                                在回复的消息id：{msg.quote_with}&nbsp;
-                                内容：{findRepliedMessageContent(msg.quote_with)}
-                            </div>
-                        )}
+
                         <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
+
                             onContextMenu={(event) => {
                                 msgContextMenu(event, myID!, msg.msg_id, msg.msg_body, msg.is_audio, msg.sender_id, msg.create_time);
                             }}>
+                           
                             <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
+                            {msg.quote_with !== -1 && (
+                                <div className="translate" style={{fontSize:"12px", height:"40px", maxWidth:"300px", overflowY:"auto"}}>
+                                    回复：{findRepliedMessageContent(msg.quote_with)}
+                                </div>
+                            )}
                             {msg.is_transmit === true ? (
                                 multiselecting === false ? (
                                     // 不在多选状态才能设置点击事件
@@ -1034,7 +1036,8 @@ const ChatScreen = () => {
                                 if (document.getElementById("msginput"))
                                     insertAtCursor(document.getElementById("msginput"), "");
                                 setMsg(inputValue);
-                                setShowPopupMention(false);}}>
+                                setShowPopupMention(false);
+                            }}>
                                 取消
                             </li>
                         </div>
