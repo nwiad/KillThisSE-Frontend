@@ -59,6 +59,8 @@ const ChatScreen = () => {
     const [sticked, setSticked] = useState<string>();
     const [silent, setSilent] = useState<string>();
 
+    const selected = useRef<number[]>([]);
+
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
         setShowEmojiPicker(showEmojiPicker => !showEmojiPicker);
@@ -285,6 +287,82 @@ const ChatScreen = () => {
 
     }
 
+    const addOrRemoveSelected = (id: number, target: HTMLElement) => {
+        console.log("selected", selected);
+        const index = selected.current.indexOf(id);
+        console.log("index", index);
+        console.log("id", id);
+        if(index !== -1) {
+            const newArray = [...selected.current];
+            newArray.splice(index, 1);
+            console.log("index  newArray", newArray);
+            selected.current = newArray;
+            console.log("selected", selected.current);
+            target.className = "msg";
+            console.log("----nowselected+"+selected.current);
+
+        }
+        else {
+            const newArray = [...selected.current, id];                            
+            console.log("else  newArray", newArray);//newArray正常
+            selected.current = newArray;
+            console.log("selected", selected.current);// 这里的selected没有变
+            target.className = "msgchosen";
+            console.log("+++++nowselected+"+selected.current);
+        }
+    };
+
+    const sendForward = () => {
+        //点击按钮时候选择的会话id  表示即将发送到那个会话中
+        let selectedConversationId = selectRef.current!.value;
+        console.log("选中的会话id");
+        console.log(selectedConversationId);
+        if(selected.current.length === 0) {
+            return;
+        }
+        // 给目标会话发送这个消息
+        const forwardOptions: Options = {
+            url: suffix + `${selectedConversationId}/${myID}/`,
+            // url: suffix + `2/${myID}/`,
+            heartTime: 5000, // 心跳时间间隔
+            heartMsg: JSON.stringify({ message: "heartbeat", token: localStorage.getItem("token"), heartbeat: true }),
+            forward: true,
+            forwardMsg: selected.current, //! 转发的消息id列表 后端用这2个参数
+            isReconnect: true, // 是否自动重连
+            isDestroy: false, // 是否销毁
+            reconnectTime: 5000, // 重连时间间隔
+            reconnectCount: -1, // 重连次数 -1 则不限制
+            openCb: () => { }, // 连接成功的回调
+            closeCb: () => { }, // 关闭的回调
+            messageCb: (event: MessageEvent) => { }, // 消息的回调
+            errorCb: () => { } // 错误的回调
+        };
+        const forwardSocket = new Socket(forwardOptions);
+        setTimeout(() => {
+            forwardSocket.destroy();
+            console.log("我死啦");
+        }, 1000);
+        // 清空选中的消息id列表并退出选择状态
+        selected.current = [];
+        setMultiselecting(false);
+
+        // 遍历消息的id 
+        // 恢复初始状态+移除监听事件
+        for (let msg of msgList) {
+            const id = msg.msg_id;
+            const target = document.getElementById(`msg${id}`);
+            if(target !== null)
+            {   
+                target.className = "msg";
+                target.removeEventListener("click", () => addOrRemoveSelected(id, target));
+            }
+        }
+    };
+
+    useEffect(() => {
+        console.log("Updated selected:", selected.current);//这里的selected变了
+    }, [selected]);
+
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string) => {
         event.preventDefault();
@@ -407,70 +485,22 @@ const ChatScreen = () => {
         const multiselectItem = document.createElement("li");
         multiselectItem.className = "ContextMenuLi";
         multiselectItem.innerHTML = "多选";
-        // 被选中的消息id list
-        let selectedMessagesId: number[] = [];        
         multiselectItem.addEventListener("click", async (event) => {
             event.stopPropagation();
             // 弹出字幕 正在进行多选
             setMultiselecting(true);
 
             // 遍历消息的id 
-            for (const msg of msgList) {
-                msg_id = msg.msg_id;
-                const target = document.getElementById(`msg${msg_id}`);
+            for (let msg of msgList) {
+                const id = msg.msg_id;
+                const target = document.getElementById(`msg${id}`);
                 // 如果消息已经被选中，就不再添加点击事件监听器
                 if(target !== null)
-                {
-                    target.addEventListener("click", () => {
-                    // 消息的 ID 是否已存在于 selectedMessages 数组中
-                        if (!selectedMessagesId.includes(msg_id)) {
-                            // 如果不存在，将 ID 添加到数组中并用chosen标记选中状态；
-                            selectedMessagesId.push(msg_id);
-                            msg.chosen = false;
-                        } else {
-                            // 已存在，从数组中移除 ID 并移除 chosen 类名以取消选中状态。
-                            const index = selectedMessagesId.indexOf(msg_id);
-                            if (index > -1) {
-                                selectedMessagesId.splice(index, 1);
-                                msg.chosen = true;
-                            }
-                        }});
+                {   
+                    target.addEventListener("click",() => addOrRemoveSelected(id, target));
                 }
             }
-            console.log(selectedMessagesId);
-
-            // 给后端发的东西 后端收就可以 没有其他定义的位置
-            // 合并转发消息
-
-            // 点击转发按钮才会触发
-            // 你可能需要一个发送按钮的引用，这是一个例子：
-            const sendForwardButton = document.getElementById("send_forward_button");
-            if(sendForwardButton !== null)
-            {
-                if(selectRef.current !== null)
-                {
-                    //点击按钮时候选择的会话id  表示即将发送到那个会话中
-                    let selectedConversationId = selectRef.current.value;
-                    console.log("选中的会话id");
-                    console.log(selectedConversationId);
-                    sendForwardButton.addEventListener("click", () => {
-                        // 获取选中的对话ID
-                        // 当用户点击发送按钮时，发送选中的消息id
-                        socket.current!.send(JSON.stringify({
-                            message: msg_body, token: localStorage.getItem("token"),
-                            selectedMessages: selectedMessagesId,
-                            targetConversationId: selectedConversationId // 转发到哪个会话
-                        }));
-        
-                        // 清空选中的消息id列表并退出选择状态
-                        selectedMessagesId = [];
-                        setMultiselecting(false);
-                    });
-                }
-            }
-            // 后端收到消息后，将消息合并转发给所有人
-
-            // todo 什么时候结束多选
+            // 点击转发按钮才会触发  合并转发消息       
         });
         contextMenu.appendChild(multiselectItem);
 
@@ -529,6 +559,7 @@ const ChatScreen = () => {
                 setconvList(convList
                     .map((val: any) => ({ ...val }))
                 );
+                console.log("convList"+convList);
 
                 const last_id = messages.length === 0 ? -1 : messages.at(-1).msg_id;
                 fetch(
@@ -617,7 +648,7 @@ const ChatScreen = () => {
             <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} />
             <div ref={chatBoxRef} id="msgdisplay" style={{ display: "flex", flexDirection: "column" }}>
                 {msgList.map((msg) => (
-                    <div key={msg.msg_id} className={msg.chosen?"msgchosen":"msg"}>
+                    <div key={msg.msg_id} className={"msg"}>
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
@@ -661,18 +692,22 @@ const ChatScreen = () => {
                     </div>
                 </div>
             )}
-            <div className="conversation-select">
-                <select id="conversation-select" ref={selectRef}>
-                    {convList.map((conv) => (
-                        <option key={conv.id} value={conv.id}>
-                            {conv.name} {/* 或者你的对话对象的其他属性，例如 title */}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <button id="send_forward_button"className="send_forward_button">
-                发送选中的信息
-            </button>
+            {multiselecting && (
+                <div >
+                    <div className="multidisplay">
+                        <select id="conversation-select" ref={selectRef}>
+                            {convList.map((conv) => (
+                                <option key={conv.id} value={conv.id}>
+                                    {conv.name} {conv.is_group === true ? "(群)" : "(私聊)"}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <button id="send_forward_button" className="send_forward_button" onClick={()=> sendForward()}>
+                        发送选中的信息
+                    </button>
+                </div>
+            )}
             <div className="inputdisplay">
                 <input
                     className="msginput"

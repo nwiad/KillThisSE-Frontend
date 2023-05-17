@@ -9,6 +9,8 @@ export interface Options {
     heartTime: number, // 心跳时间间隔
     heartMsg: string, // 心跳信息,默认为"ping"
     sayHi?: boolean,
+    forward?: boolean, // 是否转发
+    forwardMsg?: number[], // 转发的消息的id
     isReconnect: boolean, // 是否自动重连
     isDestroy: boolean, // 是否销毁
     reconnectTime: number, // 重连时间间隔
@@ -70,4 +72,5 @@ export interface CovnMetaData{
     id: number,
     name: string,
     avatar: string,
+    is_group: boolean,
 }
