@@ -108,6 +108,9 @@ const DetailsPage = (props: detailProps) => {
     const [showAssign, setShowAssign] = useState<boolean>(false);
     const [assignees, setAssignees] = useState<number[]>([]);
 
+    const [showFire, setShowFire] = useState<boolean>(false);
+    const [firees, setFirees] = useState<number[]>([]);
+
     useEffect(() => {
         if (!router.isReady) {
             return;
@@ -525,6 +528,46 @@ const DetailsPage = (props: detailProps) => {
         }
     };
 
+    const addOrRemoveFiree = (id: number) => {
+        console.log("移除管理员", firees);
+        const index = firees.indexOf(id);
+        if (index !== -1) {
+            let newArray = [...firees];
+            newArray.splice(index, 1);
+            setFirees(newArray);
+        }
+        else {
+            setFirees((memeberList) => [...memeberList, id]);
+        }
+    };
+
+    const fire = () => {
+        console.log("firees", firees);
+        fetch(
+            "/api/user/remove_administrator/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    group: props.chatID,
+                    admin: firees
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    alert("移除管理员成功");
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
+                }
+                else {
+                    throw new Error(`${data.info}`);
+                }
+            })
+            .catch((err) => alert("移除管理员失败: "+err));
+    };
+
     const assign = () => {
         console.log("assignees", assignees);
         fetch(
@@ -549,12 +592,17 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("增设管理员"+err));
+            .catch((err) => alert("增设管理员失败"+err));
     };
 
     const closeAssign = () => {
         setShowAssign(false);
         setAssignees([]);
+    };
+
+    const closeFire = () => {
+        setShowFire(false);
+        setFirees([]);
     };
 
     const remove = () => {
@@ -1193,6 +1241,10 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
                         <p className="admininfo">增设管理员</p>
                     </div>}
+                    { props.myID === owner?.id.toString() && <div className="adminbutton" onClick={() => { setShowFire(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
+                        <p className="admininfo">移除管理员</p>
+                    </div>}
                 </div>
 
             </div>
@@ -1479,7 +1531,7 @@ const DetailsPage = (props: detailProps) => {
                         </button>
                     </div>
                 ))}
-
+            {/* 根据发送者筛选记录 */}
             {showSenders && (
                 <p className="members">
                     <div className="membersort">
@@ -1591,6 +1643,29 @@ const DetailsPage = (props: detailProps) => {
                         取消
                     </button>
                     <button onClick={() => { assign(); closeAssign(); }} disabled={assignees.length === 0}>
+                        完成
+                    </button>
+                </div>
+            )}
+            {/* 移除管理员 */}
+            {showFire && (
+                <div className="popup" style={{ padding: "20px", height: "auto" }}>
+                    <ul className="startgroupchoice">
+                        {admins?.map((item) => (
+                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveFiree(item.id); }}>
+                                <li
+                                    className="navbar_ele_info"
+                                    style={{ display: "flex", width: "100%" }}>
+                                    <img className="sender_avatar" src={`${item.avatar}`} alt="oops" />
+                                    <p style={{ color: "black" }}>{item.name}</p>
+                                </li>
+                            </div>
+                        ))}
+                    </ul>
+                    <button onClick={() => { closeFire(); }}>
+                        取消
+                    </button>
+                    <button onClick={() => { fire(); closeFire(); }} disabled={firees.length === 0}>
                         完成
                     </button>
                 </div>
