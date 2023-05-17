@@ -77,6 +77,11 @@ const ChatScreen = () => {
     // 声明 eventListeners 数组的类型为 EventListenerInfo[]
     const eventListeners: EventListenerInfo[] = [];
 
+    // 正在回复的某条消息
+    const [ReplyingMsg, setReplyingMsg] = useState<MsgMetaData>();
+    // 是否正在有消息被提及
+    const [replying,setreplying] = useState<boolean>(false);
+
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
         setShowEmojiPicker(showEmojiPicker => !showEmojiPicker);
@@ -95,16 +100,26 @@ const ChatScreen = () => {
         if (message === "") {
             return;
         }
+        // 是否有回复 只有文字信息才可能有回复某消息
         // 私聊直接发
         if (isGroup === "false") {
-            socket.current!.send(JSON.stringify({
-                message: inputValue, token: localStorage.getItem("token"),
-                isImg: false, isFile: false, isVideo: false
-            }));
+            if(replying)
+            {
+                socket.current!.send(JSON.stringify({
+                    message: inputValue, token: localStorage.getItem("token"),
+                    isImg: false, isFile: false, isVideo: false, quote_with: ReplyingMsg?.msg_id
+                }));
+            }
+            else{
+                socket.current!.send(JSON.stringify({
+                    message: inputValue, token: localStorage.getItem("token"),
+                    isImg: false, isFile: false, isVideo: false
+                }));
+            }
         }
+        // 群聊检查是否有@name
         else {
-            // 群聊可能有@name
-            // 表示该条消息提及了谁
+            // 群聊可能有@name 表示该条消息提及了谁
             let mentioned_members = [];
             // message表示消息内容 从中提取是否有@name
             // 如果有，提取出来，然后发送消息
@@ -126,12 +141,25 @@ const ChatScreen = () => {
                         }
                     }
             }
-            socket.current!.send(JSON.stringify({
-                message: inputValue, token: localStorage.getItem("token"),
-                isImg: false, isFile: false, isVideo: false,
-                mentioned_members: mentioned_members
-            }));
+            if(replying) {                
+                socket.current!.send(JSON.stringify({
+                    message: inputValue, token: localStorage.getItem("token"),
+                    isImg: false, isFile: false, isVideo: false,
+                    mentioned_members: mentioned_members, quote_with: ReplyingMsg?.msg_id
+                }));
+            }
+            else{
+
+                socket.current!.send(JSON.stringify({
+                    message: inputValue, token: localStorage.getItem("token"),
+                    isImg: false, isFile: false, isVideo: false,
+                    mentioned_members: mentioned_members
+                }));
+            }
+
         }
+        setReplyingMsg(undefined);
+        setreplying(false);
     };
 
     const cleanUp = () => {
@@ -506,6 +534,20 @@ const ChatScreen = () => {
         });
         contextMenu.appendChild(deleteItem);
 
+        // 回复按钮
+        const replyItem = document.createElement("li");
+        replyItem.className = "ContextMenuLi";
+        replyItem.innerHTML = "回复";
+        replyItem.addEventListener("click", () => {
+            //  从消息id找到消息
+            setReplyingMsg(msgList.find((msg) => msg.msg_id === msg_id));
+            setreplying(true);
+            // 当点击发送按钮的时候 如果正在有消息被提及，则连带这个消息的id一起发送给后端
+            // 显示正在回复的消息的信息
+            event.stopPropagation();
+        });
+        contextMenu.appendChild(replyItem);
+
         // 多选按钮--为了合并转发消息
         const multiselectItem = document.createElement("li");
         multiselectItem.className = "ContextMenuLi";
@@ -593,6 +635,12 @@ const ChatScreen = () => {
     const closeFilter = () => {
         setDisplayForwardMsgs(false);
         setRefreshingRecords(true);
+    };
+
+
+    const findRepliedMessageContent = (quoteId: number) => {
+        const repliedMessage = msgList.find((msg) => msg.msg_id === quoteId);
+        return repliedMessage ? repliedMessage.msg_body : "";
     };
 
     useEffect(() => {
@@ -733,6 +781,12 @@ const ChatScreen = () => {
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
                             <img className="sender_avatar" src={msg.sender_avatar} />
                         </div>
+                        {msg.quote_with !== -1 && (
+                            <div>
+                            在回复的消息id：{msg.quote_with}&nbsp;
+                            内容：{findRepliedMessageContent(msg.quote_with)}
+                            </div>
+                        )}
                         <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
                             onContextMenu={(event) => {
                                 msgContextMenu(event, myID!, msg.msg_id, msg.msg_body, msg.is_audio, msg.sender_id, msg.create_time);
@@ -781,6 +835,13 @@ const ChatScreen = () => {
                     <div className="popuprecord">
                         <div className="popup-title">
                             &nbsp;&nbsp;正在录音......&nbsp;&nbsp;
+                        </div>
+                    </div>
+                )}
+                {replying && (
+                    <div className="popuprecord">
+                        <div className="popup-title">
+                            &nbsp;&nbsp;正在回复：&nbsp;{ReplyingMsg?.msg_body}&nbsp;&nbsp;
                         </div>
                     </div>
                 )}
