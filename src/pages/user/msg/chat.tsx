@@ -289,7 +289,7 @@ const ChatScreen = () => {
             }
             if (msgBody.includes(`@${myName}`)) {
                 msgBody = msgBody.replace(`@${myName}`, () => {
-                    return `<a onclick="handleMsgClick('${myName}');">@${myName}</a>`;
+                    return `<a >@${myName}</a>`;
                 });
             }
         }
@@ -1196,7 +1196,7 @@ const ChatScreen = () => {
                             sendPublic();
                             setInput("");
                         };
-                        if (event.key === "@") {
+                        if (event.key === "@" && isGroup === "1") {
                             event.preventDefault();
                             setShowPopupMention(true);
                             //验证是否为群聊
