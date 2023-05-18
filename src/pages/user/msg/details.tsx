@@ -305,11 +305,14 @@ const DetailsPage = (props: detailProps) => {
             if (owner?.id.toString() === props.myID) {
                 return true;
             }
-            admins?.forEach((admin) => {
-                if (admin.id.toString() === props.myID) {
+            if(admins === undefined) {
+                return false;
+            }
+            for(let admin of admins) {
+                if(admin.id.toString() === props.myID) {
                     return true;
                 }
-            });
+            }
             return false;
         };
         if (props.group === "1" && owner !== undefined && admins !== undefined && members !== undefined) {
@@ -1258,7 +1261,7 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faUserMinus} />
                         <p className="admininfo">移除成员</p>
                     </div>}
-                    {hasPermit && <div className="adminbutton" onClick={() => { setShowReq(true); }}>
+                    {owner?.toString() === props.myID && <div className="adminbutton" onClick={() => { setShowReq(true); }}>
                         <FontAwesomeIcon className="adminicon" icon={faUserCheck} />
                         <p className="admininfo">入群请求</p>
                     </div>}
