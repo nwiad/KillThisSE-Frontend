@@ -38,10 +38,10 @@ const ChatScreen = () => {
     const [showMemberDetail, setShowMemberDetail] = useState(false);
     const [memberDetailList, setMemberdetailList] = useState<string[]>([]);
 
-    const [nowuserowner, setnowuserowner] = useState<string>();
-    const [nowuseradmin, setnowuseradmin] = useState<string>();
-    const [msg_owneradmin, setmsg_owneradmin] = useState<string>();
-    const [msg_ownerowner, setmsg_ownerowner] = useState<string>();
+    const [nowuserowner, setnowuserowner] = useState<string>("ss");
+    const [nowuseradmin, setnowuseradmin] = useState<string>("ss");
+    const [msg_owneradmin, setmsg_owneradmin] = useState<string>("ss");
+    const [msg_ownerowner, setmsg_ownerowner] = useState<string>("ss");
 
     // image
     const [newimg, setNewImg] = useState<File>();
@@ -403,7 +403,7 @@ const ChatScreen = () => {
     const sendAudio = async (audioURL: string) => {
         try {
             const audioBlob = await (await fetch(audioURL)).blob();
-            const audioFile = blobToFile(audioBlob, "recording.pcm");
+            const audioFile = blobToFile(audioBlob, "recording.amr");
             const audioUrl = await uploadFile(audioFile);
             console.log("audioUrl", audioUrl);
             if (socket.current) {
@@ -645,50 +645,57 @@ const ChatScreen = () => {
                 withdraw_msg_id: msg_id
             }));
         };
+        let withdrawItem = document.getElementById("deleteItem");
+
         if (!msg_is_audio) {
             // 撤回按钮
-            if(can && isGroup === "1")
-            {
-                // 在群内且自己身份特殊  管理员和群主无视时间
-                const withdrawItem = document.createElement("li");
-                withdrawItem.className = "ContextMenuLi";
-                withdrawItem.innerHTML = "撤回";
-                withdrawItem.addEventListener("click", withdrawAllTime);
-                contextMenu.appendChild(withdrawItem);
-                
-            }
-            else if (user_id === msg_owner  && ((isGroup === "0")||((isGroup === "1")&&!nowuseradmin && !nowuserowner))) {
-                // 自己撤回自己有时间限制  私聊 or 群聊且自己身份普通成员
-                const withdrawItem = document.createElement("li");
-                withdrawItem.className = "ContextMenuLi";
-                withdrawItem.innerHTML = "撤回";
-                withdrawItem.addEventListener("click", withdrawInFive);
-                contextMenu.appendChild(withdrawItem);
-            }
-            
-            const translateItem = document.createElement("li");
-            translateItem.className = "ContextMenuLi";
-            translateItem.innerHTML = "翻译";
-            translateItem.addEventListener("click", async (event) => {
-                event.stopPropagation();
-                const target = document.getElementById(`msg${msg_id}`);
-                console.log(target!.getElementsByTagName("p").length);
-                console.log(target!.getElementsByClassName("translate")[0]);
-                if (target!.getElementsByClassName("translate")[0]) {
-                    console.log("已经有翻译结果了");
-                    return;
+            if(!withdrawItem) { // 确保只添加一次
+                if(can && isGroup === "1")
+                {
+                    console.log("都听我的！！！！！！！");
+                    // 在群内且自己身份特殊  管理员和群主无视时间
+                    const withdrawItem = document.createElement("li");
+                    withdrawItem.className = "ContextMenuLi";
+                    withdrawItem.innerHTML = "撤回";
+                    withdrawItem.addEventListener("click", withdrawAllTime);
+                    contextMenu.appendChild(withdrawItem);
+                    
                 }
-                const newElement = document.createElement("p");
-                newElement.className = "translate";
-                newElement.innerHTML = await translate(msg_body);  //翻译次数有限！！！
-                // newElement.innerHTML = "翻译结果";
-                target?.insertAdjacentElement("beforeend", newElement);
-                hideContextMenu();
-                console.log(target!.getElementsByClassName("translate").length);
-
-            });
-            contextMenu.appendChild(translateItem);
-
+                else if (user_id === msg_owner  && ((isGroup === "0")||((isGroup === "1")&&!nowuseradmin && !nowuserowner))) {
+                    // 自己撤回自己有时间限制  私聊 or 群聊且自己身份普通成员
+                    console.log("有时间限制噢！！！！！！！！！！！！！！！！！！！！");
+                    const withdrawItem = document.createElement("li");
+                    withdrawItem.className = "ContextMenuLi";
+                    withdrawItem.innerHTML = "撤回";
+                    withdrawItem.addEventListener("click", withdrawInFive);
+                    contextMenu.appendChild(withdrawItem);
+                }
+            }
+            let translateItem = document.getElementById("translateItem");
+            if(!translateItem){
+                const translateItem = document.createElement("li");
+                translateItem.className = "ContextMenuLi";
+                translateItem.innerHTML = "翻译";
+                translateItem.addEventListener("click", async (event) => {
+                    event.stopPropagation();
+                    const target = document.getElementById(`msg${msg_id}`);
+                    console.log(target!.getElementsByTagName("p").length);
+                    console.log(target!.getElementsByClassName("translate")[0]);
+                    if (target!.getElementsByClassName("translate")[0]) {
+                        console.log("已经有翻译结果了");
+                        return;
+                    }
+                    const newElement = document.createElement("p");
+                    newElement.className = "translate";
+                    newElement.innerHTML = await translate(msg_body);  //翻译次数有限！！！
+                    // newElement.innerHTML = "翻译结果";
+                    target?.insertAdjacentElement("beforeend", newElement);
+                    hideContextMenu();
+                    console.log(target!.getElementsByClassName("translate").length);
+    
+                });
+                contextMenu.appendChild(translateItem);
+            }
         }
         else // 语音消息不能撤回 只能转文字
         {
@@ -722,35 +729,40 @@ const ChatScreen = () => {
             contextMenu.appendChild(transformItem);
         }
 
+        let replyItem = document.getElementById("replyItem");
+        let deleteItem = document.getElementById("deleteItem");
 
+        if(!deleteItem) {
         // 删除消息记录按钮
-        const deleteItem = document.createElement("li");
-        deleteItem.className = "ContextMenuLi";
-        deleteItem.innerHTML = "删除";
-        const deleteEventListener = () => {
-            event.stopPropagation();
-            socket.current!.send(JSON.stringify({
-                message: msg_body, token: localStorage.getItem("token"),
-                deleted_msg_id: msg_id
-            }));
-        };
-        deleteItem.addEventListener("click", deleteEventListener);
-        contextMenu.appendChild(deleteItem);
-
-        // 回复按钮
-        const replyItem = document.createElement("li");
-        replyItem.className = "ContextMenuLi";
-        replyItem.innerHTML = "回复";
-        const replyEventListeners = () => {
-            //  从消息id找到消息
-            setReplyingMsg(msgList.find((msg) => msg.msg_id === msg_id));
-            setreplying(true);
-            // 当点击发送按钮的时候 如果正在有消息被提及，则连带这个消息的id一起发送给后端
-            // 显示正在回复的消息的信息
-            event.stopPropagation();
-        };
-        replyItem.addEventListener("click",replyEventListeners);
-        contextMenu.appendChild(replyItem);
+            const deleteItem = document.createElement("li");
+            deleteItem.className = "ContextMenuLi";
+            deleteItem.innerHTML = "删除";
+            const deleteEventListener = () => {
+                event.stopPropagation();
+                socket.current!.send(JSON.stringify({
+                    message: msg_body, token: localStorage.getItem("token"),
+                    deleted_msg_id: msg_id
+                }));
+            };
+            deleteItem.addEventListener("click", deleteEventListener);
+            contextMenu.appendChild(deleteItem);
+        }
+        if(!replyItem){
+            // 回复按钮
+            const replyItem = document.createElement("li");
+            replyItem.className = "ContextMenuLi";
+            replyItem.innerHTML = "回复";
+            const replyEventListeners = () => {
+                //  从消息id找到消息
+                setReplyingMsg(msgList.find((msg) => msg.msg_id === msg_id));
+                setreplying(true);
+                // 当点击发送按钮的时候 如果正在有消息被提及，则连带这个消息的id一起发送给后端
+                // 显示正在回复的消息的信息
+                event.stopPropagation();
+            };
+            replyItem.addEventListener("click",replyEventListeners);
+            contextMenu.appendChild(replyItem);
+        }
 
         // 多选按钮--为了合并转发消息
         const multiselectItem = document.createElement("li");
@@ -783,8 +795,8 @@ const ChatScreen = () => {
 
         function hideContextMenu() {
             //todo 移除所有事件监听器
-            deleteItem.removeEventListener("click", deleteEventListener);
-            replyItem.removeEventListener("click", replyEventListeners);
+            // deleteItem.removeEventListener("click", deleteEventListener);
+            // replyItem.removeEventListener("click", replyEventListeners);
 
             document.removeEventListener("mousedown", hideContextMenu);
             document.removeEventListener("click", hideContextMenu);
