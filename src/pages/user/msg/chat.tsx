@@ -1061,9 +1061,9 @@ const ChatScreen = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="popup" style={{ padding: "20px", height: "auto" }}>
+                    <div className="historypopup" >
                         <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setDisplayForwardMsgs(false); }} />
-                        <div style={{ display: "flex", flexDirection: "column", overflowY: "auto" }}>
+                        <div style={{ display: "flex", flexDirection: "column", height: "500px", overflowY: "auto", marginTop: "50px" }}>
                             {ForwardMsgs?.map((msg) => (
                                 <div key={msg.msg_id} className={msg.chosen ? "msgchosen" : "msg"}>
                                     <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
