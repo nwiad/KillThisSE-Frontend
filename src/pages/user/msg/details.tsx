@@ -441,7 +441,7 @@ const DetailsPage = (props: detailProps) => {
                 if (data.code === 0) {
                     alert(hasPermit ? "已拉取入群" : "已发送邀请");
                     console.log("邀请：", invitees);
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top==="1" ? 1 : 0}&silent=${silent==="1" ? 1 : 0}&validation=${validation==="1" ? 1 : 0}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation === "1" ? 1 : 0}`);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -467,7 +467,7 @@ const DetailsPage = (props: detailProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     alert("成功创建群聊");
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top==="1" ? 1 : 0}&silent=${silent==="1" ? 1 : 0}&validation=${validation==="1" ? 1 : 0}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation === "1" ? 1 : 0}`);
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -557,7 +557,7 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     alert("移除管理员成功");
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
                 }
@@ -565,7 +565,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("移除管理员失败: "+err));
+            .catch((err) => alert("移除管理员失败: " + err));
     };
 
     const assign = () => {
@@ -584,7 +584,7 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     alert("增设管理员成功");
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
                 }
@@ -592,7 +592,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("增设管理员失败"+err));
+            .catch((err) => alert("增设管理员失败" + err));
     };
 
     const closeAssign = () => {
@@ -625,7 +625,7 @@ const DetailsPage = (props: detailProps) => {
                 if (data.code === 0) {
                     alert("已移除成员");
                     console.log("移除：", removed);
-                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top==="1" ? 1 : 0}&silent=${silent==="1" ? 1 : 0}&validation=${validation==="1" ? 1 : 0}`);
+                    router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation === "1" ? 1 : 0}`);
                 } else {
                     throw new Error(`${data.info}`);
                 }
@@ -777,7 +777,7 @@ const DetailsPage = (props: detailProps) => {
         if (top === undefined && silent === undefined && validation !== undefined) {
             return;
         }
-        router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation==="1" ? 1 : 0}`);
+        router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation === "1" ? 1 : 0}`);
     }, [top, silent, validation]);
 
     const deleteFriend = () => {
@@ -1156,7 +1156,7 @@ const DetailsPage = (props: detailProps) => {
     }, [content, props]);
 
     useEffect(() => {
-        if(newOwner !== undefined) {
+        if (newOwner !== undefined) {
             fetch(
                 "/api/user/transfer_owner/",
                 {
@@ -1171,7 +1171,7 @@ const DetailsPage = (props: detailProps) => {
             )
                 .then((res) => res.json())
                 .then((data) => {
-                    if(data.code === 0) {
+                    if (data.code === 0) {
                         alert("转让群主成功");
                         setNewOwner(undefined);
                         router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
@@ -1180,12 +1180,12 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("转让群主失败: "+err));
+                .catch((err) => alert("转让群主失败: " + err));
         }
     }, [newOwner, props]);
 
     const sendFriendRequest = (id: number | undefined) => {
-        if(id === undefined) {
+        if (id === undefined) {
             alert("发送好友请求: 非法id");
         }
         fetch(
@@ -1201,20 +1201,20 @@ const DetailsPage = (props: detailProps) => {
         )
             .then((res) => res.json())
             .then((data) => {
-                if(data.code === 0) {
+                if (data.code === 0) {
                     alert("成功发送好友请求");
                 }
-                else if(data.code === 3) {
+                else if (data.code === 3) {
                     alert("你们已经是好友了");
                 }
-                else if(data.code === 4) {
+                else if (data.code === 4) {
                     alert("已发送过好友请求，请耐心等候对方回复");
                 }
                 else {
                     throw new Error(`${data.infp}`);
                 }
             })
-            .catch((err) => alert("发送好友请求: "+err));
+            .catch((err) => alert("发送好友请求: " + err));
     };
 
     return refreshing ? (
@@ -1239,7 +1239,7 @@ const DetailsPage = (props: detailProps) => {
                         <p className="admininfo">筛选消息</p>
                     </div>
                     <div className="adminbutton">
-                        <FontAwesomeIcon className="adminicon" icon={validation === "1" ? faKey : faLock} onClick={() => { setValidation(validation==="1"?"0" : "1"); setOrUnsetValidation(validation === "1" ? true : false); }} />
+                        <FontAwesomeIcon className="adminicon" icon={validation === "1" ? faKey : faLock} onClick={() => { setValidation(validation === "1" ? "0" : "1"); setOrUnsetValidation(validation === "1" ? true : false); }} />
                         <p className="admininfo">{validation === "1" ? "解除二级验证" : "设置二级验证"}</p>
                     </div>
                     <div className="adminbutton" onClick={() => { makeOrUnmakeSilent(silent === "1" ? true : false); }}>
@@ -1262,22 +1262,23 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faUserCheck} />
                         <p className="admininfo">入群请求</p>
                     </div>}
+
+                    {props.myID === owner?.id.toString() && <div className="adminbutton" onClick={() => { setShowTransfer(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
+                        <p className="admininfo">转让群主</p>
+                    </div>}
+                    {props.myID === owner?.id.toString() && <div className="adminbutton" onClick={() => { setShowAssign(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
+                        <p className="admininfo">增设管理员</p>
+                    </div>}
+                    {props.myID === owner?.id.toString() && <div className="adminbutton" onClick={() => { setShowFire(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
+                        <p className="admininfo">移除管理员</p>
+                    </div>}
                     <div className="adminbutton" onClick={() => { dismissOrQuit(); }}>
                         <FontAwesomeIcon className="quiticon" icon={faXmark} />
                         <p className="admininfo">{props.myID === owner?.id.toString() ? "解散群聊" : "退出群聊"}</p>
                     </div>
-                    { props.myID === owner?.id.toString() && <div className="adminbutton" onClick={() => { setShowTransfer(true); }}>
-                        <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
-                        <p className="admininfo">转让群主</p>
-                    </div>}
-                    { props.myID === owner?.id.toString() && <div className="adminbutton" onClick={() => { setShowAssign(true); }}>
-                        <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
-                        <p className="admininfo">增设管理员</p>
-                    </div>}
-                    { props.myID === owner?.id.toString() && <div className="adminbutton" onClick={() => { setShowFire(true); }}>
-                        <FontAwesomeIcon className="adminicon" icon={faUserGroup} />
-                        <p className="admininfo">移除管理员</p>
-                    </div>}
                 </div>
 
             </div>
@@ -1289,7 +1290,7 @@ const DetailsPage = (props: detailProps) => {
                             <img className="sender_avatar" style={{ borderColor: "#0660e9" }} src={`${owner?.avatar}`} alt="oops" />
                             <p style={{ color: "black", margin: "auto 10px", fontSize: "30px" }}>{owner?.name}</p>
                             <p className="owner">群主</p>
-                            { owner?.id.toString() !== props.myID && <button style={{width: "8%"}} onClick={() => {sendFriendRequest(owner?.id);}}>+</button>}
+                            {owner?.id.toString() !== props.myID && <button style={{ width: "8%" }} onClick={() => { sendFriendRequest(owner?.id); }}>+</button>}
                         </div>
                     </div>
                     <div className="membersort">
@@ -1298,7 +1299,7 @@ const DetailsPage = (props: detailProps) => {
                                 <img className="sender_avatar" src={`${admin?.avatar}`} alt="oops" />
                                 <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{admin?.name}</p>
                                 <p className="admin">管理员</p>
-                                {admin?.id.toString() !== props.myID && <button style={{width: "8%"}} onClick={() => {sendFriendRequest(admin?.id);}}>+</button>}
+                                {admin?.id.toString() !== props.myID && <button style={{ width: "8%" }} onClick={() => { sendFriendRequest(admin?.id); }}>+</button>}
                             </div>
                         ))}
                     </div>
@@ -1307,7 +1308,7 @@ const DetailsPage = (props: detailProps) => {
                             <div key={member.id} className="member">
                                 <img className="sender_avatar" src={`${member?.avatar}`} alt="oops" />
                                 <p style={{ color: "black", margin: "auto 10px" }}>{member?.name}</p>
-                                {member?.id.toString() !== props.myID && <button style={{width: "8%"}} onClick={() => {sendFriendRequest(member?.id);}}>+</button>}
+                                {member?.id.toString() !== props.myID && <button style={{ width: "8%" }} onClick={() => { sendFriendRequest(member?.id); }}>+</button>}
                             </div>
                         ))}
                     </div>
@@ -1415,7 +1416,7 @@ const DetailsPage = (props: detailProps) => {
                             </div>
                         ))}
                     </ul>
-                    <button onClick={() => { setShowReq(false); router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation==="1" ? 1 : 0}`); }}>
+                    <button onClick={() => { setShowReq(false); router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation === "1" ? 1 : 0}`); }}>
                         返回
                     </button>
                 </div>
@@ -1614,7 +1615,7 @@ const DetailsPage = (props: detailProps) => {
             {/* 二次验证窗口 */}
             {showSecondValid && (
                 <div className="popup">
-                    <button onClick={() => { setOrUnsetValidation(validation==="1" ? true : false); }}>
+                    <button onClick={() => { setOrUnsetValidation(validation === "1" ? true : false); }}>
                         {validation ? "解除二次验证" : "开启二次验证"}
                     </button>
                     {/* <button onClick={() => { submitNotice(); setNotice(newNotice); closeNoticeBoard(); }} disabled={newNotice.length === 0}>
@@ -1638,7 +1639,7 @@ const DetailsPage = (props: detailProps) => {
                 </div>
             )}
             {/* 转让群主 */}
-            {( showTransfer && props.myID === owner?.id.toString()) && (
+            {(showTransfer && props.myID === owner?.id.toString()) && (
                 <p className="members">
                     <div className="membersort">
                         {admins?.map((admin) => (

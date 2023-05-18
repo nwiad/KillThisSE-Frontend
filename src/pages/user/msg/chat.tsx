@@ -16,6 +16,7 @@ interface EventListenerInfo {
     listener: () => void;
 }
 
+
 const ChatScreen = () => {
     const selectRef = useRef<HTMLSelectElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -34,7 +35,7 @@ const ChatScreen = () => {
     const query = router.query;
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [showMemberDetail, setShowMemberDetail] = useState(false);
-    const [memberDetailName, setMemberdetailName] = useState<string>("");
+    const [memberDetailList, setMemberdetailList] = useState<string[]>([]);
 
     const [nowuserowner, setnowuserowner] = useState<string>();
     const [nowuseradmin, setnowuseradmin] = useState<string>();
@@ -221,10 +222,6 @@ const ChatScreen = () => {
         }));
     };
 
-    function handleMsgClick(name: string) {
-        setMemberdetailName(name);
-        setShowMemberDetail(true);
-    }
 
     useEffect(() => {
         fetch(
@@ -245,6 +242,23 @@ const ChatScreen = () => {
             .catch((err) => alert(err));
     }, []);
 
+    const getAvatar = (name: string) => {
+        fetch(
+            "/api/user/get_avatar/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    name: name
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                return (data.avatar);
+            })
+            .catch((err) => alert(err));
+    };
     // 功能：创建链接
     function createLinkifiedMsgBody(msgBody: string) {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -253,7 +267,6 @@ const ChatScreen = () => {
         if (msgBody.includes("@")) {
             if (msgBody.includes(`@${all}`)) {
                 console.log(`消息有@${all}`);
-                // 如果包含全体成员，将所有用户名添加到提及成员的数组中
                 msgBody = msgBody.replace(`@${all}`, () => {
                     return `<a>@${all}</a>`;
                 });
@@ -262,24 +275,46 @@ const ChatScreen = () => {
                 // 检查消息中是否包含用户名
                 if (msgBody.includes(`@${member.user_name}`)) {
                     console.log(`消息有@${member.user_name}`);
-                    // 如果包含，将用户名添加到提及成员的数组中
                     msgBody = msgBody.replace(`@${member.user_name}`, () => {
-                        return `<a onclick="handleMsgClick('${member.user_name}')">@${member.user_name}</a>`;
+                        return `<a data-function="myFunction" data-name="${member.user_name}">@${member.user_name}</a>`;
                     });
                     console.log(msgBody);
                 }
             }
             if (msgBody.includes(`@${myName}`)) {
                 msgBody = msgBody.replace(`@${myName}`, () => {
-                    return `<a onclick="handleMsgClick('${myName}')">@${myName}</a>`;
+                    return `<a onclick="handleMsgClick('${myName}');">@${myName}</a>`;
                 });
             }
         }
-        return msgBody.replace(urlRegex, (url) => {
+        msgBody = msgBody.replace(urlRegex, (url) => {
             return `<a href="${url}" target="_blank">${url}</a>`;
         });
+        return msgBody;
     }
 
+    function createDetailList(msgBody: string) {
+        const all = "全体成员";
+        // 有@ 才检查是否有名字
+        if (msgBody.includes("@")) {
+            if (msgBody.includes(`@${all}`)) {
+                console.log(`消息有@${all}`);
+            }
+            for (let member of memberList) {
+                // 检查消息中是否包含用户名
+                if (msgBody.includes(`@${member.user_name}`)) {
+                    console.log(`消息有@${member.user_name}`);
+                    memberDetailList.push(member.user_name);
+                    console.log(msgBody);
+                }
+            }
+            if (msgBody.includes(`@${myName}`)) {
+                memberDetailList.push(myName);
+            }
+        }
+        if(memberDetailList.length)
+            setShowMemberDetail(true);
+    }
     // 开始/停止录音
     const handleRecording = async () => {
         // 如果正在录音
@@ -965,6 +1000,7 @@ const ChatScreen = () => {
                                                 {<audio src={msg.msg_body} controls />}
                                             </a> :
                                                 <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                                    onClick={() => { createDetailList(msg.msg_body);  }}
                                                     dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
                                                 ></p>)))
                                 )}
@@ -989,8 +1025,16 @@ const ChatScreen = () => {
 
             </div>
             {showMemberDetail && (
-                <div className="popup" style={{ padding: "20px", height: "auto" }}>
-                    <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setDisplayForwardMsgs(false); }} />
+                <div className="popup" style={{ padding: "20px", height: "auto", width: "auto" }}>
+                    <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowMemberDetail(false); setMemberdetailList([]); }} />
+                    <p>在此消息中被@的成员</p>
+                    {memberDetailList.map((name) => (
+                        <div key={name} className="member">
+                            <img className="sender_avatar" src={`${getAvatar(name)}`} />
+                            <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{name}</p>
+                        </div>
+                    )
+                    )}
                 </div>
             )}
             {displayForwardMsgs && (
