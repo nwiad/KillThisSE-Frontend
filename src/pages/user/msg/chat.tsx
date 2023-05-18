@@ -7,6 +7,7 @@ import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "reac
 import { uploadFile } from "../../../utils/oss";
 import { CovnMetaData, MemberMetaData, MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
+import { translate } from "../../../utils/youdao";
 import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
@@ -149,6 +150,11 @@ const ChatScreen = () => {
                         // 检查消息中是否包含用户名
                         if (message.includes(`@${member.user_name}`)) {
                             // 如果包含，将用户名添加到提及成员的数组中
+                            // 将消息中的"@name"创建链接
+                            // todo: 创建链接
+                            setInput(message.replace(`@${member.user_name}`, 
+                                `<a href="http://localhost:3000/user" onclick="alert('点击了${member.user_name}')">@${member.user_name}</a>`));
+                            
                             mentioned_members.push(member.user_name);
                         }
                     }
@@ -485,9 +491,10 @@ const ChatScreen = () => {
             setcan(true);
         else
             setcan(false);
+        console.log("can!!!"+can);
 
-    }, [nowuserowner !== undefined, nowuseradmin !== undefined, msg_ownerowner !== undefined, msg_owneradmin !== undefined]);
-
+    },[nowuserowner, nowuseradmin,msg_ownerowner,msg_owneradmin]);
+    
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string) => {
         event.preventDefault();
@@ -552,61 +559,63 @@ const ChatScreen = () => {
             .catch(((err) => alert("获取该用户在本会话中的身份: " + err)));
 
 
+        const withdrawInFive = () =>{
+            // 如果现在时间减去消息时间少于5分钟，可以撤回
+            event.stopPropagation();
+            const now_time_str = new Date();
 
+            console.log("当前时间");
+            console.log(now_time_str);
+            // Mon May 15 2023 18:34:08 GMT+0800
+
+            console.log(msg_time);
+            // 将输入的时间字符串转化为 moment 对象
+            let now_time_use = moment(now_time_str, "ddd MMM DD YYYY HH:mm:ss Z");
+            let msg_time_use = moment(msg_time, "MM-DD HH:mm");
+
+            // 因为 msg_time 没有年份，我们需要给它加上
+            msg_time_use.year(now_time_use.year());
+
+            // 计算时间差，单位为分钟
+            let time_diff = now_time_use.diff(msg_time_use, "minutes");
+            if (time_diff > 5) {
+                alert("该消息发送超过5分钟，不能撤回");
+                return;
+            }
+
+            socket.current!.send(JSON.stringify({
+                message: msg_body, token: localStorage.getItem("token"),
+                withdraw_msg_id: msg_id
+            }));
+        };
+        const withdrawAllTime = () =>{
+            event.stopPropagation();
+            socket.current!.send(JSON.stringify({
+                message: msg_body, token: localStorage.getItem("token"),
+                withdraw_msg_id: msg_id
+            }));
+        };
         if (!msg_is_audio) {
             // 撤回按钮
-            if ((isGroup === "0") && user_id === msg_owner) {
-                // 自己撤回自己有时间限制
-                const deleteItem = document.createElement("li");
-                deleteItem.className = "ContextMenuLi";
-                deleteItem.innerHTML = "撤回";
-                deleteItem.addEventListener("click", () => {
-                    // 如果现在时间减去消息时间少于5分钟，可以撤回
-                    event.stopPropagation();
-                    const now_time_str = new Date();
-
-                    console.log("当前时间");
-                    console.log(now_time_str);
-                    // Mon May 15 2023 18:34:08 GMT+0800
-
-                    console.log(msg_time);
-                    // 将输入的时间字符串转化为 moment 对象
-                    let now_time_use = moment(now_time_str, "ddd MMM DD YYYY HH:mm:ss Z");
-                    let msg_time_use = moment(msg_time, "MM-DD HH:mm");
-
-                    // 因为 msg_time 没有年份，我们需要给它加上
-                    msg_time_use.year(now_time_use.year());
-
-                    // 计算时间差，单位为分钟
-                    let time_diff = now_time_use.diff(msg_time_use, "minutes");
-                    if (time_diff > 5) {
-                        alert("该消息发送超过5分钟，不能撤回");
-                        return;
-                    }
-
-                    socket.current!.send(JSON.stringify({
-                        message: msg_body, token: localStorage.getItem("token"),
-                        withdraw_msg_id: msg_id
-                    }));
-
-                });
-                contextMenu.appendChild(deleteItem);
+            if(can && isGroup === "1")
+            {
+                // 在群内且自己身份特殊  管理员和群主无视时间
+                const withdrawItem = document.createElement("li");
+                withdrawItem.className = "ContextMenuLi";
+                withdrawItem.innerHTML = "撤回";
+                withdrawItem.addEventListener("click", withdrawAllTime);
+                contextMenu.appendChild(withdrawItem);
+                
             }
-            else if (can && isGroup === "1") {
-                // 管理员和群主无视时间
-                const deleteItem = document.createElement("li");
-                deleteItem.className = "ContextMenuLi";
-                deleteItem.innerHTML = "撤回";
-                deleteItem.addEventListener("click", () => {
-                    event.stopPropagation();
-                    socket.current!.send(JSON.stringify({
-                        message: msg_body, token: localStorage.getItem("token"),
-                        withdraw_msg_id: msg_id
-                    }));
-
-                });
-                contextMenu.appendChild(deleteItem);
+            else if (user_id === msg_owner  && ((isGroup === "0")||((isGroup === "1")&&!nowuseradmin && !nowuserowner))) {
+                // 自己撤回自己有时间限制  私聊 or 群聊且自己身份普通成员
+                const withdrawItem = document.createElement("li");
+                withdrawItem.className = "ContextMenuLi";
+                withdrawItem.innerHTML = "撤回";
+                withdrawItem.addEventListener("click", withdrawInFive);
+                contextMenu.appendChild(withdrawItem);
             }
+            
             const translateItem = document.createElement("li");
             translateItem.className = "ContextMenuLi";
             translateItem.innerHTML = "翻译";
@@ -621,8 +630,8 @@ const ChatScreen = () => {
                 }
                 const newElement = document.createElement("p");
                 newElement.className = "translate";
-                // newElement.innerHTML = await translate(msg_body);  翻译次数有限！！！
-                newElement.innerHTML = "翻译结果";
+                newElement.innerHTML = await translate(msg_body);  //翻译次数有限！！！
+                // newElement.innerHTML = "翻译结果";
                 target?.insertAdjacentElement("beforeend", newElement);
                 hideContextMenu();
                 console.log(target!.getElementsByClassName("translate").length);
@@ -668,27 +677,29 @@ const ChatScreen = () => {
         const deleteItem = document.createElement("li");
         deleteItem.className = "ContextMenuLi";
         deleteItem.innerHTML = "删除";
-        deleteItem.addEventListener("click", () => {
+        const deleteEventListener = () => {
             event.stopPropagation();
             socket.current!.send(JSON.stringify({
                 message: msg_body, token: localStorage.getItem("token"),
                 deleted_msg_id: msg_id
             }));
-        });
+        };
+        deleteItem.addEventListener("click", deleteEventListener);
         contextMenu.appendChild(deleteItem);
 
         // 回复按钮
         const replyItem = document.createElement("li");
         replyItem.className = "ContextMenuLi";
         replyItem.innerHTML = "回复";
-        replyItem.addEventListener("click", () => {
+        const replyEventListeners = () => {
             //  从消息id找到消息
             setReplyingMsg(msgList.find((msg) => msg.msg_id === msg_id));
             setreplying(true);
             // 当点击发送按钮的时候 如果正在有消息被提及，则连带这个消息的id一起发送给后端
             // 显示正在回复的消息的信息
             event.stopPropagation();
-        });
+        };
+        replyItem.addEventListener("click",replyEventListeners);
         contextMenu.appendChild(replyItem);
 
         // 多选按钮--为了合并转发消息
@@ -717,6 +728,10 @@ const ChatScreen = () => {
         document.body.appendChild(contextMenu);
 
         function hideContextMenu() {
+            //todo 移除所有事件监听器
+            deleteItem.removeEventListener("click", deleteEventListener);
+            replyItem.removeEventListener("click", replyEventListeners);
+
             document.removeEventListener("mousedown", hideContextMenu);
             document.removeEventListener("click", hideContextMenu);
             document.body.removeChild(contextMenu);
