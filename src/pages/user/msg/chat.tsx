@@ -546,7 +546,7 @@ const ChatScreen = () => {
     },[nowuserowner, nowuseradmin,msg_ownerowner,msg_owneradmin]);
     
     // 功能：消息右键菜单
-    const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string) => {
+    const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string, msg_istransmit: boolean) => {
         event.preventDefault();
 
         const contextMenu = document.createElement("ul");
@@ -649,7 +649,7 @@ const ChatScreen = () => {
 
         if (!msg_is_audio) {
             // 撤回按钮
-            if(!withdrawItem) { // 确保只添加一次
+            if(!withdrawItem && !msg_istransmit) { // 确保只添加一次
                 if(can && isGroup === "1")
                 {
                     console.log("都听我的！！！！！！！");
@@ -1005,7 +1005,7 @@ const ChatScreen = () => {
                         <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}
 
                             onContextMenu={(event) => {
-                                msgContextMenu(event, myID!, msg.msg_id, msg.msg_body, msg.is_audio, msg.sender_id, msg.create_time);
+                                msgContextMenu(event, myID!, msg.msg_id, msg.msg_body, msg.is_audio, msg.sender_id, msg.create_time, msg.is_transmit);
                             }}>
 
                             <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
@@ -1064,7 +1064,7 @@ const ChatScreen = () => {
                 {replying && (
                     <div className="popuprecord">
                         <div className="popup-title">
-                            &nbsp;&nbsp;正在回复：&nbsp;{ReplyingMsg?.msg_body}&nbsp;&nbsp;
+                            &nbsp;&nbsp;正在回复：&nbsp;{ReplyingMsg?.is_transmit ? "合并转发消息": ReplyingMsg?.msg_body}&nbsp;&nbsp;
                         </div>
                     </div>
                 )}
