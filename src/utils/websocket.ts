@@ -6,7 +6,7 @@ const LOCAL = "ws://localhost:8000/ws/chat/"; // 测试环境
 const REMOTE = "wss://2023-im-backend-killthisse.app.secoder.net/ws/chat/"; // 正式环境
 
 export const suffix = LOCAL;
-//export const suffix = REMOTE;
+// export const suffix = REMOTE;
 
 export class Socket extends Heart {
     ws: WebSocket|undefined;
