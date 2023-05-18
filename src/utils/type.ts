@@ -64,6 +64,7 @@ export interface MsgMetaData {
     chosen?: boolean // 点击完确认发送就变成false ?指定为可选属性
     is_transmit: boolean,
     quote_with: number,
+    mention_id: number[],
 };
 
 export interface MemberMetaData {

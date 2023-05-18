@@ -342,9 +342,14 @@
     color: #0baaf9;
 }
 
+.mention {
+    color: #0baaf9;
+}
+
 .mymsgbody a {
     color: #0baaf9;
 }
+
 
 .sendername {
     text-align: left;

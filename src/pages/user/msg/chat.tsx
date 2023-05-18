@@ -28,10 +28,13 @@ const ChatScreen = () => {
     const [memberList, setmemberList] = useState<MemberMetaData[]>([]);
     const [convList, setconvList] = useState<CovnMetaData[]>([]);
     const [myID, setID] = useState<number>();
+    const [myName, setMyName] = useState<string>("");
     const chatBoxRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
     const query = router.query;
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [showMemberDetail, setShowMemberDetail] = useState(false);
+    const [memberDetailName, setMemberdetailName] = useState<string>("");
 
     const [nowuserowner, setnowuserowner] = useState<string>();
     const [nowuseradmin, setnowuseradmin] = useState<string>();
@@ -90,7 +93,7 @@ const ChatScreen = () => {
 
     // can 设置撤回消息的权限
     const [can, setcan] = useState<boolean>(false);
-    const [msg_owner,setmsg_owner] = useState<number>();
+    const [msg_owner, setmsg_owner] = useState<number>();
 
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
@@ -113,8 +116,7 @@ const ChatScreen = () => {
         // 是否有回复 只有文字信息才可能有回复某消息
         // 私聊直接发
         if (isGroup === "0") {
-            if(replying)
-            {
+            if (replying) {
                 socket.current!.send(JSON.stringify({
                     message: inputValue, token: localStorage.getItem("token"),
                     isImg: false, isFile: false, isVideo: false, quote_with: ReplyingMsg?.msg_id
@@ -219,9 +221,60 @@ const ChatScreen = () => {
         }));
     };
 
+    function handleMsgClick(name: string) {
+        setMemberdetailName(name);
+        setShowMemberDetail(true);
+    }
+
+    useEffect(() => {
+        fetch(
+            "/api/user/get_profile/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token")
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                setMyName(data.name);
+
+            })
+            .catch((err) => alert(err));
+    }, []);
+
     // 功能：创建链接
     function createLinkifiedMsgBody(msgBody: string) {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const all = "全体成员";
+        // 有@ 才检查是否有名字
+        if (msgBody.includes("@")) {
+            if (msgBody.includes(`@${all}`)) {
+                console.log(`消息有@${all}`);
+                // 如果包含全体成员，将所有用户名添加到提及成员的数组中
+                msgBody = msgBody.replace(`@${all}`, () => {
+                    return `<a>@${all}</a>`;
+                });
+            }
+            for (let member of memberList) {
+                // 检查消息中是否包含用户名
+                if (msgBody.includes(`@${member.user_name}`)) {
+                    console.log(`消息有@${member.user_name}`);
+                    // 如果包含，将用户名添加到提及成员的数组中
+                    msgBody = msgBody.replace(`@${member.user_name}`, () => {
+                        return `<a onclick="handleMsgClick('${member.user_name}')">@${member.user_name}</a>`;
+                    });
+                    console.log(msgBody);
+                }
+            }
+            if (msgBody.includes(`@${myName}`)) {
+                msgBody = msgBody.replace(`@${myName}`, () => {
+                    return `<a onclick="handleMsgClick('${myName}')">@${myName}</a>`;
+                });
+            }
+        }
         return msgBody.replace(urlRegex, (url) => {
             return `<a href="${url}" target="_blank">${url}</a>`;
         });
@@ -428,13 +481,13 @@ const ChatScreen = () => {
     useEffect(() => {
         if (nowuserowner)
             setcan(true);
-        else if (nowuseradmin && ((msg_owner === myID)||(!msg_ownerowner && !msg_owneradmin)))
+        else if (nowuseradmin && ((msg_owner === myID) || (!msg_ownerowner && !msg_owneradmin)))
             setcan(true);
         else
             setcan(false);
 
-    },[nowuserowner!==undefined,nowuseradmin!==undefined,msg_ownerowner!==undefined,msg_owneradmin!==undefined]);
-    
+    }, [nowuserowner !== undefined, nowuseradmin !== undefined, msg_ownerowner !== undefined, msg_owneradmin !== undefined]);
+
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string) => {
         event.preventDefault();
@@ -497,12 +550,12 @@ const ChatScreen = () => {
                 }
             })
             .catch(((err) => alert("获取该用户在本会话中的身份: " + err)));
-            
+
 
 
         if (!msg_is_audio) {
             // 撤回按钮
-            if ((isGroup==="0" )&& user_id === msg_owner) {
+            if ((isGroup === "0") && user_id === msg_owner) {
                 // 自己撤回自己有时间限制
                 const deleteItem = document.createElement("li");
                 deleteItem.className = "ContextMenuLi";
@@ -539,8 +592,7 @@ const ChatScreen = () => {
                 });
                 contextMenu.appendChild(deleteItem);
             }
-            else if(can && isGroup==="1")
-            {
+            else if (can && isGroup === "1") {
                 // 管理员和群主无视时间
                 const deleteItem = document.createElement("li");
                 deleteItem.className = "ContextMenuLi";
@@ -874,10 +926,10 @@ const ChatScreen = () => {
                             onContextMenu={(event) => {
                                 msgContextMenu(event, myID!, msg.msg_id, msg.msg_body, msg.is_audio, msg.sender_id, msg.create_time);
                             }}>
-                           
+
                             <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
                             {msg.quote_with !== -1 && (
-                                <div className="translate" style={{fontSize:"12px", height:"40px", maxWidth:"300px", overflowY:"auto"}}>
+                                <div className="translate" style={{ fontSize: "12px", height: "40px", maxWidth: "300px", overflowY: "auto" }}>
                                     回复：{findRepliedMessageContent(msg.quote_with)}
                                 </div>
                             )}
@@ -936,6 +988,11 @@ const ChatScreen = () => {
                 )}
 
             </div>
+            {showMemberDetail && (
+                <div className="popup" style={{ padding: "20px", height: "auto" }}>
+                    <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setDisplayForwardMsgs(false); }} />
+                </div>
+            )}
             {displayForwardMsgs && (
                 refreshingRecords ? (
                     <div className="popup" style={{ padding: "20px", height: "auto" }}>
@@ -1081,6 +1138,7 @@ const ChatScreen = () => {
                             setInput("");
                         };
                         if (event.key === "@") {
+                            event.preventDefault();
                             setShowPopupMention(true);
                             //验证是否为群聊
                             if (isGroup === "1") {
