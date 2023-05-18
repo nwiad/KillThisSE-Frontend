@@ -146,12 +146,13 @@ const InitPage = () => {
                 }
             })
             .catch((err) => alert(err));
-        if(respond === "accept") {
-            startChat(id);            
-        }
-        else {
-            router.push("/user/friend/friendindex");
-        }
+        // if(respond === "accept") {
+        //     startChat(id);            
+        // }
+        // else {
+        //     router.push("/user/friend/friendindex");
+        // }
+        router.push("/user/friend/friendindex");
     };
 
     useEffect(() => {
