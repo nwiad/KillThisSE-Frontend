@@ -156,7 +156,19 @@ const MsgBar = () => {
                         return;
                     }
                     if(last_msg.is_transmit === true) {
-                        newArray[chat.id] = "合并转发消息";
+                        newArray[chat.id] = "[合并转发消息]";
+                    }
+                    else if(last_msg.is_audio === true) {
+                        newArray[chat.id] = "[语音消息]";
+                    }
+                    else if(last_msg.is_image === true) {
+                        newArray[chat.id] = "[图片消息]";
+                    }
+                    else if(last_msg.is_video === true) {
+                        newArray[chat.id] = "[视频消息]";
+                    }
+                    else if(last_msg.is_file === true) {
+                        newArray[chat.id] = "[文件消息]";
                     }
                     else {
                         newArray[chat.id] = last_msg.msg_body;
@@ -207,7 +219,19 @@ const MsgBar = () => {
                         return;
                     }
                     if(last_msg.is_transmit === true) {
-                        newArray[chat.id] = "合并转发消息";
+                        newArray[chat.id] = "[合并转发消息]";
+                    }
+                    else if(last_msg.is_audio === true) {
+                        newArray[chat.id] = "[语音消息]";
+                    }
+                    else if(last_msg.is_image === true) {
+                        newArray[chat.id] = "[图片消息]";
+                    }
+                    else if(last_msg.is_video === true) {
+                        newArray[chat.id] = "[视频消息]";
+                    }
+                    else if(last_msg.is_file === true) {
+                        newArray[chat.id] = "[文件消息]";
                     }
                     else {
                         newArray[chat.id] = last_msg.msg_body;
@@ -258,7 +282,19 @@ const MsgBar = () => {
                         return;
                     }
                     if(last_msg.is_transmit === true) {
-                        newArray[chat.id] = "合并转发消息";
+                        newArray[chat.id] = "[合并转发消息]";
+                    }
+                    else if(last_msg.is_audio === true) {
+                        newArray[chat.id] = "[语音消息]";
+                    }
+                    else if(last_msg.is_image === true) {
+                        newArray[chat.id] = "[图片消息]";
+                    }
+                    else if(last_msg.is_video === true) {
+                        newArray[chat.id] = "[视频消息]";
+                    }
+                    else if(last_msg.is_file === true) {
+                        newArray[chat.id] = "[文件消息]";
                     }
                     else {
                         newArray[chat.id] = last_msg.msg_body;
@@ -311,7 +347,19 @@ const MsgBar = () => {
                         return;
                     }
                     if(last_msg.is_transmit === true) {
-                        newArray[chat.id] = "合并转发消息";
+                        newArray[chat.id] = "[合并转发消息]";
+                    }
+                    else if(last_msg.is_audio === true) {
+                        newArray[chat.id] = "[语音消息]";
+                    }
+                    else if(last_msg.is_image === true) {
+                        newArray[chat.id] = "[图片消息]";
+                    }
+                    else if(last_msg.is_video === true) {
+                        newArray[chat.id] = "[视频消息]";
+                    }
+                    else if(last_msg.is_file === true) {
+                        newArray[chat.id] = "[文件消息]";
                     }
                     else {
                         newArray[chat.id] = last_msg.msg_body;
