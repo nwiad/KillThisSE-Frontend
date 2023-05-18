@@ -86,7 +86,7 @@ const ChatScreen = () => {
     // 在添加事件监听器时，将事件处理程序函数保存在变量中
 
     // 声明 eventListeners 数组的类型为 EventListenerInfo[]
-    const eventListeners: EventListenerInfo[] = [];
+    const [eventListeners, seteventListeners] = useState<EventListenerInfo[]>([]);
 
     // 正在回复的某条消息
     const [ReplyingMsg, setReplyingMsg] = useState<MsgMetaData>();
@@ -348,7 +348,12 @@ const ChatScreen = () => {
                 console.error("Failed to obtain audio stream");
                 return;
             }
-            mediaRecorder.current = new MediaRecorder(stream);
+            const options = {
+                audioBitsPerSecond: 16,
+                numberOfChannels: 1,
+                sampleRate: 16000
+            };
+            mediaRecorder.current = new MediaRecorder(stream, options);
             console.log("Created MediaRecorder", mediaRecorder, "with options", mediaRecorder.current!.stream);
             mediaRecorder.current.start();
         } catch (err) {
@@ -398,9 +403,9 @@ const ChatScreen = () => {
     const sendAudio = async (audioURL: string) => {
         try {
             const audioBlob = await (await fetch(audioURL)).blob();
-            const audioFile = blobToFile(audioBlob, "recording.wav");
+            const audioFile = blobToFile(audioBlob, "recording.pcm");
             const audioUrl = await uploadFile(audioFile);
-
+            console.log("audioUrl", audioUrl);
             if (socket.current) {
                 socket.current.send(JSON.stringify({
                     message: audioUrl,
@@ -498,16 +503,25 @@ const ChatScreen = () => {
 
         // 遍历消息的id 
         // 恢复初始状态+移除监听事件
-
+        console.log("501eventListeners");
+        console.log(eventListeners);
         for (let msg of msgList) {
             const id = msg.msg_id;
             // 在移除事件监听器时，使用相同的函数引用
-            for (let { id, listener } of eventListeners) {
-                const target = document.getElementById(`msg${id}`);
-                if (target !== null) {
-                    target.removeEventListener("click", listener);
+            console.log("我要移除监听器啦！！！！！！！！");
+            console.log(id);
+            const target = document.getElementById(`msg${id}`);
+            // 如果target存在事件监听器
+            if (target !== null) {
+                for (let eventListener of eventListeners) {
+                    if (eventListener.id === id) {
+                        console.log("移除事件监听器！！！！");
+                        target.removeEventListener("click", eventListener.listener);
+                    }
                 }
             }
+            console.log("518518518eventListeners");
+            console.log(eventListeners);
             const bgtarget = document.getElementById(`msgbg${id}`);
             // 恢复样式
             if (bgtarget)
@@ -515,6 +529,7 @@ const ChatScreen = () => {
         }
     };
 
+    
     useEffect(() => {
         console.log("Updated selected:", selected.current);//这里的selected变了
     }, [selected]);
@@ -752,12 +767,16 @@ const ChatScreen = () => {
                 const id = msg.msg_id;
                 const target = document.getElementById(`msg${id}`);
                 if (target !== null) {
-                    const eventListener = () => addOrRemoveSelected(id, target);
-                    target.addEventListener("click", eventListener);
-                    eventListeners.push({ id, listener: eventListener });
+                    console.log("添加事件监听器"+{id});
+                    target.addEventListener("click", () => addOrRemoveSelected(id, target));
+                    seteventListeners((listeners) => [...listeners, { id, listener: () => addOrRemoveSelected(id, target) }]);
+                    console.log(eventListeners);
                 }
             }
+            console.log("764          eventListeners");
+            console.log(eventListeners);
         });
+        
         contextMenu.appendChild(multiselectItem);
 
         document.body.appendChild(contextMenu);
