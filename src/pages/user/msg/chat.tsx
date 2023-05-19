@@ -12,7 +12,7 @@ import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
 // import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
-import TRTC from "trtc-js-sdk";
+// import TRTC from "trtc-js-sdk";
 
 interface EventListenerInfo {
     id: number;
@@ -989,54 +989,62 @@ const ChatScreen = () => {
         }
     }, [chatID, chatName, isGroup, myID, sticked, silent, validation]);
 
+    const sdkAppId = 1400811921;
+    let client, localStream;
+
+    // const wtf = {
+    //     TRTC: () => import("trtc-js-sdk")
+    // };
+
+    // useEffect(() => {
+    //     TRTC: import("trtc-js-sdk");
+    // }, []);
+    // const TRTC = require("trtc-js-sdk");
+    const TRTC = useRef<any>();
     useEffect(() => {
-        if(chatID === undefined || myID === undefined || sig === undefined) return;
-        if(refreshing) return;
-        let sdkAppId = 1400811921; // "填入您创建应用的 sdkAppId"
-        let roomId ; // "您指定的房间号"
-        let userId ; // "您指定的用户ID"
-        let userSig ; // "生成的userSig"
-        let client, localStream;
-        document.getElementById("startCall").onclick = async function () {
-            roomId = parseInt(chatID);
-            userId = myID.toString();
-            userSig = sig;
-            client = TRTC.createClient({ mode: "rtc", sdkAppId, userId, userSig });
-            // 1.监听事件
-            client.on("stream-added", event => {
-                const remoteStream = event.stream;
-                console.log("远端流增加: " + remoteStream.getId());
-                //订阅远端流
-                client.subscribe(remoteStream);
-            });
-            client.on("stream-subscribed", event => {
-            // 远端流订阅成功
-                const remoteStream = event.stream;
-                alert("订阅成功");
-                // 播放远端流，传入的元素 ID 必须是页面里存在的 div 元素
-                remoteStream.play("remoteStreamContainer");
-            });
-            // 2.进房成功后开始推流
-            try {
-                await client.join({ roomId });
-                localStream = TRTC.createStream({ userId, audio: true, video: true });
-                await localStream.initialize();
-                // 播放本地流
-                localStream.play("localStreamContainer");
-                await client.publish(localStream);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        document.getElementById("finishCall").onclick = async function () {
+        TRTC.current = require("trtc-js-sdk");
+    }, []);
+
+    const handleStartCall = async () => {
+        const roomId = parseInt(chatID);
+        const userId = myID.toString();
+        const userSig = sig;
+        client = TRTC.current.createClient({ mode: "rtc", sdkAppId, userId, userSig });
+        // 1.监听事件
+        client.on("stream-added", event => {
+            const remoteStream = event.stream;
+            console.log("远端流增加: " + remoteStream.getId());
+            //订阅远端流
+            client.subscribe(remoteStream);
+        });
+        client.on("stream-subscribed", event => {
+        // 远端流订阅成功
+            const remoteStream = event.stream;
+            alert("订阅成功");
+            // 播放远端流，传入的元素 ID 必须是页面里存在的 div 元素
+            remoteStream.play("remoteStreamContainer");
+        });
+        // 2.进房成功后开始推流
+        try {
+            await client.join({ roomId });
+            localStream = TRTC.current.createStream({ userId, audio: true, video: true });
+            await localStream.initialize();
+            // 播放本地流
+            localStream.play("localStreamContainer");
+            await client.publish(localStream);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleFinishCall = async () => {
         // 停止本地流预览
-            localStream.close();
-            await client.leave();
-            // 退房成功，如果没有调用 client.destroy()，可再次调用 client.join 重新进房开启新的通话
-            // 调用 destroy() 结束当前 client 的生命周期
-            client.destroy();
-        };
-    }, [chatID, myID, refreshing, sig]);
+        localStream.close();
+        await client.leave();
+        // 退房成功，如果没有调用 client.destroy()，可再次调用 client.join 重新进房开启新的通话
+        // 调用 destroy() 结束当前 client 的生命周期
+        client.destroy();
+    };
 
     return refreshing ? (
         <div style={{ padding: 12 }}>
@@ -1416,10 +1424,10 @@ const ChatScreen = () => {
                     <button className="sendbutton" onClick={() => { handleRecording(); }}>
                         <FontAwesomeIcon className="Icon" id={recording ? "notrcd" : "rcd"} icon={faMicrophone} />
                     </button>
-                    <button id="startCall">
+                    <button id="startCall" onClick={handleStartCall}>
                         开始通话
                     </button>
-                    <button id="finishCall">
+                    <button id="finishCall" onClick={handleFinishCall}>
                         结束通话
                     </button>
                 </div>

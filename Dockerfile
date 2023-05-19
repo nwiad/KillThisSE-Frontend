@@ -5,8 +5,8 @@ ENV FRONTEND=/opt/frontend
 
 WORKDIR $FRONTEND
 
-RUN yarn config set registry https://yxzrazem.mirror.aliyuncs.com
-# RUN yarn config set registry https://registry.npmmirror.com
+# RUN yarn config set registry https://yxzrazem.mirror.aliyuncs.com
+RUN yarn config set registry https://registry.npmmirror.com
 
 COPY . .
 
