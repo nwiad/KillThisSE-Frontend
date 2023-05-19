@@ -11,8 +11,6 @@ import { translate } from "../../../utils/youdao";
 import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
-// import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
-import TRTC from "trtc-js-sdk";
 
 interface EventListenerInfo {
     id: number;
@@ -99,8 +97,6 @@ const ChatScreen = () => {
     const [can, setcan] = useState<boolean>(false);
     const [msg_owner, setmsg_owner] = useState<number>();
 
-    const [sig, setSig] = useState<string>();
-
     // 功能：切换emoji显示
     const toggleEmojiPicker = () => {
         setShowEmojiPicker(showEmojiPicker => !showEmojiPicker);
@@ -158,7 +154,7 @@ const ChatScreen = () => {
                             // 将消息中的"@name"创建链接
                             // todo: 创建链接
                             setInput(message.replace(`@${member.user_name}`, 
-                                `<a href="http://localhost:3000/user" onclick="alert("点击了${member.user_name}")">@${member.user_name}</a>`));
+                                `<a href="http://localhost:3000/user" onclick="alert('点击了${member.user_name}')">@${member.user_name}</a>`));
                             
                             mentioned_members.push(member.user_name);
                         }
@@ -247,7 +243,7 @@ const ChatScreen = () => {
             .then((res) => res.json())
             .then((data) => {
                 setMyName(data.name);
-                setSig(data.sig);
+
             })
             .catch((err) => alert(err));
     }, []);
@@ -347,16 +343,17 @@ const ChatScreen = () => {
         }
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: {
-                sampleRate: 16000,
-                sampleSize: 16,
-                channelCount: 1
-            } });
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             if (!stream) {
                 console.error("Failed to obtain audio stream");
                 return;
             }
-            mediaRecorder.current = new MediaRecorder(stream);
+            const options = {
+                audioBitsPerSecond: 16,
+                numberOfChannels: 1,
+                sampleRate: 16000
+            };
+            mediaRecorder.current = new MediaRecorder(stream, options);
             console.log("Created MediaRecorder", mediaRecorder, "with options", mediaRecorder.current!.stream);
             mediaRecorder.current.start();
         } catch (err) {
@@ -406,7 +403,7 @@ const ChatScreen = () => {
     const sendAudio = async (audioURL: string) => {
         try {
             const audioBlob = await (await fetch(audioURL)).blob();
-            const audioFile = blobToFile(audioBlob, "recording.webm");
+            const audioFile = blobToFile(audioBlob, "recording.amr");
             const audioUrl = await uploadFile(audioFile);
             console.log("audioUrl", audioUrl);
             if (socket.current) {
@@ -989,54 +986,6 @@ const ChatScreen = () => {
         }
     }, [chatID, chatName, isGroup, myID, sticked, silent, validation]);
 
-    useEffect(() => {
-        if(chatID === undefined || myID === undefined || sig === undefined) return;
-        if(refreshing) return;
-        let sdkAppId = 1400811921; // "填入您创建应用的 sdkAppId"
-        let roomId ; // "您指定的房间号"
-        let userId ; // "您指定的用户ID"
-        let userSig ; // "生成的userSig"
-        let client, localStream;
-        document.getElementById("startCall").onclick = async function () {
-            roomId = parseInt(chatID);
-            userId = myID.toString();
-            userSig = sig;
-            client = TRTC.createClient({ mode: "rtc", sdkAppId, userId, userSig });
-            // 1.监听事件
-            client.on("stream-added", event => {
-                const remoteStream = event.stream;
-                console.log("远端流增加: " + remoteStream.getId());
-                //订阅远端流
-                client.subscribe(remoteStream);
-            });
-            client.on("stream-subscribed", event => {
-            // 远端流订阅成功
-                const remoteStream = event.stream;
-                // 播放远端流，传入的元素 ID 必须是页面里存在的 div 元素
-                remoteStream.play("remoteStreamContainer");
-            });
-            // 2.进房成功后开始推流
-            try {
-                await client.join({ roomId });
-                localStream = TRTC.createStream({ userId, audio: true, video: true });
-                await localStream.initialize();
-                // 播放本地流
-                localStream.play("localStreamContainer");
-                await client.publish(localStream);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        document.getElementById("finishCall").onclick = async function () {
-        // 停止本地流预览
-            localStream.close();
-            await client.leave();
-            // 退房成功，如果没有调用 client.destroy()，可再次调用 client.join 重新进房开启新的通话
-            // 调用 destroy() 结束当前 client 的生命周期
-            client.destroy();
-        };
-    }, [chatID, myID, refreshing, sig]);
-
     return refreshing ? (
         <div style={{ padding: 12 }}>
             正在加载会话窗口......
@@ -1047,8 +996,6 @@ const ChatScreen = () => {
             <MsgBar />
             <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!} />
             <div ref={chatBoxRef} id="msgdisplay" className="msgdpbox" style={{ display: "flex", flexDirection: "column" }}>
-                <div id="localStreamContainer"></div>
-                <div id="remoteStreamContainer"></div>
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} id={`msgbg${msg.msg_id}`} className={"msg"}>
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
@@ -1414,12 +1361,6 @@ const ChatScreen = () => {
                     {/* 发送语音功能 */}
                     <button className="sendbutton" onClick={() => { handleRecording(); }}>
                         <FontAwesomeIcon className="Icon" id={recording ? "notrcd" : "rcd"} icon={faMicrophone} />
-                    </button>
-                    <button id="startCall">
-                        开始通话
-                    </button>
-                    <button id="finishCall">
-                        结束通话
                     </button>
                 </div>
                 <button
