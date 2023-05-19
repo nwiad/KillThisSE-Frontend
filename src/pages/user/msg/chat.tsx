@@ -1012,6 +1012,7 @@ const ChatScreen = () => {
             client.on("stream-subscribed", event => {
             // 远端流订阅成功
                 const remoteStream = event.stream;
+                alert("订阅成功");
                 // 播放远端流，传入的元素 ID 必须是页面里存在的 div 元素
                 remoteStream.play("remoteStreamContainer");
             });
