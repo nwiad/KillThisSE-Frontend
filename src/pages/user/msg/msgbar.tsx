@@ -239,6 +239,7 @@ const MsgBar = (props: MsgBarProps) => {
                 const data = JSON.parse(event.data);
                 const msg_len = data.len_of_msgs;
                 const last_msg = JSON.parse(event.data).last_msg;
+                const prefix = (data.mentioned === true) ? "[有人@你] " : "";
                 if(msg_len === 0) {
                     target.innerHTML = "";
                 }
@@ -259,7 +260,8 @@ const MsgBar = (props: MsgBarProps) => {
                         target.innerHTML = "[文件消息]";
                     }
                     else {
-                        target.innerHTML = last_msg.msg_body.length > 10 ? last_msg.msg_body.slice(0,10)+"......" : last_msg.msg_body;
+                        // target.innerHTML = last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? prefix+last_msg.msg_body.slice(0,10)+"......" : prefix+last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
