@@ -73,7 +73,7 @@ const InitPage = () => {
                     throw new Error(`Request failed with status ${res.status}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("注销失败: " + err));
         router.push("/");
     };
 
@@ -118,7 +118,7 @@ const InitPage = () => {
                 }
 
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("修改用户名失败: " + err));
         router.push("/user/info");
     };
 
@@ -146,7 +146,7 @@ const InitPage = () => {
                 }
 
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("修改用户名失败: " + err));
         router.push("/user/info");
     };
 
@@ -174,7 +174,7 @@ const InitPage = () => {
                 }
 
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("修改密码失败: " + err));
         router.push("/user/info");
     };
 
@@ -211,7 +211,7 @@ const InitPage = () => {
                 }
 
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("修改头像失败: " + err));
         router.push("/user/info");
     };
 
@@ -252,7 +252,7 @@ const InitPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("绑定邮箱失败: " + err));
     };
 
     useEffect(() => {
@@ -272,7 +272,7 @@ const InitPage = () => {
                 setAvatar(data.avatar);
 
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取个人信息失败: " + err));
     }, [avatar, name]);
 
     return (

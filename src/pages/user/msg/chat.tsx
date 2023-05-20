@@ -29,8 +29,8 @@ interface detailMetaData {
 }
 
 interface readMetaData {
-    name:string,
-    avatar:string
+    name: string,
+    avatar: string
 }
 
 const ChatScreen = () => {
@@ -268,7 +268,7 @@ const ChatScreen = () => {
                 setMyName(data.name);
                 setSig(data.sig);
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取个人信息: " + err));
     }, []);
 
     const getAvatar = (name: string) => {
@@ -286,7 +286,7 @@ const ChatScreen = () => {
             .then((data) => {
                 return (data.avatar);
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取头像: " + err));
     };
     // 功能：创建链接
     function createLinkifiedMsgBody(msgBody: string) {
@@ -347,7 +347,7 @@ const ChatScreen = () => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => alert("获取at成员: " + err));
             // if (msgBody.includes(`@${all}`)) {
             //     console.log(`消息有@${all}`);
             // }
@@ -847,8 +847,7 @@ const ChatScreen = () => {
             contextMenu.appendChild(replyItem);
         }
 
-        if(isGroup === "1")
-        {
+        if (isGroup === "1") {
             // 展示已读本消息成员的列表按钮
             const readItem = document.createElement("li");
             readItem.className = "ContextMenuLi";
@@ -872,7 +871,7 @@ const ChatScreen = () => {
                         if (data.code === 0) {
                             console.log("获取已读成员列表成功");
                             setReadMembers(data.read_members.map((member: any) => ({ ...member })));
-                            
+
                             setShowReadMembers(true);
                         }
                         else {
@@ -884,7 +883,7 @@ const ChatScreen = () => {
             readItem.addEventListener("click", readEventListeners);
             contextMenu.appendChild(readItem);
         }
-        
+
         // 多选按钮--为了合并转发消息
         const multiselectItem = document.createElement("li");
         multiselectItem.className = "ContextMenuLi";
@@ -1062,7 +1061,7 @@ const ChatScreen = () => {
                             throw new Error(`${data.info}`);
                         }
                     })
-                    .catch((err) => alert(err));
+                    .catch((err) => alert("设置已读消息: " + err));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -1090,7 +1089,7 @@ const ChatScreen = () => {
             .then((data) => {
                 setID(data.user_id);
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取个人信息: " + err));
     }, []);
 
     useEffect(() => {
@@ -1305,9 +1304,9 @@ const ChatScreen = () => {
                                                 ></p>)))
                                 )}
                             {(isGroup === "0" && msg.sender_id === myID) && (
-                                <div className="translate" style={{ fontSize: "12px", height: "40px", maxWidth: "300px", overflowY: "auto" }}>
+                                <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>
                                     {msg.is_read === true ? "已读" : "未读"}
-                                </div>
+                                </p>
                             )}
                             <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
                         </div>

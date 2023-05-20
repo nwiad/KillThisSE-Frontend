@@ -50,7 +50,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => alert("获取群聊成员: " + err));
             // 获取管理员（不含群主）
             fetch(
                 "/api/user/get_group_administrators/",
@@ -72,7 +72,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => alert("获取管理员: " + err));
             // 获取群主
             fetch(
                 "/api/user/get_group_owner/",
@@ -96,7 +96,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => alert("获取群主: " + err));
             // 获取群公告
             fetch(
                 "/api/user/get_group_announcement/",
@@ -118,7 +118,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => alert("获取群公告: " + err));
         }
 
     }, [props]);
@@ -146,7 +146,7 @@ const ChatBar = (props: chatBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("设置群公告: " + err));
     };
 
     const closeNoticeBoard = () => {

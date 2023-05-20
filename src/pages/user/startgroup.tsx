@@ -45,7 +45,7 @@ const GroupStarter = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取好友列表失败: " + err));
     };
 
     useEffect(() => {
@@ -85,7 +85,7 @@ const GroupStarter = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("创建群聊失败: " + err));
     };
 
     return (

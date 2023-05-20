@@ -30,7 +30,7 @@ const InitPage = () => {
                 }
 
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("发送好友请求: " + err));
     };
 
     useEffect(() => {
@@ -53,7 +53,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => { alert(err); });
+            .catch((err) => { alert("获取个人信息: " + err); });
 
         fetch(
             "/api/user/search_by_id/",
@@ -76,7 +76,7 @@ const InitPage = () => {
                 }
             })
             .catch((err) => {
-                alert(err);
+                alert("获取好友信息: " + err);
                 router.push("/user/friend/searchfriend");
             });
     }, [id, router, router.query]);

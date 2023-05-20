@@ -36,7 +36,7 @@ const InitPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {alert(err);});
+            .catch((err) => {alert("登陆失败: " + err);});
     };
 
     const getPassword = () => {
@@ -61,7 +61,7 @@ const InitPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {alert(err);});
+            .catch((err) => {alert("登陆失败: " + err);});
     };
 
     const checkName = (name_: string) => {

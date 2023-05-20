@@ -89,7 +89,7 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { alert(err); });
+            .catch((err) => { alert("登陆失败: " + err); });
     };
 
     const checkName = (name_: string) => {
@@ -121,7 +121,7 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { alert(err); });
+            .catch((err) => { alert("发送验证码失败: " + err); });
     };
 
     const checkEmail = (address: string) => {
@@ -158,7 +158,7 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { alert(err); });
+            .catch((err) => { alert("登陆失败: " + err); });
     };
 
     return (
@@ -167,7 +167,7 @@ const InitLoginPage = () => {
                 <p className="entrytitle">{text}</p>
             </div>
             <div className={fadeIn ? "fadein" : "blank"}>
-                <ul className="indexbar">
+                <ul className={fadeIn ? "indexbar" : "blank"}>
                     <li className="hometitle">
                         <Link href="/">
                             KillthisSE IM

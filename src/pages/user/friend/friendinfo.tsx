@@ -58,7 +58,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取群组: " + err));
     }, []);
 
     const sendDelete = async () => {
@@ -81,7 +81,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("从群组中删除好友: " + err));
         router.push("/user/friend/friendindex");
     };
 
@@ -106,7 +106,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("在群组中添加好友:" + err));
         router.push("/user/friend/friendindex");
     };
     const startChat = async () => {
@@ -133,7 +133,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("创建私聊:" + err));
         router.push("/user/friend/friendindex");
     };
 
