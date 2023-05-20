@@ -1,5 +1,5 @@
 import Picker from "@emoji-mart/react";
-import { faFaceSmile, faFile, faImage, faMicrophone, faPaperPlane, faVideo, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faVideoSlash, faFilm, faFaceSmile, faFile, faImage, faMicrophone, faPaperPlane, faVideo, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -78,6 +78,7 @@ const ChatScreen = () => {
     const [sticked, setSticked] = useState<string>();
     const [silent, setSilent] = useState<string>();
     const [validation, setValidation] = useState<string>();
+    const [calling, setCalling] = useState(false);
 
     const selected = useRef<number[]>([]);// 用于存储即将被转发的消息id列表
 
@@ -157,9 +158,9 @@ const ChatScreen = () => {
                             // 如果包含，将用户名添加到提及成员的数组中
                             // 将消息中的"@name"创建链接
                             // todo: 创建链接
-                            setInput(message.replace(`@${member.user_name}`, 
+                            setInput(message.replace(`@${member.user_name}`,
                                 `<a href="http://localhost:3000/user" onclick="alert("点击了${member.user_name}")">@${member.user_name}</a>`));
-                            
+
                             mentioned_members.push(member.user_name);
                         }
                     }
@@ -322,7 +323,7 @@ const ChatScreen = () => {
                 memberDetailList.push(myName);
             }
         }
-        if(memberDetailList.length)
+        if (memberDetailList.length)
             setShowMemberDetail(true);
     }
     // 开始/停止录音
@@ -347,11 +348,13 @@ const ChatScreen = () => {
         }
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: {
-                sampleRate: 16000,
-                sampleSize: 16,
-                channelCount: 1
-            } });
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    sampleRate: 16000,
+                    sampleSize: 16,
+                    channelCount: 1
+                }
+            });
             if (!stream) {
                 console.error("Failed to obtain audio stream");
                 return;
@@ -532,7 +535,7 @@ const ChatScreen = () => {
         }
     };
 
-    
+
     useEffect(() => {
         console.log("Updated selected:", selected.current);//这里的selected变了
     }, [selected]);
@@ -544,10 +547,10 @@ const ChatScreen = () => {
             setcan(true);
         else
             setcan(false);
-        console.log("can!!!"+can);
+        console.log("can!!!" + can);
 
-    },[nowuserowner, nowuseradmin,msg_ownerowner,msg_owneradmin]);
-    
+    }, [nowuserowner, nowuseradmin, msg_ownerowner, msg_owneradmin]);
+
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string, msg_istransmit: boolean) => {
         event.preventDefault();
@@ -612,7 +615,7 @@ const ChatScreen = () => {
             .catch(((err) => alert("获取该用户在本会话中的身份: " + err)));
 
 
-        const withdrawInFive = () =>{
+        const withdrawInFive = () => {
             // 如果现在时间减去消息时间少于5分钟，可以撤回
             event.stopPropagation();
             const now_time_str = new Date();
@@ -641,7 +644,7 @@ const ChatScreen = () => {
                 withdraw_msg_id: msg_id
             }));
         };
-        const withdrawAllTime = () =>{
+        const withdrawAllTime = () => {
             event.stopPropagation();
             socket.current!.send(JSON.stringify({
                 message: msg_body, token: localStorage.getItem("token"),
@@ -652,9 +655,8 @@ const ChatScreen = () => {
 
         if (!msg_is_audio) {
             // 撤回按钮
-            if(!withdrawItem && !msg_istransmit) { // 确保只添加一次
-                if(can && isGroup === "1")
-                {
+            if (!withdrawItem && !msg_istransmit) { // 确保只添加一次
+                if (can && isGroup === "1") {
                     console.log("都听我的！！！！！！！");
                     // 在群内且自己身份特殊  管理员和群主无视时间
                     const withdrawItem = document.createElement("li");
@@ -662,9 +664,9 @@ const ChatScreen = () => {
                     withdrawItem.innerHTML = "撤回";
                     withdrawItem.addEventListener("click", withdrawAllTime);
                     contextMenu.appendChild(withdrawItem);
-                    
+
                 }
-                else if (user_id === msg_owner  && ((isGroup === "0")||((isGroup === "1")&&!nowuseradmin && !nowuserowner))) {
+                else if (user_id === msg_owner && ((isGroup === "0") || ((isGroup === "1") && !nowuseradmin && !nowuserowner))) {
                     // 自己撤回自己有时间限制  私聊 or 群聊且自己身份普通成员
                     console.log("有时间限制噢！！！！！！！！！！！！！！！！！！！！");
                     const withdrawItem = document.createElement("li");
@@ -675,7 +677,7 @@ const ChatScreen = () => {
                 }
             }
             let translateItem = document.getElementById("translateItem");
-            if(!translateItem){
+            if (!translateItem) {
                 const translateItem = document.createElement("li");
                 translateItem.className = "ContextMenuLi";
                 translateItem.innerHTML = "翻译";
@@ -695,7 +697,7 @@ const ChatScreen = () => {
                     target?.insertAdjacentElement("beforeend", newElement);
                     hideContextMenu();
                     console.log(target!.getElementsByClassName("translate").length);
-    
+
                 });
                 contextMenu.appendChild(translateItem);
             }
@@ -735,8 +737,8 @@ const ChatScreen = () => {
         let replyItem = document.getElementById("replyItem");
         let deleteItem = document.getElementById("deleteItem");
 
-        if(!deleteItem) {
-        // 删除消息记录按钮
+        if (!deleteItem) {
+            // 删除消息记录按钮
             const deleteItem = document.createElement("li");
             deleteItem.className = "ContextMenuLi";
             deleteItem.innerHTML = "删除";
@@ -750,7 +752,7 @@ const ChatScreen = () => {
             deleteItem.addEventListener("click", deleteEventListener);
             contextMenu.appendChild(deleteItem);
         }
-        if(!replyItem){
+        if (!replyItem) {
             // 回复按钮
             const replyItem = document.createElement("li");
             replyItem.className = "ContextMenuLi";
@@ -763,7 +765,7 @@ const ChatScreen = () => {
                 // 显示正在回复的消息的信息
                 event.stopPropagation();
             };
-            replyItem.addEventListener("click",replyEventListeners);
+            replyItem.addEventListener("click", replyEventListeners);
             contextMenu.appendChild(replyItem);
         }
 
@@ -782,7 +784,7 @@ const ChatScreen = () => {
                 const id = msg.msg_id;
                 const target = document.getElementById(`msg${id}`);
                 if (target !== null) {
-                    console.log("添加事件监听器"+{id});
+                    console.log("添加事件监听器" + { id });
                     target.addEventListener("click", () => addOrRemoveSelected(id, target));
                     seteventListeners((listeners) => [...listeners, { id, listener: () => addOrRemoveSelected(id, target) }]);
                     console.log(eventListeners);
@@ -791,7 +793,7 @@ const ChatScreen = () => {
             console.log("764          eventListeners");
             console.log(eventListeners);
         });
-        
+
         contextMenu.appendChild(multiselectItem);
 
         document.body.appendChild(contextMenu);
@@ -1010,6 +1012,7 @@ const ChatScreen = () => {
         const userId = myID.toString();
         const userSig = sig;
         client = TRTC.current.createClient({ mode: "rtc", sdkAppId, userId, userSig });
+        setCalling(true);
         // 1.监听事件
         client.on("stream-added", event => {
             const remoteStream = event.stream;
@@ -1018,7 +1021,7 @@ const ChatScreen = () => {
             client.subscribe(remoteStream);
         });
         client.on("stream-subscribed", event => {
-        // 远端流订阅成功
+            // 远端流订阅成功
             const remoteStream = event.stream;
             alert("订阅成功");
             // 播放远端流，传入的元素 ID 必须是页面里存在的 div 元素
@@ -1055,9 +1058,16 @@ const ChatScreen = () => {
             <Navbar />
             <MsgBar />
             <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!} />
+            {calling && (
+                <div className="callinginfo">
+                    <FontAwesomeIcon className="callingicon" icon={faVideo}/>
+                    通话中
+                </div>
+            )}
+            <div id="localStreamContainer"></div>
+            <div className="msgdpbox" id="remoteStreamContainer"></div>
             <div ref={chatBoxRef} id="msgdisplay" className="msgdpbox" style={{ display: "flex", flexDirection: "column" }}>
-                <div id="localStreamContainer"></div>
-                <div id="remoteStreamContainer"></div>
+
                 {msgList.map((msg) => (
                     <div key={msg.msg_id} id={`msgbg${msg.msg_id}`} className={"msg"}>
                         <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
@@ -1108,7 +1118,7 @@ const ChatScreen = () => {
                                                 {<audio src={msg.msg_body} controls />}
                                             </a> :
                                                 <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
-                                                    onClick={() => { createDetailList(msg.msg_body);  }}
+                                                    onClick={() => { createDetailList(msg.msg_body); }}
                                                     dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
                                                 ></p>)))
                                 )}
@@ -1126,7 +1136,7 @@ const ChatScreen = () => {
                 {replying && (
                     <div className="popuprecord">
                         <div className="popup-title">
-                            &nbsp;&nbsp;正在回复：&nbsp;{ReplyingMsg?.is_transmit ? "合并转发消息": ReplyingMsg?.msg_body}&nbsp;&nbsp;
+                            &nbsp;&nbsp;正在回复：&nbsp;{ReplyingMsg?.is_transmit ? "合并转发消息" : ReplyingMsg?.msg_body}&nbsp;&nbsp;
                         </div>
                     </div>
                 )}
@@ -1375,7 +1385,7 @@ const ChatScreen = () => {
                         </div>
                     )}
                     <button className="sendbutton" onClick={() => { setShowPopupVideo(true); }}>
-                        <FontAwesomeIcon className="Icon" icon={faVideo} />
+                        <FontAwesomeIcon className="Icon" icon={faFilm} />
                     </button>
                     {showPopupVideo && (
                         <div className="popup">
@@ -1424,11 +1434,8 @@ const ChatScreen = () => {
                     <button className="sendbutton" onClick={() => { handleRecording(); }}>
                         <FontAwesomeIcon className="Icon" id={recording ? "notrcd" : "rcd"} icon={faMicrophone} />
                     </button>
-                    <button id="startCall" onClick={handleStartCall}>
-                        开始通话
-                    </button>
-                    <button id="finishCall" onClick={handleFinishCall}>
-                        结束通话
+                    <button className={calling ? "quitbutton" : "sendbutton"} id="startCall" onClick={calling ? handleFinishCall : handleStartCall}>
+                        <FontAwesomeIcon className="Icon" icon={calling ? faVideoSlash : faVideo} />
                     </button>
                 </div>
                 <button

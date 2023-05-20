@@ -91,7 +91,7 @@
     margin: auto;
 }
 
-.adminbutton:hover .adminicon{
+.adminbutton:hover .adminicon {
     color: #ccc;
 }
 
@@ -178,4 +178,77 @@
     text-align: center;
     overflow-y: auto;
     z-index: 9999;
-  }
+}
+
+#localStreamContainer {
+    display: flex;
+    flex-direction: column-reverse;
+    position: fixed;
+    width: 300px;
+    height: 200px;
+    top: 115px;
+    bottom: 80px;
+    right: 22%;
+    background-size: cover;
+    background-position: center;
+    float: right;
+    z-index: 9999;
+    overflow-y: auto;
+    border-radius: 30px;
+    border: 5px solid #ccc;
+    background-color: #f0f0f0;
+}
+
+#remoteStreamContainer {
+    display: flex;
+    flex-direction: column-reverse;
+    position: fixed;
+    width: 55%;
+    height: auto;
+    top: 115px;
+    bottom: 80px;
+    right: 22%;
+    background-size: cover;
+    background-position: center;
+    float: right;
+    z-index: 8888;
+    overflow-y: auto;
+    border-radius: 15px;
+    background-color: #f0f0f0;
+    border: 10px solid #ccc;
+}
+
+.callinginfo {
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    text-align: center;
+    width: auto;
+    height: 50px;
+    top: 130px;
+    bottom: 80px;
+    right: 50%;
+    color: white;
+    background-size: cover;
+    background-position: center;
+    float: right;
+    z-index: 9999;
+    overflow-y: auto;
+    border-radius: 0px;
+    background-color: #f0f0f000;
+    border: 0px solid #ccc;
+    animation: blink 1s infinite;
+}
+
+.callingicon {
+    color: rgb(3, 230, 3);
+    margin-right: 20px;
+    margin-top: 3px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}

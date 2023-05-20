@@ -156,6 +156,16 @@
     border: 0px solid #7d7d7d;
 }
 
+.quitbutton {
+    width: 40px;
+    height: 100%;
+    margin-top: 10px;
+    margin-left: 10px;
+    border-radius: 0;
+    background-color: rgba(0,0,0,0);
+    border: 0px solid #7d7d7d;
+}
+
 .send_forward_button {
     width: auto;
     background-color: rgba(0,0,0,0);
@@ -186,6 +196,12 @@
     height: 25px;
 }
 
+.quitbutton .Icon {
+    color: #ff0000;
+    width: 25px;
+    height: 25px;
+}
+
 .sendbutton #rcd {
     color: #969696;
     width: 25px;
@@ -202,8 +218,16 @@
     background-color: rgba(0,0,0,0);
 }
 
+.quitbutton:hover {
+    background-color: rgba(0,0,0,0);
+}
+
 .sendbutton:hover .Icon {
     color: #535353;
+}
+
+.quitbutton:hover .Icon {
+    color: #a40202;
 }
 
 .sendbutton:hover #rcd {
