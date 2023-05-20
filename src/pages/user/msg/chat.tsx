@@ -11,7 +11,7 @@ import { translate } from "../../../utils/youdao";
 import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
-import GlobalContext from "../../GlobalContext";
+import { GlobalContext, CurrentVocalCallContext } from "../../../constants/GlobalContext";
 
 
 // import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
@@ -29,12 +29,9 @@ interface detailMetaData {
 }
 
 const ChatScreen = () => {
-    const {
-        globalValue,
-        updateGlobalValue,
-        currentVocalCall,
-        updateCurrentVocalCall
-    } = useContext(GlobalContext);
+    const { globalValue, updateGlobalValue } = useContext(GlobalContext);
+    const { currentVocalCall, updateCurrentVocalCall } = useContext(CurrentVocalCallContext);
+
     const selectRef = useRef<HTMLSelectElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [cursorPosStart, setCursorPosStart] = useState<number | null>(null);

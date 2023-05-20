@@ -15,20 +15,14 @@ export const GlobalContextProvider = ({ children }) => {
         setCurrentVocalCall(newValue);
     };
 
-    const contextValue = {
-        globalValue,
-        updateGlobalValue,
-        currentVocalCall,
-        updateCurrentVocalCall
-    };
 
     return (
-        <GlobalContext.Provider value={contextValue}>
-            <CurrentVocalCallContext.Provider value={contextValue}>
+        <GlobalContext.Provider value={{ globalValue, updateGlobalValue }}>
+            <CurrentVocalCallContext.Provider value={{ currentVocalCall, updateCurrentVocalCall }}>
                 {children}
             </CurrentVocalCallContext.Provider>
         </GlobalContext.Provider>
     );
 };
 
-export default GlobalContext;
+export {GlobalContext, CurrentVocalCallContext};

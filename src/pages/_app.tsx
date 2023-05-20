@@ -9,7 +9,7 @@ import "../styles/requests.css";
 import "../styles/friendinfo.css";
 import "../styles/startgroup.css";
 import "../styles/chatinfo.css";
-import { GlobalContextProvider } from "./GlobalContext";
+import {GlobalContextProvider} from "../constants/GlobalContext";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
