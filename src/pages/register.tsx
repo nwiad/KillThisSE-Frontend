@@ -62,7 +62,7 @@ const InitRegisterPage = () => {
                     </Link>
                 </li>
             </ul>
-            <div id="main" style={{ display: "flex", flexDirection: "column", margin: "50px auto" }}>
+            <div className="info" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
                 <p id="title">欢迎，新的杀软er</p>
                 <p id="info">请在下方填写您的注册信息</p>
                 <input
@@ -70,6 +70,7 @@ const InitRegisterPage = () => {
                     type="text"
                     placeholder="用户名"
                     value={name}
+                    style={{margin:"30px auto"}}
                     onChange={(e) => checkName(e.target.value)}
                 />
                 <span id={nameLegal? "usernamelegaltip":"usernameillegaltip"}>*用户名必须由3-16位字母、数字和下划线组成</span>
@@ -78,10 +79,11 @@ const InitRegisterPage = () => {
                     type="password"
                     placeholder="密码"
                     value={password}
+                    style={{margin:"30px auto"}}
                     onChange={(e) => checkPassword(e.target.value)}
                 />
                 <span id={passwordLegal? "pwdlegaltip":"pwdillegaltip"}>*密码必须由6-16位字母、数字和下划线组成</span>
-                <button onClick={saveUser} disabled={!nameLegal || !passwordLegal}>
+                <button onClick={saveUser} disabled={!nameLegal || !passwordLegal} style={{margin:"30px auto", marginBottom:"80px"}}>
                     注册新用户
                 </button>
             </div>

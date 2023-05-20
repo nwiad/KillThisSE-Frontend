@@ -1,52 +1,84 @@
 html,
 body {
-  padding: 0;
-  margin: auto;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    padding: 0;
+    margin: auto;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+        Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+
+}
+
+.blank {
+    display: none;
+}
+
+.fadein {
+    opacity: 0;
+    animation: fade-in-animation 1s ease-in forwards;
+    z-index: 100;
 }
 
 input {
-    margin:20px auto;
-    text-align:center;
+    margin: 20px auto;
+    text-align: center;
     height: 50px;
     width: 300px;
     background-color: #e6e6e6;
     border-radius: 5px;
     border: 1px solid #7d7d7d;
-    font-size:14px;
+    font-size: 14px;
 }
-input:hover {background-color: #dadada}
-input:active {background-color: #c0c0c0;}
+
+input:hover {
+    background-color: #dadada
+}
+
+input:active {
+    background-color: #c0c0c0;
+}
+
 button {
-    margin:20px auto;
-    text-align:center;
+    margin: 20px auto;
+    text-align: center;
     height: 50px;
     width: 300px;
     background-color: #0660e9;
     border-radius: 5px;
     border: 1px solid #7d7d7d;
     color: rgb(255, 255, 255);
-    font-size:14px;
+    font-size: 14px;
 }
 
 .delete {
-    margin:20px auto;
-    text-align:center;
+    margin: 20px auto;
+    text-align: center;
     height: 50px;
     width: 300px;
     background-color: #e90606;
     border-radius: 5px;
     border: 1px solid #7d7d7d;
     color: rgb(255, 255, 255);
-    font-size:14px;
+    font-size: 14px;
 }
-.delete:hover {background-color: #af0000}
-.delete:active {background-color: #5a0101}
 
-button:hover {background-color: #001eb1}
-button:active {background-color: #001683}
-button:disabled {background-color: #589bff;}
+.delete:hover {
+    background-color: #af0000
+}
+
+.delete:active {
+    background-color: #5a0101
+}
+
+button:hover {
+    background-color: #001eb1
+}
+
+button:active {
+    background-color: #001683
+}
+
+button:disabled {
+    background-color: #589bff;
+}
 
 img {
     height: 300px;
@@ -54,46 +86,49 @@ img {
     margin: 20px auto;
 }
 
-#usernamelegaltip, #pwdlegaltip {
+#usernamelegaltip,
+#pwdlegaltip {
     display: none;
     margin: auto;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:12px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
     color: rgb(0, 154, 39);
 }
 
-#usernameillegaltip, #pwdillegaltip {
+#usernameillegaltip,
+#pwdillegaltip {
     display: none;
     margin: auto;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:12px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
     color: rgb(255, 0, 0);
 }
 
-#usernameinput:focus + #usernameillegaltip{
+#usernameinput:focus+#usernameillegaltip {
     display: block;
 }
 
-#pwdinput:focus + #pwdillegaltip {
+#pwdinput:focus+#pwdillegaltip {
     display: block;
 }
 
-#title{
+#title {
     margin: 50px auto;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:40px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 40px;
     font-weight: 1000;
 }
 
-#info{
+#info {
     margin: 20px auto;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:15px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
     font-weight: 100;
     color: #8c8c8c;
 }
 
-.registerbar, .indexbar {
+.registerbar,
+.indexbar {
     position: fixed;
     top: 20px;
     left: 20px;
@@ -115,11 +150,11 @@ img {
     padding: 20px;
     text-decoration: none;
     margin: auto;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 22px;
     font-weight: 100;
-    border-style:solid;
-    border-width:0px;
+    border-style: solid;
+    border-width: 0px;
     border-left-color: #0660e9;
     border-right-color: #589bff;
     border-top-color: #0660e9;
@@ -131,7 +166,8 @@ img {
     border-radius: 15px;
 }
 
-.hometitle, .registerbarli {
+.hometitle,
+.registerbarli {
     float: left;
     height: 65px;
     display: block;
@@ -140,11 +176,11 @@ img {
     padding: 20px;
     text-decoration: none;
     margin: auto;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 25px;
     font-weight: 100;
-    border-style:solid;
-    border-width:0px;
+    border-style: solid;
+    border-width: 0px;
 }
 
 .hometitle:hover {
@@ -156,4 +192,42 @@ img {
     background-color: #0660e9;
     border-radius: 15px;
     color: #e6e6e6;
+}
+
+@keyframes fade-in-animation {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.entry{
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.entrytitle {
+    position: fixed;
+    font-size: 50px;
+    font-weight: 100;
+    top: 40%;
+    left: 33%;
+}
+
+.newuser{
+    margin: 10px 43%;
+    margin-bottom: 50px;
+    width: auto;
+    font-size: 13px;
+    color: #589bff;
+}
+
+.newuser:hover{
+    color: #0660e9;
 }

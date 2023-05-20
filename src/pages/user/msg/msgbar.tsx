@@ -424,7 +424,6 @@ const MsgBar = (props: MsgBarProps) => {
     ) : (
         <div style={{ padding: 12 }}>
             <Navbar />
-            <img className="chatimg" src="https://i.hd-r.cn/95c0358239b9d888355844c9dd54d67a.png"></img>
 
             {chatList!.length + groupChatList!.length + stickedPrivate!.length + stickedGroup!.length === 0 ? (
                 <ul className="friendlist">
@@ -433,7 +432,7 @@ const MsgBar = (props: MsgBarProps) => {
                     </li>
                 </ul>
             ) : (
-                <ul className="friendlist">
+                <ul className="friendlist" style={{top:"95px"}}>
                     {stickedPrivate!.map((chat) => (
                         (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#434343" }}
                             onClick={() => {
