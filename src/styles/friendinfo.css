@@ -100,3 +100,77 @@
   height: 200px;
   border-radius: 50%;
 }
+
+.friendinfobutton {
+  display: flex;
+  flex-direction: column;
+  background-color: #0661e900;
+  margin: auto 10px;
+  border: 0;
+}
+
+.friendinfobutton:hover {
+  display: flex;
+  flex-direction: column;
+  background-color: #0661e900;
+  margin: auto 10px;
+  border: 0;
+}
+
+.friendinfobuttondisplay {
+  display: flex;
+  flex-direction: row;
+  margin: 60px 30%;
+}
+
+.friendinfoicon{
+  margin: auto;
+  width: 35px;
+  height: 35px;
+}
+
+.friendinfobuttoninfo{
+  margin: 10px auto;
+  color: #0660e9;
+}
+
+.frienddeletebuttoninfo{
+  margin: 10px auto;
+  color: #e90606;
+}
+
+.friendinfoiconbg{
+  margin: auto;
+  padding: 20px;
+  border-radius: 50%;
+  background-color: #0660e9;
+  width: 75px;
+  height: 75px;
+}
+
+.friendinfoiconbg:hover{
+  margin: auto;
+  padding: auto;
+  border-radius: 50%;
+  background-color: #001eb1;
+  width: 75px;
+  height: 75px;
+}
+
+.frienddeleteiconbg{
+  margin: auto;
+  padding: 20px;
+  border-radius: 50%;
+  background-color: #e90606;
+  width: 75px;
+  height: 75px;
+}
+
+.frienddeleteiconbg:hover{
+  margin: auto;
+  padding: 20px;
+  border-radius: 50%;
+  background-color: #970404;
+  width: 75px;
+  height: 75px;
+}

@@ -1,6 +1,8 @@
 import { useRouter } from "next/router";
 import FriendBar from "./friendbar";
 import { useEffect, useState } from "react";
+import { faMessage, faUserXmark, faUserTag , faXmark} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface Group {
     group_id: number;
@@ -152,38 +154,45 @@ const InitPage = () => {
         <p>正在加载好友信息</p>
     ) : (
         <div>
+            {showPopupGrouptoAdd && (
+                <div className="popup" style={{ padding: "20px", height: "auto", width: "auto" }}>
+                    <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowPopupGrouptoAdd(false); }} />
+                    <p>请选择需要加入的分组</p>
+                    {groupsList?.map((item: Group) => (
+                        <div className="member" style={{ textAlign: "center", height: "50px",  }} key={item.group_id} onClick={() => { addtoGroup(item.group_id); }}>
+                            <p style={{ color: "black", margin: "auto 10px", fontSize: "25px", textAlign: "center"  }}> {item.group_name}</p>
+                        </div>
+                    ))}
+                </div>
+            )
+            }
             <FriendBar />
             <div className="friendinfodisplay">
                 <img className="friendinfoavatar" src={`${friendAvatar}`} alt="oops" />
                 <p className="friendinfoname">{friendName}</p>
-                <button onClick={() => { startChat(); }}>
-                    发消息
-                </button>
-                <button className="addtoGroup" onClick={() => { setShowPopupGrouptoAdd(true); }}>
-                    加入分组
-                </button>
-                {showPopupGrouptoAdd && (
-                    <div className="popupGrouptoAdd">
-                        <ul>
-                            <li id="title">
-                                请选择需要加入的分组
-                            </li>
-                            {groupsList?.map((item: Group) => (
-                                <li key={item.group_id} onClick={() => { addtoGroup(item.group_id); }}>
-                                    {item.group_name}
-                                </li>
-                            ))}
-                            <li onClick={() => { setShowPopupGrouptoAdd(false); }}>
-                                取消
-                            </li>
-                        </ul>
-                    </div>
-                )}
-                <button className="deleteFriend" onClick={() => { sendDelete(); }}>
-                    删除此好友
-                </button>
+                <div className="friendinfobuttondisplay">
+                    <button className="friendinfobutton" onClick={() => { startChat(); }}>
+                        <div className="friendinfoiconbg">
+                            <FontAwesomeIcon className="friendinfoicon" icon={faMessage} />
+                        </div>
+                        <p className="friendinfobuttoninfo">发消息</p>
+                    </button>
+                    <button className="friendinfobutton" onClick={() => { setShowPopupGrouptoAdd(true); }}>
+                        <div className="friendinfoiconbg">
+                            <FontAwesomeIcon className="friendinfoicon" icon={faUserTag} />
+                        </div>
+                        <p className="friendinfobuttoninfo">加入分组</p>
+                    </button>
+
+                    <button className="friendinfobutton" onClick={() => { sendDelete(); }}>
+                        <div className="frienddeleteiconbg">
+                            <FontAwesomeIcon className="friendinfoicon" icon={faUserXmark} />
+                        </div>
+                        <p className="frienddeletebuttoninfo">删除好友</p>
+                    </button>
+                </div>
             </div>
-        </div>
+        </div >
     );
 };
 
