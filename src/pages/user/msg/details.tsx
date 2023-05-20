@@ -730,6 +730,7 @@ const DetailsPage = (props: detailProps) => {
                             .then((data) => {
                                 if (data.code === 0) {
                                     setShowSecondValid(false);
+                                    setValidation("0");
                                     alert("解除二次验证");
                                 }
                                 else {
@@ -1242,7 +1243,7 @@ const DetailsPage = (props: detailProps) => {
                         <p className="admininfo">筛选消息</p>
                     </div>
                     <div className="adminbutton">
-                        <FontAwesomeIcon className="adminicon" icon={validation === "1" ? faKey : faLock} onClick={() => { setValidation(validation === "1" ? "0" : "1"); setOrUnsetValidation(validation === "1" ? true : false); }} />
+                        <FontAwesomeIcon className="adminicon" icon={validation === "1" ? faKey : faLock} onClick={() => {  setOrUnsetValidation(validation === "1" ? true : false); }} />
                         <p className="admininfo">{validation === "1" ? "解除二级验证" : "设置二级验证"}</p>
                     </div>
                     <div className="adminbutton" onClick={() => { makeOrUnmakeSilent(silent === "1" ? true : false); }}>
@@ -1636,7 +1637,7 @@ const DetailsPage = (props: detailProps) => {
                     <button onClick={() => { setShowPwdInput(false); setPwd(""); }}>
                         取消
                     </button>
-                    <button onClick={() => { checkPwd(pwd); setShowPwdInput(false); setPwd(""); }} disabled={pwd.length !== 6}>
+                    <button onClick={() => { checkPwd(pwd); setShowPwdInput(false); setPwd(""); }}>
                         完成
                     </button>
                 </div>
@@ -1717,7 +1718,7 @@ const DetailsPage = (props: detailProps) => {
                 <p className="chatname"> {props.chatName}</p>
                 <div className="groupadminbuttons">
                     <div className="adminbutton">
-                        <FontAwesomeIcon className="adminicon" icon={validation === "1" ? faKey : faLock} onClick={() => { setValidation(validation === "1" ? "0" : "1"); setOrUnsetValidation(validation === "1" ? true : false); }} />
+                        <FontAwesomeIcon className="adminicon" icon={validation === "1" ? faKey : faLock} onClick={() => { setOrUnsetValidation(validation === "1" ? true : false); }} />
                         <p className="admininfo">{validation === "1" ? "解除二级验证" : "设置二级验证"}</p>
                     </div>
                     <div className="adminbutton" onClick={() => { makeOrUnmakeSilent(silent === "1" ? true : false); }}>
@@ -1867,6 +1868,20 @@ const DetailsPage = (props: detailProps) => {
                         取消
                     </button>
                     <button onClick={() => { setContent(newContent); setShowContentInput(false); setNewContent(""); }} disabled={newContent.length === 0}>
+                        完成
+                    </button>
+                </div>
+            )}
+            {showPwdInput && (
+                <div className="popup">
+                    <input
+                        placeholder="输入本账号的登录密码"
+                        onChange={(e) => { setPwd(e.target.value); }}
+                    />
+                    <button onClick={() => { setShowPwdInput(false); setPwd(""); }}>
+                        取消
+                    </button>
+                    <button onClick={() => { checkPwd(pwd); setShowPwdInput(false); setPwd(""); }}>
                         完成
                     </button>
                 </div>
