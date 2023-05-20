@@ -193,27 +193,28 @@ const MsgBar = (props: MsgBarProps) => {
                 const data = JSON.parse(event.data);
                 const msg_len = data.len_of_msgs;
                 const last_msg = JSON.parse(event.data).last_msg;
+                const prefix = (data.mentioned === true) ? "[有人@我] " : "";
                 if(msg_len === 0) {
                     target.innerHTML = "";
                 }
                 else {
                     if(last_msg.is_transmit === true) {
-                        target.innerHTML = "[合并转发消息]";
+                        target.innerHTML = prefix+"[合并转发消息]";
                     }
                     else if(last_msg.is_audio === true) {
-                        target.innerHTML = "[语音消息]";
+                        target.innerHTML = prefix+"[语音消息]";
                     }
                     else if(last_msg.is_image === true) {
-                        target.innerHTML = "[图片消息]";
+                        target.innerHTML = prefix+"[图片消息]";
                     }
                     else if(last_msg.is_video === true) {
-                        target.innerHTML = "[视频消息]";
+                        target.innerHTML = prefix+"[视频消息]";
                     }
                     else if(last_msg.is_file === true) {
-                        target.innerHTML = "[文件消息]";
+                        target.innerHTML = prefix+"[文件消息]";
                     }
                     else {
-                        target.innerHTML = last_msg.msg_body.length > 10 ? last_msg.msg_body.slice(0,10)+"......" : last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? prefix+last_msg.msg_body.slice(0,10)+"......" : prefix+last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
@@ -238,8 +239,6 @@ const MsgBar = (props: MsgBarProps) => {
                 const data = JSON.parse(event.data);
                 const msg_len = data.len_of_msgs;
                 const last_msg = JSON.parse(event.data).last_msg;
-                const prefix = (data.mentioned === true) ? "[有人@我] " : "";
-                console.log("data.mention: ", data.mention);
                 if(msg_len === 0) {
                     target.innerHTML = "";
                 }
@@ -260,8 +259,7 @@ const MsgBar = (props: MsgBarProps) => {
                         target.innerHTML = "[文件消息]";
                     }
                     else {
-                        // target.innerHTML = last_msg.msg_body;
-                        target.innerHTML = last_msg.msg_body.length > 10 ? prefix+last_msg.msg_body.slice(0,10)+"......" : prefix+last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? last_msg.msg_body.slice(0,10)+"......" : last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
@@ -286,27 +284,28 @@ const MsgBar = (props: MsgBarProps) => {
                 const data = JSON.parse(event.data);
                 const msg_len = data.len_of_msgs;
                 const last_msg = JSON.parse(event.data).last_msg;
+                const prefix = (data.mentioned === true) ? "[有人@我] " : "";
                 if(msg_len === 0) {
                     target.innerHTML = "";
                 }
                 else {
                     if(last_msg.is_transmit === true) {
-                        target.innerHTML = "[合并转发消息]";
+                        target.innerHTML = prefix+"[合并转发消息]";
                     }
                     else if(last_msg.is_audio === true) {
-                        target.innerHTML = "[语音消息]";
+                        target.innerHTML = prefix+"[语音消息]";
                     }
                     else if(last_msg.is_image === true) {
-                        target.innerHTML = "[图片消息]";
+                        target.innerHTML = prefix+"[图片消息]";
                     }
                     else if(last_msg.is_video === true) {
-                        target.innerHTML = "[视频消息]";
+                        target.innerHTML = prefix+"[视频消息]";
                     }
                     else if(last_msg.is_file === true) {
-                        target.innerHTML = "[文件消息]";
+                        target.innerHTML = prefix+"[文件消息]";
                     }
                     else {
-                        target.innerHTML = last_msg.msg_body.length > 10 ? last_msg.msg_body.slice(0,10)+"......" : last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? prefix+last_msg.msg_body.slice(0,10)+"......" : prefix+last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
