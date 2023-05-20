@@ -1060,12 +1060,16 @@ const ChatScreen = () => {
             <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!} />
             {calling && (
                 <div className="callinginfo">
-                    <FontAwesomeIcon className="callingicon" icon={faVideo}/>
+                    <FontAwesomeIcon className="callingicon" icon={faVideo} />
                     通话中
                 </div>
             )}
-            <div id="localStreamContainer"></div>
-            <div className="msgdpbox" id="remoteStreamContainer"></div>
+            {calling && (
+                <div id="localStreamContainer"></div>
+            )}
+            {calling && (
+                <div id="remoteStreamContainer"></div>
+            )}
             <div ref={chatBoxRef} id="msgdisplay" className="msgdpbox" style={{ display: "flex", flexDirection: "column" }}>
 
                 {msgList.map((msg) => (
