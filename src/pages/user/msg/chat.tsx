@@ -29,8 +29,8 @@ interface detailMetaData {
 }
 
 interface readMetaData {
-    name:string,
-    avatar:string
+    name: string,
+    avatar: string
 }
 
 const ChatScreen = () => {
@@ -808,8 +808,7 @@ const ChatScreen = () => {
             contextMenu.appendChild(replyItem);
         }
 
-        if(isGroup === "1")
-        {
+        if (isGroup === "1") {
             // 展示已读本消息成员的列表按钮
             const readItem = document.createElement("li");
             readItem.className = "ContextMenuLi";
@@ -833,7 +832,7 @@ const ChatScreen = () => {
                         if (data.code === 0) {
                             console.log("获取已读成员列表成功");
                             setReadMembers(data.read_members.map((member: any) => ({ ...member })));
-                            
+
                             setShowReadMembers(true);
                         }
                         else {
@@ -845,7 +844,7 @@ const ChatScreen = () => {
             readItem.addEventListener("click", readEventListeners);
             contextMenu.appendChild(readItem);
         }
-        
+
         // 多选按钮--为了合并转发消息
         const multiselectItem = document.createElement("li");
         multiselectItem.className = "ContextMenuLi";
@@ -1266,9 +1265,9 @@ const ChatScreen = () => {
                                                 ></p>)))
                                 )}
                             {(isGroup === "0" && msg.sender_id === myID) && (
-                                <div className="translate" style={{ fontSize: "12px", height: "40px", maxWidth: "300px", overflowY: "auto" }}>
+                                <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>
                                     {msg.is_read === true ? "已读" : "未读"}
-                                </div>
+                                </p>
                             )}
                             <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
                         </div>

@@ -167,7 +167,7 @@ const InitLoginPage = () => {
                 <p className="entrytitle">{text}</p>
             </div>
             <div className={fadeIn ? "fadein" : "blank"}>
-                <ul className="indexbar">
+                <ul className={fadeIn ? "indexbar" : "blank"}>
                     <li className="hometitle">
                         <Link href="/">
                             KillthisSE IM
