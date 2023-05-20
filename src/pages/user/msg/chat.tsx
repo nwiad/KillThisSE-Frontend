@@ -1064,6 +1064,7 @@ const ChatScreen = () => {
         localStream.current.close();
         // 停止本地流预览
         await client.current.leave();
+        setCalling(false);
         // 退房成功，如果没有调用 client.destroy()，可再次调用 client.join 重新进房开启新的通话
         // 调用 destroy() 结束当前 client 的生命周期
         client.current.destroy();
@@ -1075,6 +1076,14 @@ const ChatScreen = () => {
         </div>
     ) : ((
         <div style={{ padding: 12 }}>
+            {calling && (
+                <div className="overlay"></div>
+            )}
+            {calling && (
+                <button className="hangup" onClick={handleFinishCall}>
+                    <FontAwesomeIcon className="hangupicon" icon={faVideoSlash}/>
+                </button>
+            )}
             <Navbar />
             <MsgBar currentChatID={parseInt(query.id as string)} />
             <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!} />
@@ -1090,6 +1099,7 @@ const ChatScreen = () => {
             {calling && (
                 <div id="remoteStreamContainer"></div>
             )}
+            
             <div ref={chatBoxRef} id="msgdisplay" className="msgdpbox" style={{ display: "flex", flexDirection: "column" }}>
 
                 {msgList.map((msg) => (
@@ -1459,8 +1469,8 @@ const ChatScreen = () => {
                     <button className="sendbutton" onClick={() => { handleRecording(); }}>
                         <FontAwesomeIcon className="Icon" id={recording ? "notrcd" : "rcd"} icon={faMicrophone} />
                     </button>
-                    <button className={calling ? "quitbutton" : "sendbutton"} id="startCall" onClick={calling ? handleFinishCall : handleStartCall}>
-                        <FontAwesomeIcon className="Icon" icon={calling ? faVideoSlash : faVideo} />
+                    <button className={"sendbutton"} id="startCall" onClick={handleStartCall} style={{zIndex: 9999}}>
+                        <FontAwesomeIcon className="Icon" icon={faVideo} />
                     </button>
                 </div>
                 <button
