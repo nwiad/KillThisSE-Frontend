@@ -982,14 +982,14 @@ const ChatScreen = () => {
     }, [showPopupMention]);
 
     useEffect(() => {
-        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined && sticked !== undefined && silent !== undefined && validation !== undefined) {
+        if (chatID !== undefined && chatName !== undefined && isGroup !== undefined && myID !== undefined && sticked !== undefined && silent !== undefined && validation !== undefined && sig !== undefined) {
             console.log("聊天视窗刷新");
             setRefreshing(false);
         }
         else {
             setRefreshing(true);
         }
-    }, [chatID, chatName, isGroup, myID, sticked, silent, validation]);
+    }, [chatID, chatName, isGroup, myID, sticked, silent, validation, sig]);
 
     const sdkAppId = 1400811921;
     let client, localStream;
@@ -1030,7 +1030,7 @@ const ChatScreen = () => {
         // 2.进房成功后开始推流
         try {
             await client.join({ roomId });
-            localStream = TRTC.current.createStream({ userId, audio: true, video: true });
+            localStream = TRTC.current.createStream({ userId, audio: true, video: false});
             await localStream.initialize();
             // 播放本地流
             localStream.play("localStreamContainer");
