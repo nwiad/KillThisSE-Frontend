@@ -39,7 +39,7 @@ const InitPage = () => {
                     setMyID(data.user_id);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取个人信息:" + err));
         fetch(
             "/api/user/get_friend_requests/",
             {
@@ -58,7 +58,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取好友请求:" + err));
         return cleanUp;
     },[]);
 
@@ -116,7 +116,7 @@ const InitPage = () => {
                                 throw new Error(`${data.info}`);
                             }
                         })
-                        .catch((err) => alert(err));
+                        .catch((err) => alert("通过id搜索好友:" + err));
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -145,7 +145,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("回应好友请求: " + err));
         // if(respond === "accept") {
         //     startChat(id);            
         // }

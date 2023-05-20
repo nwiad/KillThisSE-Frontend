@@ -268,7 +268,7 @@ const ChatScreen = () => {
                 setMyName(data.name);
                 setSig(data.sig);
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取个人信息: " + err));
     }, []);
 
     const getAvatar = (name: string) => {
@@ -286,7 +286,7 @@ const ChatScreen = () => {
             .then((data) => {
                 return (data.avatar);
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取头像: " + err));
     };
     // 功能：创建链接
     function createLinkifiedMsgBody(msgBody: string) {
@@ -347,7 +347,7 @@ const ChatScreen = () => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => alert("获取at成员: " + err));
             // if (msgBody.includes(`@${all}`)) {
             //     console.log(`消息有@${all}`);
             // }
@@ -1022,7 +1022,7 @@ const ChatScreen = () => {
                             throw new Error(`${data.info}`);
                         }
                     })
-                    .catch((err) => alert(err));
+                    .catch((err) => alert("设置已读消息: " + err));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -1050,7 +1050,7 @@ const ChatScreen = () => {
             .then((data) => {
                 setID(data.user_id);
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取个人信息: " + err));
     }, []);
 
     useEffect(() => {

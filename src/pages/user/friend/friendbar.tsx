@@ -52,7 +52,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取好友: "+err));
 
         fetch(
             "/api/user/get_group/",
@@ -77,7 +77,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取群组: "+err));
     }, [refresh]);
 
     const createNewGroup = async () => {
@@ -101,7 +101,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("创建群租: "+err));
         router.push("/user/friend/friendindex");
     };
 
@@ -133,7 +133,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取分组好友: "+err));
         router.push("/user/friend/friendindex");
     };
 
@@ -158,7 +158,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("删除分组: "+ err));
         router.push("/user/friend/friendindex");
     };
 
@@ -184,7 +184,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("从群组中移除好友: "+err));
         router.push("/user/friend/friendindex");
     };
 
