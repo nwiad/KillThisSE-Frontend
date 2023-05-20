@@ -1050,7 +1050,7 @@ const ChatScreen = () => {
     ) : ((
         <div style={{ padding: 12 }}>
             <Navbar />
-            <MsgBar />
+            <MsgBar currentChatID={parseInt(query.id as string)} />
             <DetailsPage myID={myID!.toString()} chatID={chatID!} chatName={chatName!} group={isGroup!} sticked={sticked!} silent={silent!} validation={validation!} />
             {calling && (
                 <div className="callinginfo">
