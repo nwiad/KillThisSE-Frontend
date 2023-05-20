@@ -60,7 +60,7 @@ const Navbar = (props: infoProps) => {
 
     return (
         <div>
-            <nav style={{ padding: 12, zIndex: 9999, position: "fixed" }}>
+            <nav style={{ padding: 12, zIndex: 6666, position: "fixed" }}>
                 <ul className="navbar">
                     <li className="navbar_ele_r" onClick={() => { router.push("/user/"); }}>
                         <FontAwesomeIcon className="Icon" icon={faComment} />
