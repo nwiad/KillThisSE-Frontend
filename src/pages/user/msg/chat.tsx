@@ -591,8 +591,9 @@ const ChatScreen = () => {
     }, [nowuserowner, nowuseradmin, msg_ownerowner, msg_owneradmin]);
 
     const voice2text = async (url: string): Promise<string> => {
-        fetch(
-            "/api/user/get_taskid/",
+        let result = "[转换失败]";
+        await fetch(
+            "/api/user/voice2text/",
             {
                 method: "POST",
                 credentials: "include",
@@ -603,30 +604,16 @@ const ChatScreen = () => {
             }
         )
             .then((res) => res.json())
-            .then((data) => {
-                if(data.code === 0) {
-                    const taskID = data.TaskId;
-                    fetch(
-                        "/api/user/voice2text/",
-                        {
-                            method: "POST",
-                            credentials: "include",
-                            body: JSON.stringify({
-                                token: localStorage.getItem("token"),
-                                taskid: taskID
-                            })
-                        }
-                    )
-                        .then((res) => res.json())
-                        .then((text_data) => {
-                            if(text_data.code === 0) {
-                                return text_data.Result;
-                            }
-                        });
+            .then((text_data) => {
+                if(text_data.code === 0) {
+                    console.log("转换成功：", text_data);
+                    result = text_data.Result;
                 }
-            });
-        return "[转换失败]";
+            });    
+        return result;
     };
+
+    const [showDoing, setShowDoing] = useState<boolean>(false);
 
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string, msg_istransmit: boolean) => {
@@ -802,7 +789,9 @@ const ChatScreen = () => {
                 // newElement.innerHTML = await transform(msg_body);
                 // newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
                 // newElement.innerHTML = "转文字结果";
+                setShowDoing(true);
                 newElement.innerHTML = await voice2text(msg_body);
+                setShowDoing(false);
                 target?.insertAdjacentElement("beforeend", newElement);
                 hideContextMenu();
                 console.log("转换结果：" + newElement.innerHTML);
@@ -1316,6 +1305,13 @@ const ChatScreen = () => {
                     <div className="popuprecord">
                         <div className="popup-title">
                             &nbsp;&nbsp;正在录音......&nbsp;&nbsp;
+                        </div>
+                    </div>
+                )}
+                {showDoing && (
+                    <div className="popuprecord">
+                        <div className="popup-title">
+                            &nbsp;&nbsp;正在转换......&nbsp;&nbsp;
                         </div>
                     </div>
                 )}
