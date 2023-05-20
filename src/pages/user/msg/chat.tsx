@@ -995,6 +995,13 @@ const ChatScreen = () => {
                 console.log("convList" + convList);
 
                 const last_id = messages.length === 0 ? -1 : messages.at(-1).msg_id;
+                if (JSON.parse(event.data).refresh) {
+                    socket.current!.send(JSON.stringify({
+                        message: "wjlsb", token: localStorage.getItem("token"),
+                        read: true
+                    }));
+                }
+
                 fetch(
                     "/api/user/set_read_message/",
                     {
