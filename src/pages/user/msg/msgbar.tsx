@@ -23,9 +23,6 @@ const MsgBar = (props: MsgBarProps) => {
     const [showPopupValidGroup, setShowPopupValidGroup] = useState<boolean>(false);
     const [pwd, setPwd] = useState<string>("");
 
-    // const [chatInfo, setChatInfo] = useState<string[]>();
-    const [globalLength, setGlobalLength] = useState<number>();
-
     const router = useRouter();
     const query = router.query;
 
@@ -49,7 +46,6 @@ const MsgBar = (props: MsgBarProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     setMyID(data.user_id);
-                    setGlobalLength(data.conversation_len);
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -121,11 +117,9 @@ const MsgBar = (props: MsgBarProps) => {
             console.log("列表不存在");
             return;
         }
-        if (myID === undefined || globalLength === undefined) {
+        if (myID === undefined) {
             return;
         }
-        // setChatInfo(Array(chatList.length + groupChatList.length + stickedPrivate.length + stickedGroup.length).fill(""));
-        // setChatInfo(Array(globalLength).fill(""));
         const options: Options = {
             url: "",
             heartTime: 5000, // 心跳时间间隔
@@ -183,60 +177,6 @@ const MsgBar = (props: MsgBarProps) => {
                     return;
                 }
                 unreadTarget.innerHTML = (props.currentChatID === chat.id) ? 0 : unread;
-                // setChatInfo((array) => {
-                //     if (array === undefined) {
-                //         return [];
-                //     }
-                //     let newArray = [...array];
-                //     const data = JSON.parse(event.data);
-                //     const msg_len = data.len_of_msgs;
-                //     const last_msg = JSON.parse(event.data).last_msg;
-                //     if(msg_len === 0) {
-                //         return;
-                //     }
-                //     if(last_msg.is_transmit === true) {
-                //         newArray[chat.id] = "[合并转发消息]";
-                //     }
-                //     else if(last_msg.is_audio === true) {
-                //         newArray[chat.id] = "[语音消息]";
-                //     }
-                //     else if(last_msg.is_image === true) {
-                //         newArray[chat.id] = "[图片消息]";
-                //     }
-                //     else if(last_msg.is_video === true) {
-                //         newArray[chat.id] = "[视频消息]";
-                //     }
-                //     else if(last_msg.is_file === true) {
-                //         newArray[chat.id] = "[文件消息]";
-                //     }
-                //     else {
-                //         newArray[chat.id] = last_msg.msg_body;
-                //     }
-                //     return newArray;
-                // });
-                // fetch(
-                //     "/api/user/get_unread_messages/",
-                //     {
-                //         method: "POST",
-                //         credentials: "include",
-                //         body: JSON.stringify({
-                //             token: localStorage.getItem("token"),
-                //             conversation: chat.id
-                //         })
-                //     }
-                // )
-                //     .then((res) => res.json())
-                //     .then((data) => {
-                //         if (data.code === 0) {
-                //             const unread = data.UnreadMessages;
-                //             const target = document.getElementById(`chat${chat.id}`);
-                //             if (target === null) {
-                //                 return;
-                //             }
-                //             target.innerHTML = unread;
-                //         }
-                //     })
-                //     .catch((err) => alert(err));
             });
             sockets.current.push(socket);
         });
@@ -298,6 +238,8 @@ const MsgBar = (props: MsgBarProps) => {
                 const data = JSON.parse(event.data);
                 const msg_len = data.len_of_msgs;
                 const last_msg = JSON.parse(event.data).last_msg;
+                const prefix = (data.mentioned === true) ? "[有人@我] " : "";
+                console.log("data.mention: ", data.mention);
                 if(msg_len === 0) {
                     target.innerHTML = "";
                 }
@@ -319,7 +261,7 @@ const MsgBar = (props: MsgBarProps) => {
                     }
                     else {
                         // target.innerHTML = last_msg.msg_body;
-                        target.innerHTML = last_msg.msg_body.length > 10 ? last_msg.msg_body.slice(0,10)+"......" : last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? prefix+last_msg.msg_body.slice(0,10)+"......" : prefix+last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
@@ -377,7 +319,7 @@ const MsgBar = (props: MsgBarProps) => {
             sockets.current.push(socket);
         });
         return cleanUp;
-    }, [chatList, groupChatList, stickedPrivate, stickedGroup, myID, globalLength]);
+    }, [chatList, groupChatList, stickedPrivate, stickedGroup, myID]);
 
     const fetchList = async () => {
         setRefreshing(true);
@@ -463,7 +405,6 @@ const MsgBar = (props: MsgBarProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     console.log("获取群聊消息列表成功");
-                    // console.log(data);
                     setGroupChatList(data.conversations.map((val: any) => ({ ...val })));
                     setRefreshing(false);
                 }
@@ -528,7 +469,6 @@ const MsgBar = (props: MsgBarProps) => {
                             <img src={`${chat.avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0, 6)}...` : chat.name}</div>
-                                {/* <div className="msgpv" id={`info${chat.id}`}>{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div> */}
                                 <div className="msgpv" id={`info${chat.id}`}>加载中......</div>
                             </div>
                             {chat.silent ? (
@@ -553,7 +493,6 @@ const MsgBar = (props: MsgBarProps) => {
                             <img src={`${chat.friend_avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.friend_name.length > 6 ? `${chat.friend_name.slice(0, 6)}...` : chat.friend_name}</div>
-                                {/* <div className="msgpv" id={`info${chat.id}`}>{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div> */}
                                 <div className="msgpv" id={`info${chat.id}`}>加载中......</div>
                             </div>
                             {chat.silent ? (
@@ -578,7 +517,6 @@ const MsgBar = (props: MsgBarProps) => {
                             <img src={`${chat.avatar}`} alt="oops" />
                             <div className="msginfopv" >
                                 <div className="senderpv">{chat.name.length > 6 ? `${chat.name.slice(0, 6)}...` : chat.name}</div>
-                                {/* <div className="msgpv" id={`info${chat.id}`}>{chatInfo && chatInfo[chat.id] ? (chatInfo[chat.id].length > 10 ? `${chatInfo[chat.id].slice(0, 10)}...` : chatInfo[chat.id]) : ""}</div> */}
                                 <div className="msgpv" id={`info${chat.id}`}>加载中......</div>
                             </div>
                             {chat.silent ? (
