@@ -11,7 +11,7 @@ import { translate } from "../../../utils/youdao";
 import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
-import {GlobalContext} from "../../GlobalContext";
+import { GlobalContext } from "../../GlobalContext";
 
 
 // import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
@@ -22,6 +22,11 @@ interface EventListenerInfo {
     listener: () => void;
 }
 
+interface detailMetaData {
+    name: string,
+    read: boolean,
+    avatar: string
+}
 
 const ChatScreen = () => {
     const {
@@ -47,7 +52,7 @@ const ChatScreen = () => {
     const query = router.query;
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [showMemberDetail, setShowMemberDetail] = useState(false);
-    const [memberDetailList, setMemberdetailList] = useState<string[]>([]);
+    const [memberDetailList, setMemberdetailList] = useState<detailMetaData[]>([]);
 
     const [nowuserowner, setnowuserowner] = useState<string>("ss");
     const [nowuseradmin, setnowuseradmin] = useState<string>("ss");
@@ -157,7 +162,7 @@ const ChatScreen = () => {
                 console.log("有@");
                 if (message.includes(`@${all}`)) {
                     // 如果包含全体成员，将所有用户名添加到提及成员的数组中
-                    mentioned_members.push(memberList.map(member => member.user_name));
+                    mentioned_members = memberList.map(member => member.user_name);
 
                 }
                 else //不是全体成员
@@ -182,7 +187,7 @@ const ChatScreen = () => {
                 }));
             }
             else {
-
+                console.log("mentioned_members:", mentioned_members);
                 socket.current!.send(JSON.stringify({
                     message: inputValue, token: localStorage.getItem("token"),
                     isImg: false, isFile: false, isVideo: false,
@@ -313,24 +318,45 @@ const ChatScreen = () => {
         return msgBody;
     }
 
-    function createDetailList(msgBody: string) {
+    function createDetailList(msgBody: string, msgid: number) {
         const all = "全体成员";
         // 有@ 才检查是否有名字
         if (msgBody.includes("@")) {
-            if (msgBody.includes(`@${all}`)) {
-                console.log(`消息有@${all}`);
-            }
-            for (let member of memberList) {
-                // 检查消息中是否包含用户名
-                if (msgBody.includes(`@${member.user_name}`)) {
-                    console.log(`消息有@${member.user_name}`);
-                    memberDetailList.push(member.user_name);
-                    console.log(msgBody);
+            fetch(
+                "/api/user/get_mentioned_members/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        msg_id: msgid
+                    })
                 }
-            }
-            if (msgBody.includes(`@${myName}`)) {
-                memberDetailList.push(myName);
-            }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.code === 0) {
+                        console.log(",emtioned_members from backend", data.mentioned_members);
+                        setMemberdetailList(data.mentioned_members.map((member: any) => ({ ...member })));
+                    }
+                    else {
+                        throw new Error(`${data.info}`);
+                    }
+                })
+                .catch((err) => alert(err));
+            // if (msgBody.includes(`@${all}`)) {
+            //     console.log(`消息有@${all}`);
+            // }
+            // for (let member of memberList) {
+            //     // 检查消息中是否包含用户名
+            //     if (msgBody.includes(`@${member.user_name}`)) {
+            //         console.log(`消息有@${member.user_name}`);
+            //         console.log(msgBody);
+            //     }
+            // }
+            // if (msgBody.includes(`@${myName}`)) {
+            //     memberDetailList.push({name: myName, read: true});
+            // }
         }
         if (memberDetailList.length)
             setShowMemberDetail(true);
@@ -1187,7 +1213,7 @@ const ChatScreen = () => {
                                                 {<audio src={msg.msg_body} controls />}
                                             </a> :
                                                 <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
-                                                    onClick={() => { createDetailList(msg.msg_body); }}
+                                                    onClick={() => { createDetailList(msg.msg_body, msg.msg_id); }}
                                                     dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
                                                 ></p>)))
                                 )}
@@ -1211,76 +1237,75 @@ const ChatScreen = () => {
                 )}
 
             </div>
-            {
-                showMemberDetail && (
-                    <div className="popup" style={{ padding: "20px", height: "auto", width: "auto" }}>
-                        <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowMemberDetail(false); setMemberdetailList([]); }} />
-                        <p>在此消息中被@的成员</p>
-                        {memberDetailList.map((name) => (
-                            <div key={name} className="member">
-                                <img className="sender_avatar" src={`${getAvatar(name)}`} />
-                                <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{name}</p>
-                            </div>
-                        )
-                        )}
-                    </div>
-                )
-            }
-            {
-                displayForwardMsgs && (
-                    refreshingRecords ? (
-                        <div className="popup" style={{ padding: "20px", height: "auto" }}>
-                            正在加载聊天记录......
-                            <button onClick={() => { closeFilter(); }}>
-                                取消
-                            </button>
+            {showMemberDetail && (
+                <div className="popup" style={{ padding: "20px", height: "auto", width: "auto" }}>
+                    <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowMemberDetail(false); setMemberdetailList([]); }} />
+                    <p>在此消息中被@的成员</p>
+                    {memberDetailList.map((item) => (
+                        <div key={item.name} className="member">
+                            <img className="sender_avatar" src={`${item.avatar}`} />
+                            <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{item.name}</p>
+                            <div>{item.read ? "已读" : "未读"}</div>
                         </div>
-                    ) : (
-                        <div className="historypopup" >
-                            <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setDisplayForwardMsgs(false); }} />
-                            <div style={{ display: "flex", flexDirection: "column", height: "500px", overflowY: "auto", marginTop: "50px" }}>
-                                {ForwardMsgs?.map((msg) => (
-                                    <div key={msg.msg_id} className={msg.chosen ? "msgchosen" : "msg"}>
-                                        <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
-                                            <img className="sender_avatar" src={msg.sender_avatar} />
-                                        </div>
-                                        <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
-                                            <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
-                                            {msg.is_transmit === true ? (
-                                                <p
-                                                    className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
-                                                    onClick={() => {
-                                                        openFilter(msg.msg_body);
-                                                        setDisplayForwardMsgs(true);
-                                                    }}
-                                                    style={{ color: "#0baaf9" }}
-                                                >
-                                                    点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
-                                                </p>
-                                            ) :
-                                                (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
-                                                    (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
-                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
+                    )
+                    )}
+                </div>
+            )}
+            {displayForwardMsgs && (
+                refreshingRecords ? (
+                    <div className="popup" style={{ padding: "20px", height: "auto" }}>
+                        正在加载聊天记录......
+                        <button onClick={() => { closeFilter(); }}>
+                            取消
+                        </button>
+
+                    </div>
+                ) : (
+                    <div className="historypopup" >
+                        <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setDisplayForwardMsgs(false); }} />
+                        <div style={{ display: "flex", flexDirection: "column", height: "500px", overflowY: "auto", marginTop: "50px" }}>
+                            {ForwardMsgs?.map((msg) => (
+                                <div key={msg.msg_id} className={msg.chosen ? "msgchosen" : "msg"}>
+                                    <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
+                                        <img className="sender_avatar" src={msg.sender_avatar} />
+                                    </div>
+                                    <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
+                                        <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
+                                        {msg.is_transmit === true ? (
+                                            <p
+                                                className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                                onClick={() => {
+                                                    openFilter(msg.msg_body);
+                                                    setDisplayForwardMsgs(true);
+                                                }}
+                                                style={{ color: "#0baaf9" }}
+                                            >
+                                                点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
+                                            </p>
+                                        ) :
+                                            (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
+                                                (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
+                                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
+                                                        style={{ width: "100%", height: "auto" }} />
+                                                </a> :
+                                                    (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
+                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
                                                             style={{ width: "100%", height: "auto" }} />
                                                     </a> :
-                                                        (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                                            <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
-                                                                style={{ width: "100%", height: "auto" }} />
+                                                        (msg.is_audio === true ? <a>
+                                                            {<audio src={msg.msg_body} controls />}
                                                         </a> :
-                                                            (msg.is_audio === true ? <a>
-                                                                {<audio src={msg.msg_body} controls />}
-                                                            </a> :
-                                                                <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
-                                                                    dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
-                                                                ></p>)))
-                                                )}
-                                            <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
-                                        </div>
+                                                            <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                                                dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
+                                                            ></p>)))
+                                            )}
+                                        <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ))}
                         </div>
-                    ))
+                    </div>
+                ))
             }
             {
                 multiselecting && (
@@ -1514,7 +1539,7 @@ const ChatScreen = () => {
                     <button className={"sendbutton"} id="startCall" onClick={handleStartCall} style={{ zIndex: 9999 }}>
                         <FontAwesomeIcon className="Icon" icon={faVideo} />
                     </button>
-                    <button className={currentVocalCall===chatID && globalValue ? "quitbutton" : "sendbutton"} id="startCall" onClick={globalValue && currentVocalCall===chatID ? handleFinishVocalCall : handleStartVocalCall} disabled={globalValue && currentVocalCall!==chatID} style={{ zIndex: 9999 }}>
+                    <button className={currentVocalCall === chatID && globalValue ? "quitbutton" : "sendbutton"} id="startCall" onClick={globalValue && currentVocalCall === chatID ? handleFinishVocalCall : handleStartVocalCall} disabled={globalValue && currentVocalCall !== chatID} style={{ zIndex: 9999 }}>
                         <FontAwesomeIcon className="Icon" icon={faPhone} />
                     </button>
                 </div>
