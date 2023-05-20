@@ -51,7 +51,7 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取个人信息: " + err));
         fetchList();
     }, [router, query]);
 
@@ -344,7 +344,7 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取置顶私聊: " + err));
         await fetch(
             "/api/user/get_sticky_group_conversations/",
             {
@@ -365,7 +365,7 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取置顶群聊: " + err));
         await fetch(
             "/api/user/get_private_conversations/",
             {
@@ -388,7 +388,7 @@ const MsgBar = (props: MsgBarProps) => {
                 }
             })
             .catch((err) => {
-                alert(err);
+                alert("获取私聊列表: " + err);
                 setRefreshing(false);
             });
 
@@ -414,7 +414,7 @@ const MsgBar = (props: MsgBarProps) => {
                 }
             })
             .catch((err) => {
-                alert(err);
+                alert("获取群聊消息列表: " + err);
                 setRefreshing(false);
             });
     };

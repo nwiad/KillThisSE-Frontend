@@ -38,7 +38,7 @@ const Navbar = (props: infoProps) => {
                     throw new Error(`Request failed with status ${res.status}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("登出失败: " + err));
     };
 
     useEffect(() => {
@@ -58,7 +58,7 @@ const Navbar = (props: infoProps) => {
                 setAvatar(data.avatar);
 
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取个人信息失败: " + err));
     }, []);
 
     return (

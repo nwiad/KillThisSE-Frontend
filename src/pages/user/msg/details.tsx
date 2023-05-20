@@ -152,7 +152,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => alert("获取群成员: " + err));
             // 获取管理员（不含群主）
             fetch(
                 "/api/user/get_group_administrators/",
@@ -174,7 +174,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => alert("获取管理员: " + err));
             // 获取群主
             fetch(
                 "/api/user/get_group_owner/",
@@ -197,7 +197,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => alert("获取群主: " + err));
             // 获取群公告
             fetch(
                 "/api/user/get_group_announcement/",
@@ -219,7 +219,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => alert("获取群公告: " + err));
             fetch(
                 "/api/user/get_group_invitations/",
                 {
@@ -281,7 +281,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => alert("获取好友信息: " + err));
         };
 
         // 筛选不在群里的好友
@@ -370,7 +370,7 @@ const DetailsPage = (props: detailProps) => {
                                     throw new Error(`${data.info}`);
                                 }
                             })
-                            .catch((err) => alert(err));
+                            .catch((err) => alert("聊天获取对方id: " + err));
                     }
                     else {
                         throw new Error(`聊天获取对方id: ${data.info}`);
@@ -422,7 +422,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("设置群公告: " + err));
     };
 
     // 邀请新成员（能不能改成列表啊）
@@ -449,7 +449,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("邀请新成员入群: " + err));
     };
 
     const startGroup = () => {
@@ -476,7 +476,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("创建群聊: " + err));
     };
 
     const closeInvite = () => {
@@ -633,7 +633,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("移除成员: " + err));
     };
 
     const makeOrUnmakeTop = (isTop: boolean) => {
@@ -660,7 +660,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("获取置顶私聊: " + err));
     };
 
     const setOrUnsetValidation = (validated: boolean) => {
@@ -774,7 +774,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => alert("设置免打扰: " + err));
     };
 
     useEffect(() => {
