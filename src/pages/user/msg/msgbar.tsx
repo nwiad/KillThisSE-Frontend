@@ -174,7 +174,7 @@ const MsgBar = (props: MsgBarProps) => {
                         target.innerHTML = "[文件消息]";
                     }
                     else{
-                        target.innerHTML = last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? last_msg.msg_body.slice(0,10)+"......" : last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
@@ -273,7 +273,7 @@ const MsgBar = (props: MsgBarProps) => {
                         target.innerHTML = "[文件消息]";
                     }
                     else {
-                        target.innerHTML = last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? last_msg.msg_body.slice(0,10)+"......" : last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
@@ -318,7 +318,8 @@ const MsgBar = (props: MsgBarProps) => {
                         target.innerHTML = "[文件消息]";
                     }
                     else {
-                        target.innerHTML = last_msg.msg_body;
+                        // target.innerHTML = last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? last_msg.msg_body.slice(0,10)+"......" : last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
@@ -363,7 +364,7 @@ const MsgBar = (props: MsgBarProps) => {
                         target.innerHTML = "[文件消息]";
                     }
                     else {
-                        target.innerHTML = last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? last_msg.msg_body.slice(0,10)+"......" : last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
