@@ -1,8 +1,10 @@
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComment, faUsers, faUser, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faPhone, faComment, faUsers, faUser, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import GroupStarter from "./startgroup"; 
+import {GlobalContext} from "../../constants/GlobalContext";
+
 
 interface infoProps {
     name?: string,
@@ -13,6 +15,7 @@ const Navbar = (props: infoProps) => {
     const [name, setName] = useState<string>("");
     const [avatar, setAvatar] = useState<string>();
     const [showPopupStartGroup, setShowPopupStartGroup] = useState(false);
+    const { globalValue, updateGlobalValue } = useContext(GlobalContext);
 
     const router = useRouter();
 
@@ -60,6 +63,12 @@ const Navbar = (props: infoProps) => {
 
     return (
         <div>
+            {globalValue && (
+                < button className="hangon" >
+                    <FontAwesomeIcon className="hangonicon" icon={faPhone} />
+                    <p className="hangoninfo">正在通话</p> 
+                </button>
+            )}
             <nav style={{ padding: 12, zIndex: 6666, position: "fixed" }}>
                 <ul className="navbar">
                     <li className="navbar_ele_r" onClick={() => { router.push("/user/"); }}>
