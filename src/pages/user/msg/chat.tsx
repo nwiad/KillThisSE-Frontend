@@ -11,7 +11,7 @@ import { translate } from "../../../utils/youdao";
 import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
-import { GlobalContext } from "../../GlobalContext";
+import GlobalContext from "../../GlobalContext";
 
 
 // import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
@@ -1245,7 +1245,7 @@ const ChatScreen = () => {
                         <div key={item.name} className="member">
                             <img className="sender_avatar" src={`${item.avatar}`} />
                             <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{item.name}</p>
-                            <div>{item.read ? "已读" : "未读"}</div>
+                            <div className={item.read ? "owner" : "admin"}>{item.read ? "已读" : "未读"}</div>
                         </div>
                     )
                     )}

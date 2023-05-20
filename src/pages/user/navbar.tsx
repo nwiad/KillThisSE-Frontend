@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhone, faComment, faUsers, faUser, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import GroupStarter from "./startgroup"; 
-import {GlobalContext} from "../GlobalContext";
+import GlobalContext from "../GlobalContext";
 
 
 interface infoProps {

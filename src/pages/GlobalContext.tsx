@@ -31,4 +31,4 @@ export const GlobalContextProvider = ({ children }) => {
     );
 };
 
-export { GlobalContext, CurrentVocalCallContext };
+export default GlobalContext;
