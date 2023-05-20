@@ -1,5 +1,5 @@
 import Picker from "@emoji-mart/react";
-import { faVideoSlash, faFilm, faFaceSmile, faFile, faImage, faMicrophone, faPaperPlane, faVideo, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faFaceSmile, faFile, faFilm, faImage, faMicrophone, faPaperPlane, faVideo, faVideoSlash, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -19,6 +19,11 @@ interface EventListenerInfo {
     listener: () => void;
 }
 
+interface detailMetaData {
+    name:string,
+    read:boolean,
+    avatar:string
+}
 
 const ChatScreen = () => {
     const selectRef = useRef<HTMLSelectElement>(null);
@@ -38,7 +43,7 @@ const ChatScreen = () => {
     const query = router.query;
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [showMemberDetail, setShowMemberDetail] = useState(false);
-    const [memberDetailList, setMemberdetailList] = useState<string[]>([]);
+    const [memberDetailList, setMemberdetailList] = useState<detailMetaData[]>([]);
 
     const [nowuserowner, setnowuserowner] = useState<string>("ss");
     const [nowuseradmin, setnowuseradmin] = useState<string>("ss");
@@ -148,7 +153,7 @@ const ChatScreen = () => {
                 console.log("有@");
                 if (message.includes(`@${all}`)) {
                     // 如果包含全体成员，将所有用户名添加到提及成员的数组中
-                    mentioned_members.push(memberList.map(member => member.user_name));
+                    mentioned_members = memberList.map(member => member.user_name);
 
                 }
                 else //不是全体成员
@@ -173,7 +178,7 @@ const ChatScreen = () => {
                 }));
             }
             else {
-
+                console.log("mentioned_members:", mentioned_members);
                 socket.current!.send(JSON.stringify({
                     message: inputValue, token: localStorage.getItem("token"),
                     isImg: false, isFile: false, isVideo: false,
@@ -304,24 +309,45 @@ const ChatScreen = () => {
         return msgBody;
     }
 
-    function createDetailList(msgBody: string) {
+    function createDetailList(msgBody: string, msgid: number) {
         const all = "全体成员";
         // 有@ 才检查是否有名字
         if (msgBody.includes("@")) {
-            if (msgBody.includes(`@${all}`)) {
-                console.log(`消息有@${all}`);
-            }
-            for (let member of memberList) {
-                // 检查消息中是否包含用户名
-                if (msgBody.includes(`@${member.user_name}`)) {
-                    console.log(`消息有@${member.user_name}`);
-                    memberDetailList.push(member.user_name);
-                    console.log(msgBody);
+            fetch(
+                "/api/user/get_mentioned_members/",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token"),
+                        msg_id: msgid
+                    })
                 }
-            }
-            if (msgBody.includes(`@${myName}`)) {
-                memberDetailList.push(myName);
-            }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.code === 0) {
+                        console.log(",emtioned_members from backend", data.mentioned_members);
+                        setMemberdetailList(data.mentioned_members.map((member: any) => ({ ...member })));
+                    }   
+                    else {
+                        throw new Error(`${data.info}`);
+                    }
+                })
+                .catch((err) => alert(err));
+            // if (msgBody.includes(`@${all}`)) {
+            //     console.log(`消息有@${all}`);
+            // }
+            // for (let member of memberList) {
+            //     // 检查消息中是否包含用户名
+            //     if (msgBody.includes(`@${member.user_name}`)) {
+            //         console.log(`消息有@${member.user_name}`);
+            //         console.log(msgBody);
+            //     }
+            // }
+            // if (msgBody.includes(`@${myName}`)) {
+            //     memberDetailList.push({name: myName, read: true});
+            // }
         }
         if (memberDetailList.length)
             setShowMemberDetail(true);
@@ -1116,7 +1142,7 @@ const ChatScreen = () => {
                                                 {<audio src={msg.msg_body} controls />}
                                             </a> :
                                                 <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
-                                                    onClick={() => { createDetailList(msg.msg_body); }}
+                                                    onClick={() => { createDetailList(msg.msg_body, msg.msg_id); }}
                                                     dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
                                                 ></p>)))
                                 )}
@@ -1144,10 +1170,11 @@ const ChatScreen = () => {
                 <div className="popup" style={{ padding: "20px", height: "auto", width: "auto" }}>
                     <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowMemberDetail(false); setMemberdetailList([]); }} />
                     <p>在此消息中被@的成员</p>
-                    {memberDetailList.map((name) => (
-                        <div key={name} className="member">
-                            <img className="sender_avatar" src={`${getAvatar(name)}`} />
-                            <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{name}</p>
+                    {memberDetailList.map((item) => (
+                        <div key={item.name} className="member">
+                            <img className="sender_avatar" src={`${item.avatar}`} />
+                            <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{item.name}</p>
+                            <div>{item.read ? "已读" : "未读"}</div>
                         </div>
                     )
                     )}
