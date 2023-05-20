@@ -65,6 +65,7 @@ export interface MsgMetaData {
     is_transmit: boolean,
     quote_with: number,
     mention_list: string[],
+    is_read: boolean,
 };
 
 export interface MemberMetaData {

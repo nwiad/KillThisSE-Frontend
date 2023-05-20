@@ -28,6 +28,11 @@ interface detailMetaData {
     avatar: string
 }
 
+interface readMetaData {
+    name:string,
+    avatar:string
+}
+
 const ChatScreen = () => {
     const { globalValue, updateGlobalValue } = useContext(GlobalContext);
     const { currentVocalCall, updateCurrentVocalCall } = useContext(CurrentVocalCallContext);
@@ -49,7 +54,9 @@ const ChatScreen = () => {
     const query = router.query;
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [showMemberDetail, setShowMemberDetail] = useState(false);
+    const [showReadMembers, setShowReadMembers] = useState(false);
     const [memberDetailList, setMemberdetailList] = useState<detailMetaData[]>([]);
+    const [readMembers, setReadMembers] = useState<readMetaData[]>([]);
 
     const [nowuserowner, setnowuserowner] = useState<string>("ss");
     const [nowuseradmin, setnowuseradmin] = useState<string>("ss");
@@ -801,6 +808,44 @@ const ChatScreen = () => {
             contextMenu.appendChild(replyItem);
         }
 
+        if(isGroup === "1")
+        {
+            // 展示已读本消息成员的列表按钮
+            const readItem = document.createElement("li");
+            readItem.className = "ContextMenuLi";
+            readItem.innerHTML = "已读成员列表";
+            const readEventListeners = () => {
+                event.stopPropagation();
+                // 展示已读本消息成员的列表
+                fetch(
+                    "/api/user/get_read_members/",
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify({
+                            token: localStorage.getItem("token"),
+                            msg_id: msg_id
+                        })
+                    }
+                )
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data.code === 0) {
+                            console.log("获取已读成员列表成功");
+                            setReadMembers(data.read_members.map((member: any) => ({ ...member })));
+                            
+                            setShowReadMembers(true);
+                        }
+                        else {
+                            throw new Error(`获取已读成员列表失败: ${data.info}`);
+                        }
+                    })
+                    .catch(((err) => alert("获取已读成员列表: " + err)));
+            };
+            readItem.addEventListener("click", readEventListeners);
+            contextMenu.appendChild(readItem);
+        }
+        
         // 多选按钮--为了合并转发消息
         const multiselectItem = document.createElement("li");
         multiselectItem.className = "ContextMenuLi";
@@ -1214,6 +1259,11 @@ const ChatScreen = () => {
                                                     dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
                                                 ></p>)))
                                 )}
+                            {(isGroup === "0" && msg.sender_id === myID) && (
+                                <div className="translate" style={{ fontSize: "12px", height: "40px", maxWidth: "300px", overflowY: "auto" }}>
+                                    {msg.is_read === true ? "已读" : "未读"}
+                                </div>
+                            )}
                             <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
                         </div>
                     </div>
@@ -1243,6 +1293,19 @@ const ChatScreen = () => {
                             <img className="sender_avatar" src={`${item.avatar}`} />
                             <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{item.name}</p>
                             <div className={item.read ? "owner" : "admin"}>{item.read ? "已读" : "未读"}</div>
+                        </div>
+                    )
+                    )}
+                </div>
+            )}
+            {showReadMembers && (
+                <div className="popup" style={{ padding: "20px", height: "auto", width: "auto" }}>
+                    <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowReadMembers(false); setReadMembers([]); }} />
+                    <p>已读此消息的成员</p>
+                    {readMembers.map((item) => (
+                        <div key={item.name} className="member">
+                            <img className="sender_avatar" src={`${item.avatar}`} />
+                            <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{item.name}</p>
                         </div>
                     )
                     )}
