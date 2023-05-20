@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import Navbar from "../navbar";
 import { all } from "axios";
 import { MouseEvent as ReactMouseEvent } from "react";
-
+import { faUserPlus, faEnvelope, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface Friend {
     user_id: number;
@@ -242,35 +243,38 @@ const FriendBar = () => {
     return (
         <div style={{ padding: 12 }}>
             <Navbar />
+            {showPopupNewGroup && (
+                <div className="popup">
+                    <input
+                        type="text"
+                        value={newGroup}
+                        onChange={(e) => { setNewGroup(e.target.value); }}
+                        placeholder="请输入新的分组名"
+                        id="usernameinput" />
+                    <button onClick={() => { createNewGroup(); setShowPopupNewGroup(false); }} >保存</button>
+                    <button onClick={() => { setShowPopupNewGroup(false); }}>取消</button>
+                </div>
+            )}
             <div>
+                <div className="friendbarbuttons">
+                    <div className="adminbutton"
+                        onClick={() => { router.push("/user/friend/searchfriend"); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
+                        <p className="admininfo">添加新好友</p>
+                    </div>
+                    <div className="adminbutton"
+                        onClick={() => { router.push("/user/friend/friendrequest"); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faEnvelope} />
+                        <p className="admininfo">收到的好友邀请</p>
+                    </div>
+                    <div className="adminbutton"
+                        onClick={() => { setShowPopupNewGroup(true); }}>
+                        <FontAwesomeIcon className="adminicon" icon={faUsers} />
+                        <p className="admininfo">新建分组</p>
+                    </div>
+
+                </div>
                 <ul className="friendlist">
-                    <li className="newfriend"
-                        onClick={() => { router.push("/user/friend/searchfriend"); }}
-                        style={{ padding: 20 }}>
-                        + 添加新好友
-                    </li>
-                    <li className="newfriend"
-                        onClick={() => { router.push("/user/friend/friendrequest"); }}
-                        style={{ padding: 20 }}>
-                        收到的好友邀请
-                    </li>
-                    <li className="newfriend"
-                        onClick={() => { setShowPopupNewGroup(true); }}
-                        style={{ padding: 20 }}>
-                        新建分组
-                    </li>
-                    {showPopupNewGroup && (
-                        <div className="popup">
-                            <input
-                                type="text"
-                                value={newGroup}
-                                onChange={(e) => { setNewGroup(e.target.value); }}
-                                placeholder="请输入新的分组名"
-                                id="usernameinput" />
-                            <button onClick={() => { createNewGroup(); setShowPopupNewGroup(false); }} >保存</button>
-                            <button onClick={() => { setShowPopupNewGroup(false); }}>取消</button>
-                        </div>
-                    )}
                     <li className="newfriend"
                         onClick={() => { setAllCollapsed(!allCollapsed); }}
                         style={{ padding: 20 }}>
@@ -293,7 +297,7 @@ const FriendBar = () => {
                                     const foundGroup = groupsList.find(group => group.group_id === item.group_id);
                                     if (foundGroup) foundGroup.collapsed = !item.collapsed;
                                 }}
-                                onContextMenu={ (event) => {
+                                onContextMenu={(event) => {
                                     deleteGroupContextMenu(event, item.group_name);
                                 }}>
                                 <p>{item.group_name}</p>
@@ -303,7 +307,7 @@ const FriendBar = () => {
                                     className="friendinList"
                                     onClick={() => { router.push(`/user/friend/friendinfo?id=${friend.user_id}&name=${friend.name}`); }}
                                     style={{ display: `${item.collapsed ? "block" : "none"}` }}
-                                    onContextMenu={ (event) => {
+                                    onContextMenu={(event) => {
                                         removeFriendContextMenu(event, item.group_id, friend.user_id);
                                     }}>
                                     <img className="friendavatar" src={`${friend.avatar}`} alt="oops" />

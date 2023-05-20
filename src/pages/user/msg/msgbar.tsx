@@ -142,33 +142,33 @@ const MsgBar = (props: MsgBarProps) => {
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 const target = document.getElementById(`info${chat.id}`);
-                if(target === null) {
+                if (target === null) {
                     return;
                 }
                 const data = JSON.parse(event.data);
                 const msg_len = data.len_of_msgs;
                 const last_msg = JSON.parse(event.data).last_msg;
-                if(msg_len === 0) {
+                if (msg_len === 0) {
                     target.innerHTML = "";
                 }
                 else {
-                    if(last_msg.is_transmit === true) {
+                    if (last_msg.is_transmit === true) {
                         target.innerHTML = "[合并转发消息]";
                     }
-                    else if(last_msg.is_audio === true) {
+                    else if (last_msg.is_audio === true) {
                         target.innerHTML = "[语音消息]";
                     }
-                    else if(last_msg.is_image === true) {
+                    else if (last_msg.is_image === true) {
                         target.innerHTML = "[图片消息]";
                     }
-                    else if(last_msg.is_video === true) {
+                    else if (last_msg.is_video === true) {
                         target.innerHTML = "[视频消息]";
                     }
-                    else if(last_msg.is_file === true) {
+                    else if (last_msg.is_file === true) {
                         target.innerHTML = "[文件消息]";
                     }
-                    else{
-                        target.innerHTML = last_msg.msg_body.length > 10 ? last_msg.msg_body.slice(0,10)+"......" : last_msg.msg_body;
+                    else {
+                        target.innerHTML = last_msg.msg_body.length > 10 ? last_msg.msg_body.slice(0, 10) + "......" : last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
@@ -187,34 +187,34 @@ const MsgBar = (props: MsgBarProps) => {
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 const target = document.getElementById(`info${chat.id}`);
-                if(target === null) {
+                if (target === null) {
                     return;
                 }
                 const data = JSON.parse(event.data);
                 const msg_len = data.len_of_msgs;
                 const last_msg = JSON.parse(event.data).last_msg;
                 const prefix = (data.mentioned === true) ? "[有人@我] " : "";
-                if(msg_len === 0) {
+                if (msg_len === 0) {
                     target.innerHTML = "";
                 }
                 else {
-                    if(last_msg.is_transmit === true) {
-                        target.innerHTML = prefix+"[合并转发消息]";
+                    if (last_msg.is_transmit === true) {
+                        target.innerHTML = prefix + "[合并转发消息]";
                     }
-                    else if(last_msg.is_audio === true) {
-                        target.innerHTML = prefix+"[语音消息]";
+                    else if (last_msg.is_audio === true) {
+                        target.innerHTML = prefix + "[语音消息]";
                     }
-                    else if(last_msg.is_image === true) {
-                        target.innerHTML = prefix+"[图片消息]";
+                    else if (last_msg.is_image === true) {
+                        target.innerHTML = prefix + "[图片消息]";
                     }
-                    else if(last_msg.is_video === true) {
-                        target.innerHTML = prefix+"[视频消息]";
+                    else if (last_msg.is_video === true) {
+                        target.innerHTML = prefix + "[视频消息]";
                     }
-                    else if(last_msg.is_file === true) {
-                        target.innerHTML = prefix+"[文件消息]";
+                    else if (last_msg.is_file === true) {
+                        target.innerHTML = prefix + "[文件消息]";
                     }
                     else {
-                        target.innerHTML = last_msg.msg_body.length > 10 ? prefix+last_msg.msg_body.slice(0,10)+"......" : prefix+last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? prefix + last_msg.msg_body.slice(0, 10) + "......" : prefix + last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
@@ -233,7 +233,7 @@ const MsgBar = (props: MsgBarProps) => {
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 const target = document.getElementById(`info${chat.id}`);
-                if(target === null) {
+                if (target === null) {
                     return;
                 }
                 const data = JSON.parse(event.data);
@@ -244,19 +244,19 @@ const MsgBar = (props: MsgBarProps) => {
                     target.innerHTML = "";
                 }
                 else {
-                    if(last_msg.is_transmit === true) {
+                    if (last_msg.is_transmit === true) {
                         target.innerHTML = "[合并转发消息]";
                     }
-                    else if(last_msg.is_audio === true) {
+                    else if (last_msg.is_audio === true) {
                         target.innerHTML = "[语音消息]";
                     }
-                    else if(last_msg.is_image === true) {
+                    else if (last_msg.is_image === true) {
                         target.innerHTML = "[图片消息]";
                     }
-                    else if(last_msg.is_video === true) {
+                    else if (last_msg.is_video === true) {
                         target.innerHTML = "[视频消息]";
                     }
-                    else if(last_msg.is_file === true) {
+                    else if (last_msg.is_file === true) {
                         target.innerHTML = "[文件消息]";
                     }
                     else {
@@ -280,34 +280,34 @@ const MsgBar = (props: MsgBarProps) => {
             const socket = new Socket(options);
             socket.onmessage((event: MessageEvent) => {
                 const target = document.getElementById(`info${chat.id}`);
-                if(target === null) {
+                if (target === null) {
                     return;
                 }
                 const data = JSON.parse(event.data);
                 const msg_len = data.len_of_msgs;
                 const last_msg = JSON.parse(event.data).last_msg;
                 const prefix = (data.mentioned === true) ? "[有人@我] " : "";
-                if(msg_len === 0) {
+                if (msg_len === 0) {
                     target.innerHTML = "";
                 }
                 else {
-                    if(last_msg.is_transmit === true) {
-                        target.innerHTML = prefix+"[合并转发消息]";
+                    if (last_msg.is_transmit === true) {
+                        target.innerHTML = prefix + "[合并转发消息]";
                     }
-                    else if(last_msg.is_audio === true) {
-                        target.innerHTML = prefix+"[语音消息]";
+                    else if (last_msg.is_audio === true) {
+                        target.innerHTML = prefix + "[语音消息]";
                     }
-                    else if(last_msg.is_image === true) {
-                        target.innerHTML = prefix+"[图片消息]";
+                    else if (last_msg.is_image === true) {
+                        target.innerHTML = prefix + "[图片消息]";
                     }
-                    else if(last_msg.is_video === true) {
-                        target.innerHTML = prefix+"[视频消息]";
+                    else if (last_msg.is_video === true) {
+                        target.innerHTML = prefix + "[视频消息]";
                     }
-                    else if(last_msg.is_file === true) {
-                        target.innerHTML = prefix+"[文件消息]";
+                    else if (last_msg.is_file === true) {
+                        target.innerHTML = prefix + "[文件消息]";
                     }
                     else {
-                        target.innerHTML = last_msg.msg_body.length > 10 ? prefix+last_msg.msg_body.slice(0,10)+"......" : prefix+last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? prefix + last_msg.msg_body.slice(0, 10) + "......" : prefix + last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
@@ -424,6 +424,8 @@ const MsgBar = (props: MsgBarProps) => {
     ) : (
         <div style={{ padding: 12 }}>
             <Navbar />
+            <img className="chatimg" src="https://i.hd-r.cn/95c0358239b9d888355844c9dd54d67a.png"></img>
+
             {chatList!.length + groupChatList!.length + stickedPrivate!.length + stickedGroup!.length === 0 ? (
                 <ul className="friendlist">
                     <li>

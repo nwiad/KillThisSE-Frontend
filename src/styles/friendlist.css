@@ -1,6 +1,6 @@
 .friendlist {
     position: fixed;
-    top: 95px;
+    top: 27%;
     left: 20px;
     bottom: 0px;
     width: 20%;
@@ -93,4 +93,18 @@
 
 .deleteContextMenu:hover{
     background-color: rgb(179, 179, 179);
+}
+
+.friendbarbuttons {
+    position: fixed;
+    display: flex;
+    flex-wrap: wrap;
+    top: 95px;
+    left: 20px;
+    width: 20%;
+    height: 17%;
+    list-style-type: none;
+    padding: 23px;
+    background-color: #9d9d9d;
+    border-radius: 15px;
 }

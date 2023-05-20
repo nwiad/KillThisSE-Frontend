@@ -585,3 +585,11 @@
     font-size: 10px;
     padding: 10px;
 }
+
+.chatimg {
+    position: fixed;
+    top: 2%;
+    left: 40px;
+    height: 250px;
+    width: 250px;
+}
