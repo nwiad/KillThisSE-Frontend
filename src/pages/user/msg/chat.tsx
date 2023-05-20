@@ -590,6 +590,44 @@ const ChatScreen = () => {
 
     }, [nowuserowner, nowuseradmin, msg_ownerowner, msg_owneradmin]);
 
+    const voice2text = async (url: string): Promise<string> => {
+        fetch(
+            "/api/user/get_taskid/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    url: url
+                })
+            }
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if(data.code === 0) {
+                    const taskID = data.TaskId;
+                    fetch(
+                        "/api/user/voice2text/",
+                        {
+                            method: "POST",
+                            credentials: "include",
+                            body: JSON.stringify({
+                                token: localStorage.getItem("token"),
+                                taskid: taskID
+                            })
+                        }
+                    )
+                        .then((res) => res.json())
+                        .then((text_data) => {
+                            if(text_data.code === 0) {
+                                return text_data.Result;
+                            }
+                        });
+                }
+            });
+        return "[转换失败]";
+    };
+
     // 功能：消息右键菜单
     const msgContextMenu = (event: ReactMouseEvent<HTMLElement, MouseEvent>, user_id: number, msg_id: number, msg_body: string, msg_is_audio: boolean, msg_owner: number, msg_time: string, msg_istransmit: boolean) => {
         event.preventDefault();
@@ -763,7 +801,8 @@ const ChatScreen = () => {
                 newElement.className = "transform";
                 // newElement.innerHTML = await transform(msg_body);
                 // newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
-                newElement.innerHTML = "转文字结果";
+                // newElement.innerHTML = "转文字结果";
+                newElement.innerHTML = await voice2text(msg_body);
                 target?.insertAdjacentElement("beforeend", newElement);
                 hideContextMenu();
                 console.log("转换结果：" + newElement.innerHTML);
