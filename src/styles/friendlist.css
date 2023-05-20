@@ -35,7 +35,6 @@
 
 .friendlist li:hover {
     background-color: #888888;
-    border-radius: 15px;
     border: 0;
 }
 
@@ -106,5 +105,9 @@
     list-style-type: none;
     padding: 23px;
     background-color: #9d9d9d;
+    border-radius: 15px;
+}
+
+.newfriend{
     border-radius: 15px;
 }

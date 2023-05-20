@@ -1179,7 +1179,6 @@ const ChatScreen = () => {
         </div>
     ) : ((
         <div style={{ padding: 12 }}>
-            <img className="chatimg" src="https://i.hd-r.cn/95c0358239b9d888355844c9dd54d67a.png"></img>
             {calling && (
                 <div className="overlay"></div>
             )}
