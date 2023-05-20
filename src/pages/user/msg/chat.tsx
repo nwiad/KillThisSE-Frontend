@@ -1,9 +1,9 @@
 import Picker from "@emoji-mart/react";
-import { faVideoSlash, faFilm, faFaceSmile, faFile, faImage, faMicrophone, faPaperPlane, faVideo, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faPhone, faVideoSlash, faFilm, faFaceSmile, faFile, faImage, faMicrophone, faPaperPlane, faVideo, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
+import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState, useContext } from "react";
 import { uploadFile } from "../../../utils/oss";
 import { CovnMetaData, MemberMetaData, MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
@@ -11,6 +11,9 @@ import { translate } from "../../../utils/youdao";
 import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
+import {GlobalContext} from "../../GlobalContext";
+
+
 // import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 // import TRTC from "trtc-js-sdk";
 
@@ -21,6 +24,12 @@ interface EventListenerInfo {
 
 
 const ChatScreen = () => {
+    const {
+        globalValue,
+        updateGlobalValue,
+        currentVocalCall,
+        updateCurrentVocalCall
+    } = useContext(GlobalContext);
     const selectRef = useRef<HTMLSelectElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [cursorPosStart, setCursorPosStart] = useState<number | null>(null);
@@ -1024,7 +1033,7 @@ const ChatScreen = () => {
         // 2.进房成功后开始推流
         try {
             await client.current.join({ roomId });
-            localStream.current = TRTC.current.createStream({ userId, audio: true, video: true});
+            localStream.current = TRTC.current.createStream({ userId, audio: true, video: true });
             await localStream.current.initialize();
             // 播放本地流
             localStream.current.play("localStreamContainer");
@@ -1044,18 +1053,64 @@ const ChatScreen = () => {
         client.current.destroy();
     };
 
+    const handleStartVocalCall = async () => {
+        const roomId = parseInt(chatID);
+        const userId = myID.toString();
+        const userSig = sig;
+        client.current = TRTC.current.createClient({ mode: "rtc", sdkAppId, userId, userSig });
+        // setClient(TRTC.current.createClient({ mode: "rtc", sdkAppId, userId, userSig }));
+        updateGlobalValue(true);
+        updateCurrentVocalCall(chatID);
+        // 1.监听事件
+        client.current.on("stream-added", event => {
+            const remoteStream = event.stream;
+            console.log("远端流增加: " + remoteStream.getId());
+            //订阅远端流
+            client.current.subscribe(remoteStream);
+        });
+        client.current.on("stream-subscribed", event => {
+            // 远端流订阅成功
+            const remoteStream = event.stream;
+            console.log("订阅成功");
+            // 播放远端流，传入的元素 ID 必须是页面里存在的 div 元素
+            remoteStream.play("remoteVocalStreamContainer");
+        });
+        // 2.进房成功后开始推流
+        try {
+            await client.current.join({ roomId });
+            localStream.current = TRTC.current.createStream({ userId, audio: true, video: false });
+            await localStream.current.initialize();
+            // 播放本地流
+            localStream.current.play("localVocalStreamContainer");
+            await client.current.publish(localStream.current);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleFinishVocalCall = async () => {
+        updateCurrentVocalCall(-1);
+        localStream.current.close();
+        // 停止本地流预览
+        await client.current.leave();
+        updateGlobalValue(false);
+        // 退房成功，如果没有调用 client.destroy()，可再次调用 client.join 重新进房开启新的通话
+        // 调用 destroy() 结束当前 client 的生命周期
+        client.current.destroy();
+    };
     return refreshing ? (
         <div style={{ padding: 12 }}>
             正在加载会话窗口......
         </div>
     ) : ((
         <div style={{ padding: 12 }}>
+
             {calling && (
                 <div className="overlay"></div>
             )}
             {calling && (
                 <button className="hangup" onClick={handleFinishCall}>
-                    <FontAwesomeIcon className="hangupicon" icon={faVideoSlash}/>
+                    <FontAwesomeIcon className="hangupicon" icon={faVideoSlash} />
                 </button>
             )}
             <Navbar />
@@ -1073,7 +1128,13 @@ const ChatScreen = () => {
             {calling && (
                 <div id="remoteStreamContainer"></div>
             )}
-            
+
+            {globalValue && (
+                <div id="localVocalStreamContainer"></div>
+            )}
+            {globalValue && (
+                <div id="remoteVocalStreamContainer"></div>
+            )}
             <div ref={chatBoxRef} id="msgdisplay" className="msgdpbox" style={{ display: "flex", flexDirection: "column" }}>
 
                 {msgList.map((msg) => (
@@ -1150,141 +1211,149 @@ const ChatScreen = () => {
                 )}
 
             </div>
-            {showMemberDetail && (
-                <div className="popup" style={{ padding: "20px", height: "auto", width: "auto" }}>
-                    <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowMemberDetail(false); setMemberdetailList([]); }} />
-                    <p>在此消息中被@的成员</p>
-                    {memberDetailList.map((name) => (
-                        <div key={name} className="member">
-                            <img className="sender_avatar" src={`${getAvatar(name)}`} />
-                            <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{name}</p>
-                        </div>
-                    )
-                    )}
-                </div>
-            )}
-            {displayForwardMsgs && (
-                refreshingRecords ? (
-                    <div className="popup" style={{ padding: "20px", height: "auto" }}>
-                        正在加载聊天记录......
-                        <button onClick={() => { closeFilter(); }}>
-                            取消
-                        </button>
+            {
+                showMemberDetail && (
+                    <div className="popup" style={{ padding: "20px", height: "auto", width: "auto" }}>
+                        <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowMemberDetail(false); setMemberdetailList([]); }} />
+                        <p>在此消息中被@的成员</p>
+                        {memberDetailList.map((name) => (
+                            <div key={name} className="member">
+                                <img className="sender_avatar" src={`${getAvatar(name)}`} />
+                                <p style={{ color: "black", margin: "auto 10px", fontSize: "25px" }}>{name}</p>
+                            </div>
+                        )
+                        )}
                     </div>
-                ) : (
-                    <div className="historypopup" >
-                        <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setDisplayForwardMsgs(false); }} />
-                        <div style={{ display: "flex", flexDirection: "column", height: "500px", overflowY: "auto", marginTop: "50px" }}>
-                            {ForwardMsgs?.map((msg) => (
-                                <div key={msg.msg_id} className={msg.chosen ? "msgchosen" : "msg"}>
-                                    <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
-                                        <img className="sender_avatar" src={msg.sender_avatar} />
-                                    </div>
-                                    <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
-                                        <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
-                                        {msg.is_transmit === true ? (
-                                            <p
-                                                className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
-                                                onClick={() => {
-                                                    openFilter(msg.msg_body);
-                                                    setDisplayForwardMsgs(true);
-                                                }}
-                                                style={{ color: "#0baaf9" }}
-                                            >
-                                                点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
-                                            </p>
-                                        ) :
-                                            (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
-                                                (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
-                                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
-                                                        style={{ width: "100%", height: "auto" }} />
-                                                </a> :
-                                                    (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                )
+            }
+            {
+                displayForwardMsgs && (
+                    refreshingRecords ? (
+                        <div className="popup" style={{ padding: "20px", height: "auto" }}>
+                            正在加载聊天记录......
+                            <button onClick={() => { closeFilter(); }}>
+                                取消
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="historypopup" >
+                            <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setDisplayForwardMsgs(false); }} />
+                            <div style={{ display: "flex", flexDirection: "column", height: "500px", overflowY: "auto", marginTop: "50px" }}>
+                                {ForwardMsgs?.map((msg) => (
+                                    <div key={msg.msg_id} className={msg.chosen ? "msgchosen" : "msg"}>
+                                        <div className={msg.sender_id !== myID ? "msgavatar" : "mymsgavatar"}>
+                                            <img className="sender_avatar" src={msg.sender_avatar} />
+                                        </div>
+                                        <div id={`msg${msg.msg_id}`} className={msg.sender_id !== myID ? "msgmain" : "mymsgmain"}>
+                                            <p className={msg.sender_id !== myID ? "sendername" : "mysendername"}>{msg.sender_name}</p>
+                                            {msg.is_transmit === true ? (
+                                                <p
+                                                    className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                                    onClick={() => {
+                                                        openFilter(msg.msg_body);
+                                                        setDisplayForwardMsgs(true);
+                                                    }}
+                                                    style={{ color: "#0baaf9" }}
+                                                >
+                                                    点击查看合并转发的消息 共{countCommas(msg.msg_body)}条
+                                                </p>
+                                            ) :
+                                                (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
+                                                    (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
+                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
                                                             style={{ width: "100%", height: "auto" }} />
                                                     </a> :
-                                                        (msg.is_audio === true ? <a>
-                                                            {<audio src={msg.msg_body} controls />}
+                                                        (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
+                                                            <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                                                                style={{ width: "100%", height: "auto" }} />
                                                         </a> :
-                                                            <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
-                                                                dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
-                                                            ></p>)))
-                                            )}
-                                        <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
+                                                            (msg.is_audio === true ? <a>
+                                                                {<audio src={msg.msg_body} controls />}
+                                                            </a> :
+                                                                <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
+                                                                    dangerouslySetInnerHTML={{ __html: createLinkifiedMsgBody(msg.msg_body) }}
+                                                                ></p>)))
+                                                )}
+                                            <p className={msg.sender_id !== myID ? "sendtime" : "mysendtime"}>{msg.create_time}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
+                    ))
+            }
+            {
+                multiselecting && (
+                    <div className="selectbuttons">
+                        <button onClick={() => {
+                            const msgdp = document.getElementById("msgdisplay");
+                            if (msgdp) msgdp.className = "msgdpbox";
+                            setMultiselected(true);
+                            setMultiselecting(false);
+                        }}>完成</button>
+                        <button className="delete" onClick={() => {
+                            const msgdp = document.getElementById("msgdisplay");
+                            if (msgdp) msgdp.className = "msgdpbox";
+                            setMultiselecting(false);
+                            for (let msg of msgList) {
+                                const id = msg.msg_id;
+                                const targetbg = document.getElementById(`msgbg${id}`);
+                                if (targetbg !== null) {
+                                    targetbg.className = "msg";
+                                }
+                                // 点取消的移除事件监听器
+                                for (let { id, listener } of eventListeners) {
+                                    const target = document.getElementById(`msg${id}`);
+                                    if (target !== null) {
+                                        target.removeEventListener("click", listener);
+                                    }
+                                }
+                            }
+                        }}>取消</button>
                     </div>
-                ))}
-            {multiselecting && (
-                <div className="selectbuttons">
-                    <button onClick={() => {
-                        const msgdp = document.getElementById("msgdisplay");
-                        if (msgdp) msgdp.className = "msgdpbox";
-                        setMultiselected(true);
-                        setMultiselecting(false);
-                    }}>完成</button>
-                    <button className="delete" onClick={() => {
-                        const msgdp = document.getElementById("msgdisplay");
-                        if (msgdp) msgdp.className = "msgdpbox";
-                        setMultiselecting(false);
-                        for (let msg of msgList) {
-                            const id = msg.msg_id;
-                            const targetbg = document.getElementById(`msgbg${id}`);
-                            if (targetbg !== null) {
-                                targetbg.className = "msg";
-                            }
-                            // 点取消的移除事件监听器
-                            for (let { id, listener } of eventListeners) {
-                                const target = document.getElementById(`msg${id}`);
-                                if (target !== null) {
-                                    target.removeEventListener("click", listener);
+                )
+            }
+            {
+                multiselected && (
+                    <div className="popup">
+                        <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => {
+                            const msgdp = document.getElementById("msgdisplay");
+                            if (msgdp) msgdp.className = "msgdpbox";
+                            for (let msg of msgList) {
+                                const id = msg.msg_id;
+                                const targetbg = document.getElementById(`msgbg${id}`);
+                                if (targetbg !== null) {
+                                    targetbg.className = "msg";
+                                }
+                                // 点取消的移除事件监听器
+                                for (let { id, listener } of eventListeners) {
+                                    const target = document.getElementById(`msg${id}`);
+                                    if (target !== null) {
+                                        target.removeEventListener("click", listener);
+                                    }
                                 }
                             }
-                        }
-                    }}>取消</button>
-                </div>
-            )}
-            {multiselected && (
-                <div className="popup">
-                    <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => {
-                        const msgdp = document.getElementById("msgdisplay");
-                        if (msgdp) msgdp.className = "msgdpbox";
-                        for (let msg of msgList) {
-                            const id = msg.msg_id;
-                            const targetbg = document.getElementById(`msgbg${id}`);
-                            if (targetbg !== null) {
-                                targetbg.className = "msg";
-                            }
-                            // 点取消的移除事件监听器
-                            for (let { id, listener } of eventListeners) {
-                                const target = document.getElementById(`msg${id}`);
-                                if (target !== null) {
-                                    target.removeEventListener("click", listener);
-                                }
-                            }
-                        }
-                        setMultiselected(false);
-                    }} />
-                    <p style={{ fontSize: "20px", margin: " 20px auto" }}>请选择要转发的聊天</p>
-                    <div >
-                        <select id="conversation-select" ref={selectRef}>
-                            <option value="" disabled selected>
-                                请选择转发的目标
-                            </option>
-                            {convList.map((conv) => (
-                                <option key={conv.id} value={conv.id}>
-                                    {conv.name} {conv.is_group === true ? "(群)" : "(私聊)"}
+                            setMultiselected(false);
+                        }} />
+                        <p style={{ fontSize: "20px", margin: " 20px auto" }}>请选择要转发的聊天</p>
+                        <div >
+                            <select id="conversation-select" ref={selectRef}>
+                                <option value="" disabled selected>
+                                    请选择转发的目标
                                 </option>
-                            ))}
-                        </select>
+                                {convList.map((conv) => (
+                                    <option key={conv.id} value={conv.id}>
+                                        {conv.name} {conv.is_group === true ? "(群)" : "(私聊)"}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <button className="sendforward" style={{ fontSize: "15px", width: "200px", margin: " 20px auto" }} onClick={() => sendForward()}>
+                            发送选中的信息
+                        </button>
                     </div>
-                    <button className="sendforward" style={{ fontSize: "15px", width: "200px", margin: " 20px auto" }} onClick={() => sendForward()}>
-                        发送选中的信息
-                    </button>
-                </div>
-            )}
+                )
+            }
 
             <div className="inputdisplay">
                 <input
@@ -1442,8 +1511,11 @@ const ChatScreen = () => {
                     <button className="sendbutton" onClick={() => { handleRecording(); }}>
                         <FontAwesomeIcon className="Icon" id={recording ? "notrcd" : "rcd"} icon={faMicrophone} />
                     </button>
-                    <button className={"sendbutton"} id="startCall" onClick={handleStartCall} style={{zIndex: 9999}}>
+                    <button className={"sendbutton"} id="startCall" onClick={handleStartCall} style={{ zIndex: 9999 }}>
                         <FontAwesomeIcon className="Icon" icon={faVideo} />
+                    </button>
+                    <button className={currentVocalCall===chatID && globalValue ? "quitbutton" : "sendbutton"} id="startCall" onClick={globalValue && currentVocalCall===chatID ? handleFinishVocalCall : handleStartVocalCall} disabled={globalValue && currentVocalCall!==chatID} style={{ zIndex: 9999 }}>
+                        <FontAwesomeIcon className="Icon" icon={faPhone} />
                     </button>
                 </div>
                 <button
@@ -1452,16 +1524,18 @@ const ChatScreen = () => {
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                 > <FontAwesomeIcon className="Icon" icon={faPaperPlane} /> </button>
             </div>
-            {showEmojiPicker && (
-                <div className="emoji-picker-container" >
-                    <Picker
-                        onEmojiSelect={(emoji: { native: string }) => {
-                            handleEmojiClick(emoji);
-                        }}
-                    />
-                </div>
-            )}
-        </div>
+            {
+                showEmojiPicker && (
+                    <div className="emoji-picker-container" >
+                        <Picker
+                            onEmojiSelect={(emoji: { native: string }) => {
+                                handleEmojiClick(emoji);
+                            }}
+                        />
+                    </div>
+                )
+            }
+        </div >
     ));
 };
 

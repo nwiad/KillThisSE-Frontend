@@ -292,3 +292,35 @@
 .hangup:hover {
     background-color: #b20404;
 }
+
+.hangon{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    font-size: 5px;
+    text-align: center;
+    bottom:15%;
+    right: 10%;
+    z-index: 9999;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: rgb(4, 176, 42);
+    border: 0;
+}
+
+.hangonicon{
+    margin: auto;
+    color: white;
+    height: 25px;
+}
+
+.hangon:hover {
+    background-color: rgb(4, 176, 42);
+}
+
+.hangoninfo {
+    font-size: 10px;
+    text-align: center;
+    margin: auto;
+}
