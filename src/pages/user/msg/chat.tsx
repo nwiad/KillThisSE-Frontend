@@ -992,16 +992,11 @@ const ChatScreen = () => {
     }, [chatID, chatName, isGroup, myID, sticked, silent, validation, sig]);
 
     const sdkAppId = 1400811921;
-    let client, localStream;
+    const client = useRef<any>();
+    const localStream = useRef<any>();
+    // let client, localStream;
+    // const [client, setClient] = useState();
 
-    // const wtf = {
-    //     TRTC: () => import("trtc-js-sdk")
-    // };
-
-    // useEffect(() => {
-    //     TRTC: import("trtc-js-sdk");
-    // }, []);
-    // const TRTC = require("trtc-js-sdk");
     const TRTC = useRef<any>();
     useEffect(() => {
         TRTC.current = require("trtc-js-sdk");
@@ -1011,42 +1006,47 @@ const ChatScreen = () => {
         const roomId = parseInt(chatID);
         const userId = myID.toString();
         const userSig = sig;
-        client = TRTC.current.createClient({ mode: "rtc", sdkAppId, userId, userSig });
+        client.current = TRTC.current.createClient({ mode: "rtc", sdkAppId, userId, userSig });
+        // setClient(TRTC.current.createClient({ mode: "rtc", sdkAppId, userId, userSig }));
         setCalling(true);
         // 1.监听事件
-        client.on("stream-added", event => {
+        client.current.on("stream-added", event => {
             const remoteStream = event.stream;
             console.log("远端流增加: " + remoteStream.getId());
             //订阅远端流
-            client.subscribe(remoteStream);
+            client.current.subscribe(remoteStream);
         });
-        client.on("stream-subscribed", event => {
+        client.current.on("stream-subscribed", event => {
             // 远端流订阅成功
             const remoteStream = event.stream;
-            alert("订阅成功");
+            console.log("订阅成功");
             // 播放远端流，传入的元素 ID 必须是页面里存在的 div 元素
             remoteStream.play("remoteStreamContainer");
         });
         // 2.进房成功后开始推流
         try {
-            await client.join({ roomId });
-            localStream = TRTC.current.createStream({ userId, audio: true, video: false});
-            await localStream.initialize();
+            await client.current.join({ roomId });
+            localStream.current = TRTC.current.createStream({ userId, audio: true, video: true});
+            await localStream.current.initialize();
             // 播放本地流
-            localStream.play("localStreamContainer");
-            await client.publish(localStream);
+            localStream.current.play("localStreamContainer");
+            await client.current.publish(localStream.current);
         } catch (error) {
             console.error(error);
         }
     };
 
+    useEffect(() => {
+        console.log(client);
+    }, [client]);
+
     const handleFinishCall = async () => {
+        localStream.current.close();
         // 停止本地流预览
-        localStream.close();
-        await client.leave();
+        await client.current.leave();
         // 退房成功，如果没有调用 client.destroy()，可再次调用 client.join 重新进房开启新的通话
         // 调用 destroy() 结束当前 client 的生命周期
-        client.destroy();
+        client.current.destroy();
     };
 
     return refreshing ? (
