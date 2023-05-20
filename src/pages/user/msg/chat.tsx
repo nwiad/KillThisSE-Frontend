@@ -971,8 +971,6 @@ const ChatScreen = () => {
     }, []);
 
     useEffect(() => {
-
-
         function hideMsgContextMenu() {
             if (document.getElementById("msginput"))
                 insertAtCursor(document.getElementById("msginput"), "@");
@@ -1035,10 +1033,6 @@ const ChatScreen = () => {
             console.error(error);
         }
     };
-
-    useEffect(() => {
-        console.log(client);
-    }, [client]);
 
     const handleFinishCall = async () => {
         localStream.current.close();
