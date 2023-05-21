@@ -38,9 +38,10 @@
     background-size: cover;
     background-position: center;
     border-radius: 10px;
-    padding: 12px;
+    padding: 20px;
     float: right;
     background-color: #535353;
+    overflow-y: auto;
 }
 
 .members {
