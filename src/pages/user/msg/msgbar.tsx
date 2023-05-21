@@ -426,8 +426,8 @@ const MsgBar = (props: MsgBarProps) => {
             <Navbar />
 
             {chatList!.length + groupChatList!.length + stickedPrivate!.length + stickedGroup!.length === 0 ? (
-                <ul className="friendlist">
-                    <li>
+                <ul className="friendlist" style={{top:"95px"}}>
+                    <li style={{marginTop:"20px"}}>
                         当前没有会话
                     </li>
                 </ul>
