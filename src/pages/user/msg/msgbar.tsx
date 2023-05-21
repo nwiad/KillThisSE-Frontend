@@ -482,6 +482,7 @@ const MsgBar = (props: MsgBarProps) => {
                             )}
                         </li>)
                     ))}
+                    <li style={{height:"30px", fontSize:"15px", padding:"5px", backgroundColor:"#434343"}}>以上为置顶会话</li>
                     {chatList!.map((chat) => (
                         (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row" }}
                             onClick={() => {
