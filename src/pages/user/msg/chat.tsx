@@ -448,7 +448,7 @@ const ChatScreen = () => {
     const sendAudio = async (audioURL: string) => {
         try {
             const audioBlob = await (await fetch(audioURL)).blob();
-            const audioFile = blobToFile(audioBlob, "recording.webm");
+            const audioFile = blobToFile(audioBlob, "recording.mp4");
             const audioUrl = await uploadFile(audioFile);
             console.log("audioUrl", audioUrl);
             if (socket.current) {
