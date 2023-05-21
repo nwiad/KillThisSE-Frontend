@@ -1262,7 +1262,7 @@ const DetailsPage = (props: detailProps) => {
                         <FontAwesomeIcon className="adminicon" icon={faUserMinus} />
                         <p className="admininfo">移除成员</p>
                     </div>}
-                    {owner?.toString() === props.myID && <div className="adminbutton" onClick={() => { setShowReq(true); }}>
+                    {owner?.id.toString() === props.myID && <div className="adminbutton" onClick={() => { setShowReq(true); }}>
                         <FontAwesomeIcon className="adminicon" icon={faUserCheck} />
                         <p className="admininfo">入群请求</p>
                     </div>}
