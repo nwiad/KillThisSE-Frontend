@@ -786,6 +786,7 @@ const ChatScreen = () => {
                 }
                 const newElement = document.createElement("p");
                 newElement.className = "transform";
+                newElement.style.width = "300px";
                 // newElement.innerHTML = await transform(msg_body);
                 // newElement.innerHTML = await transform(msg_body);  // 转换次数有限！！！
                 // newElement.innerHTML = "转文字结果";
@@ -1285,7 +1286,7 @@ const ChatScreen = () => {
                                                 style={{ width: "100%", height: "auto" }} />
                                         </a> :
                                             (msg.is_audio === true ? <a>
-                                                {<audio src={msg.msg_body} controls />}
+                                                {<audio style={{width:"300px"}} src={msg.msg_body} controls />}
                                             </a> :
                                                 <p className={msg.sender_id !== myID ? "msgbody" : "mymsgbody"}
                                                     onClick={() => { createDetailList(msg.msg_body, msg.msg_id); }}
