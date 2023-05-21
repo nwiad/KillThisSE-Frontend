@@ -1,9 +1,10 @@
 import Picker from "@emoji-mart/react";
-import { faPhone, faVideoSlash, faFilm, faFaceSmile, faFile, faImage, faMicrophone, faPaperPlane, faVideo, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faFaceSmile, faFile, faFilm, faImage, faMicrophone, faPaperPlane, faPhone, faVideo, faVideoSlash, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState, useContext } from "react";
+import { MouseEvent as ReactMouseEvent, useContext, useEffect, useRef, useState } from "react";
+import { CurrentVocalCallContext, GlobalContext } from "../../../constants/GlobalContext";
 import { uploadFile } from "../../../utils/oss";
 import { CovnMetaData, MemberMetaData, MsgMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
@@ -11,7 +12,6 @@ import { translate } from "../../../utils/youdao";
 import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
-import { GlobalContext, CurrentVocalCallContext } from "../../../constants/GlobalContext";
 
 
 // import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
@@ -910,7 +910,13 @@ const ChatScreen = () => {
 
             document.removeEventListener("mousedown", hideContextMenu);
             document.removeEventListener("click", hideContextMenu);
-            document.body.removeChild(contextMenu);
+            try{
+
+                document.body.removeChild(contextMenu);
+            }
+            catch(err){
+                console.log(err);
+            }
         }
 
         // document.addEventListener("mousedown", hideContextMenu);
