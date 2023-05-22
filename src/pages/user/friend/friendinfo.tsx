@@ -15,16 +15,12 @@ const InitPage = () => {
 
     const router = useRouter();
     const query = router.query;
-    // const id = router.query.id;
     const [friendID, setFriendID] = useState<string>();
     const [friendName, setFriendName] = useState<string>();
     const [friendAvatar, setFriendAvatar] = useState<string>();
     const [showPopupGrouptoAdd, setShowPopupGrouptoAdd] = useState(false);
     const [groupsList, setGroupsList] = useState<Group[]>([]);
-    const [chatID, setChatID] = useState<number>();
     const [refreshing, setRefreshing] = useState<boolean>(true);
-    const [silent, setSilent] = useState<boolean>();
-    const [validation, setValidation] = useState<boolean>();
 
     useEffect(() => {
         if (!router.isReady) {
@@ -136,9 +132,10 @@ const InitPage = () => {
             .then((data) => {
                 if (data.code === 0) {
                     console.log("成功发起会话");
-                    setChatID(data.conversation_id);
-                    setSilent(data.silent);
-                    setValidation(data.validation);
+                    const chatID = data.conversation_id;
+                    const silent = data.silent;
+                    const validation = data.validation;
+                    router.push(`/user/msg/chat?id=${chatID}&name=${friendName}&group=0&sticked=0&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
                 }
                 else {
                     throw new Error(`${data.info}`);
@@ -147,12 +144,6 @@ const InitPage = () => {
             .catch((err) => swal("创建私聊:" + err.message));
         router.push("/user/friend/friendindex");
     };
-
-    useEffect(() => {
-        if (chatID !== undefined && friendName !== undefined && silent !== undefined) {
-            router.push(`/user/msg/chat?id=${chatID}&name=${friendName}&group=0&sticked=0&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
-        }
-    }, [chatID, friendName, router, silent]);
 
     useEffect(() => {
         console.log(friendID, friendName);

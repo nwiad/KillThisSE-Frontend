@@ -354,6 +354,7 @@ const MsgBar = (props: MsgBarProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     console.log("获取置顶私聊成功");
+                    console.log(data);
                     setStickedPrivate(data.conversations.map((val: any) => ({ ...val })));
                 }
                 else {
@@ -380,6 +381,7 @@ const MsgBar = (props: MsgBarProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     console.log("获取置顶群聊成功");
+                    console.log(data);
                     setStickedGroup(data.conversations.map((val: any) => ({ ...val })));
                 }
                 else {
@@ -406,7 +408,7 @@ const MsgBar = (props: MsgBarProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     console.log("获取私聊消息列表成功");
-                    // console.log(data);
+                    console.log(data);
                     setChatList(data.conversations.map((val: any) => ({ ...val })));
                 }
                 else {
@@ -437,6 +439,7 @@ const MsgBar = (props: MsgBarProps) => {
             .then((data) => {
                 if (data.code === 0) {
                     console.log("获取群聊消息列表成功");
+                    console.log(data);
                     setGroupChatList(data.conversations.map((val: any) => ({ ...val })));
                     setRefreshing(false);
                 }
