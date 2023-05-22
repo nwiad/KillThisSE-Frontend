@@ -51,7 +51,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群聊成员: " + err));
+                .catch((err) => swal("获取群聊成员: " + err.message));
             // 获取管理员（不含群主）
             fetch(
                 "/api/user/get_group_administrators/",
@@ -73,7 +73,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取管理员: " + err));
+                .catch((err) => swal("获取管理员: " + err.message));
             // 获取群主
             fetch(
                 "/api/user/get_group_owner/",
@@ -97,7 +97,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群主: " + err));
+                .catch((err) => swal("获取群主: " + err.message));
             // 获取群公告
             fetch(
                 "/api/user/get_group_announcement/",
@@ -119,7 +119,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群公告: " + err));
+                .catch((err) => swal("获取群公告: " + err.message));
         }
 
     }, [props]);
@@ -141,13 +141,18 @@ const ChatBar = (props: chatBarProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    swal("设置群公告成功");
+                    swal("设置群公告成功", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("设置群公告: " + err));
+            .catch((err) => swal("设置群公告: " + err.message));
     };
 
     const closeNoticeBoard = () => {

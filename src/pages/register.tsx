@@ -36,7 +36,12 @@ const InitRegisterPage = () => {
             .then((res) => (res.json()))
             .then((data) => {
                 if (data.code === 0){
-                    swal(CREATE_USER_SUCCESS);
+                    swal(CREATE_USER_SUCCESS, {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                     router.push("/");
                     console.log("成功注册");
                 } 
@@ -45,7 +50,12 @@ const InitRegisterPage = () => {
                 }
             })
             .catch((err) => {
-                swal(CREATE_USER_FAILURE_PERFIX + err.message);
+                swal(CREATE_USER_FAILURE_PERFIX + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                });
             });
     };
 

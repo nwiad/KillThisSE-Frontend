@@ -59,7 +59,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取群组: " + err));
+            .catch((err) => swal("获取群组: " + err.message));
     }, []);
 
     const sendDelete = async () => {
@@ -77,12 +77,17 @@ const InitPage = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功");
+                    swal("成功", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("从群组中删除好友: " + err));
+            .catch((err) => swal("从群组中删除好友: " + err.message));
         router.push("/user/friend/friendindex");
     };
 
@@ -102,12 +107,17 @@ const InitPage = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功");
+                    swal("成功", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("在群组中添加好友:" + err));
+            .catch((err) => swal("在群组中添加好友:" + err.message));
         router.push("/user/friend/friendindex");
     };
     const startChat = async () => {
@@ -134,7 +144,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("创建私聊:" + err));
+            .catch((err) => swal("创建私聊:" + err.message));
         router.push("/user/friend/friendindex");
     };
 

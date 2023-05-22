@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import FriendBar from "./friendbar";
-import swal from "sweetalert";
+import swal from "@sweetalert/with-react";
 
 const InitPage = () => {
     const [friend, setFriend] = useState<number>();
@@ -25,13 +25,18 @@ const InitPage = () => {
             .then((res) => {return res.json();})
             .then((res) => {
                 if (res.code === 0) {
-                    swal("成功发送请求");
+                    swal("成功发送请求", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                 } else {
                     throw new Error(`${res.info}`);
                 }
 
             })
-            .catch((err) => swal("发送好友请求: " + err));
+            .catch((err) => swal("发送好友请求: " + err.message));
     };
     
     useEffect(() => {

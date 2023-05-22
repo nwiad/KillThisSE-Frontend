@@ -52,7 +52,12 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取个人信息: " + err));
+            .catch((err) => swal("获取个人信息: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         fetchList();
     }, [router, query]);
 
@@ -84,7 +89,12 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("检查二级密码: " + err));
+            .catch((err) => swal("检查二级密码: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const checkPwdGroup = (password: string) => {
@@ -108,7 +118,12 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("检查二级密码: " + err));
+            .catch((err) => swal("检查二级密码: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     useEffect(() => {
@@ -345,7 +360,12 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取置顶私聊: " + err));
+            .catch((err) => swal("获取置顶私聊: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         await fetch(
             "/api/user/get_sticky_group_conversations/",
             {
@@ -366,7 +386,12 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取置顶群聊: " + err));
+            .catch((err) => swal("获取置顶群聊: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         await fetch(
             "/api/user/get_private_conversations/",
             {
@@ -389,7 +414,12 @@ const MsgBar = (props: MsgBarProps) => {
                 }
             })
             .catch((err) => {
-                swal("获取私聊列表: " + err);
+                swal("获取私聊列表: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                });
                 setRefreshing(false);
             });
 
@@ -415,7 +445,12 @@ const MsgBar = (props: MsgBarProps) => {
                 }
             })
             .catch((err) => {
-                swal("获取群聊消息列表: " + err);
+                swal("获取群聊消息列表: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                });
                 setRefreshing(false);
             });
     };

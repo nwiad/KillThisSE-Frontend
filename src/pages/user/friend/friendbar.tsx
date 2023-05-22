@@ -96,7 +96,12 @@ const FriendBar = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功");
+                    swal("成功", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                     setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);
@@ -153,7 +158,12 @@ const FriendBar = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功");
+                    swal("成功", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                     setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);
@@ -179,7 +189,12 @@ const FriendBar = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功");
+                    swal("成功", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                     setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);

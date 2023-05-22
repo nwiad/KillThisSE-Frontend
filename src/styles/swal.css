@@ -1,0 +1,12 @@
+.swal-button {
+    padding: 7px 19px;
+    border-radius: 2px;
+    background-color: #0660e9;
+    font-size: 12px;
+    border: 1px solid #0660e9;
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+}
+
+.swal-button:hover {
+    background-color: #001eb1;
+}

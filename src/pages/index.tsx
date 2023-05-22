@@ -11,7 +11,12 @@ import swal from "@sweetalert/with-react";
 const test = async () => {
     voiceService("http://killthisse-avatar.oss-cn-beijing.aliyuncs.com/1684060999727recording.wav")
         .then((res) => console.log("测试测试" + res))
-        .catch((err) => swal("调用失败"));
+        .catch((err) => swal("调用失败", {
+            button: {
+                className: "swal-button"
+            },
+            icon: "error"
+        }));
 };
 
 const InitLoginPage = () => {
@@ -90,7 +95,12 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { swal("登陆失败: " + err); });
+            .catch((err) => { swal("登陆失败: " + err, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }); });
     };
 
     const checkName = (name_: string) => {
@@ -117,12 +127,22 @@ const InitLoginPage = () => {
             .then((res) => { return res.json(); })
             .then((res) => {
                 if (res.code === 0) {
-                    swal("成功发送验证码");
+                    swal("成功发送验证码", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                 } else {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { swal("发送验证码失败: " + err); });
+            .catch((err) => { swal("发送验证码失败: " + err, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }); });
     };
 
     const checkEmail = (address: string) => {
@@ -159,7 +179,12 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { swal("登陆失败: " + err); });
+            .catch((err) => { swal("登陆失败: " + err, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }); });
     };
 
     return (

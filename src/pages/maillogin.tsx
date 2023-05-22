@@ -37,7 +37,12 @@ const InitPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {swal("登陆失败: " + err);});
+            .catch((err) => {swal("登陆失败: " + err, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            });});
     };
 
     const getPassword = () => {
@@ -62,7 +67,12 @@ const InitPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {swal("登陆失败: " + err);});
+            .catch((err) => {swal("登陆失败: " + err, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            });});
     };
 
     const checkName = (name_: string) => {

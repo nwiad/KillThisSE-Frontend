@@ -9,6 +9,7 @@ import "../styles/requests.css";
 import "../styles/friendinfo.css";
 import "../styles/startgroup.css";
 import "../styles/chatinfo.css";
+import "../styles/swal.css";
 import {GlobalContextProvider} from "../constants/GlobalContext";
 
 import { library } from "@fortawesome/fontawesome-svg-core";

@@ -69,12 +69,22 @@ const InitPage = () => {
         )
             .then((res) => {
                 if (res.ok) {
-                    swal("注销成功");
+                    swal("注销成功", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                 } else {
                     throw new Error(`Request failed with status ${res.status}`);
                 }
             })
-            .catch((err) => swal("注销失败: " + err));
+            .catch((err) => swal("注销失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         router.push("/");
     };
 
@@ -112,14 +122,24 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    swal(`成功修改用户名为${newname}`);
+                    swal(`成功修改用户名为${newname}`, {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                     setName(newname);
                 } else {
                     throw new Error(`${res.info}`);
                 }
 
             })
-            .catch((err) => swal("修改用户名失败: " + err));
+            .catch((err) => swal("修改用户名失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         router.push("/user/info");
     };
 
@@ -140,14 +160,24 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    swal(`成功修改用户名为${newname}`);
+                    swal(`成功修改用户名为${newname}`, {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                     setName(newname);
                 } else {
                     throw new Error(`${res.info}`);
                 }
 
             })
-            .catch((err) => swal("修改用户名失败: " + err));
+            .catch((err) => swal("修改用户名失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         router.push("/user/info");
     };
 
@@ -175,7 +205,12 @@ const InitPage = () => {
                 }
 
             })
-            .catch((err) => swal("修改密码失败: " + err));
+            .catch((err) => swal("修改密码失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         router.push("/user/info");
     };
 
@@ -212,7 +247,12 @@ const InitPage = () => {
                 }
 
             })
-            .catch((err) => swal("修改头像失败: " + err));
+            .catch((err) => swal("修改头像失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         router.push("/user/info");
     };
 
@@ -229,7 +269,12 @@ const InitPage = () => {
 
     const bindEmail = async () => {
         if(!emailLegal) {
-            swal("邮箱不合法");
+            swal("邮箱不合法", {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            });
             return;
         }
         await fetch(
@@ -247,13 +292,23 @@ const InitPage = () => {
             .then((res) => res.json())
             .then((res) => {
                 if(res.code === 0) {
-                    swal(`成功绑定邮箱: ${email}`);
+                    swal(`成功绑定邮箱: ${email}`, {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                 }
                 else {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => swal("绑定邮箱失败: " + err));
+            .catch((err) => swal("绑定邮箱失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     useEffect(() => {
@@ -273,7 +328,12 @@ const InitPage = () => {
                 setAvatar(data.avatar);
 
             })
-            .catch((err) => swal("获取个人信息失败: " + err));
+            .catch((err) => swal("获取个人信息失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     }, [avatar, name]);
 
     return (

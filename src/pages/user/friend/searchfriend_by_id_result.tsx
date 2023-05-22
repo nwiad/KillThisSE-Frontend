@@ -25,7 +25,12 @@ const InitPage = () => {
             .then((res) => res.json())
             .then((res) => {
                 if (res.code === 0) {
-                    swal("成功发送请求");
+                    swal("成功发送请求", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                 } else {
                     throw new Error(`${res.info}`);
                 }

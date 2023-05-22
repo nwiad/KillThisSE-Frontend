@@ -213,7 +213,12 @@ const ChatScreen = () => {
     // 功能：发送图片
     const sendPic = async (pic: File | undefined) => {
         if (pic === undefined) {
-            swal("未检测到图片");
+            swal("未检测到图片", {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "info"
+            });
             return;
         }
         const image_url = await uploadFile(pic);
@@ -227,7 +232,12 @@ const ChatScreen = () => {
     // 功能：发送视频
     const sendVideo = async (pic: File | undefined) => {
         if (pic === undefined) {
-            swal("未检测到视频文件");
+            swal("未检测到视频文件", {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "info"
+            });
             return;
         }
         const video_url = await uploadFile(pic);
@@ -241,7 +251,12 @@ const ChatScreen = () => {
     // 功能：发送文件
     const sendFile = async (pic: File | undefined) => {
         if (pic === undefined) {
-            swal("未检测到文件");
+            swal("未检测到文件", {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "info"
+            });
             return;
         }
         const file_url = await uploadFile(pic);
@@ -700,7 +715,10 @@ const ChatScreen = () => {
             // 计算时间差，单位为分钟
             let time_diff = now_time_use.diff(msg_time_use, "minutes");
             if (time_diff > 5) {
-                swal("该消息发送超过5分钟，不能撤回");
+                swal("该消息发送超过5分钟，不能撤回", {button: {
+                    className: "swal-button"
+                },
+                icon: "error"});
                 return;
             }
 

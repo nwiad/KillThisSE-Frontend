@@ -46,7 +46,12 @@ const GroupStarter = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取好友列表失败: " + err));
+            .catch((err) => swal("获取好友列表失败: " + err, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     useEffect(() => {
@@ -81,12 +86,22 @@ const GroupStarter = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功创建群聊");
+                    swal("成功创建群聊", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("创建群聊失败: " + err));
+            .catch((err) => swal("创建群聊失败: " + err, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     return (
