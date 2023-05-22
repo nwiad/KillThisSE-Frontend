@@ -31,6 +31,7 @@ describe("InitPage", () => {
         // Find input elements
         const usernameInput = screen.getByPlaceholderText("用户名");
         const passwordInput = screen.getByPlaceholderText("密码");
+        const repeatPasswordInput = screen.getByPlaceholderText("请重复密码");
         const registerButton = screen.getByText("注册新用户");
 
         // Check if the register button is initially disabled
@@ -39,6 +40,7 @@ describe("InitPage", () => {
         // Enter valid name and password
         fireEvent.change(usernameInput, { target: { value: "test_user" } });
         fireEvent.change(passwordInput, { target: { value: "test_password" } });
+        fireEvent.change(repeatPasswordInput, { target: { value: "test_password" } });
         // fireEvent.click(registerButton);
 
         // Wait for validation updates
