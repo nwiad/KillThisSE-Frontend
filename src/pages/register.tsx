@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const InitRegisterPage = () => {
     const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>(""); 
+    const [repeat, setRepeat] = useState<string>("");
     const [nameLegal, setNameLegal] = useState<boolean>(false);
     const [passwordLegal, setPasswordLegal] = useState<boolean>(false);
 
@@ -83,7 +84,16 @@ const InitRegisterPage = () => {
                     onChange={(e) => checkPassword(e.target.value)}
                 />
                 <span id={passwordLegal? "pwdlegaltip":"pwdillegaltip"}>*密码必须由6-16位字母、数字和下划线组成</span>
-                <button onClick={saveUser} disabled={!nameLegal || !passwordLegal} style={{margin:"30px auto", marginBottom:"80px"}}>
+                <input
+                    id="pwdinput"
+                    type="password"
+                    placeholder="请重复密码"
+                    value={repeat}
+                    style={{margin:"30px auto"}}
+                    onChange={(e) => setRepeat(e.target.value)}
+                />
+                <span id={repeat === password ? "pwdlegaltip":"pwdillegaltip"}>*两次输入的密码不一致</span>
+                <button onClick={saveUser} disabled={!nameLegal || !passwordLegal || repeat !== password} style={{margin:"30px auto", marginBottom:"80px"}}>
                     注册新用户
                 </button>
             </div>
