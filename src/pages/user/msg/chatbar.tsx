@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { faCircleInfo} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import swal from "@sweetalert/with-react";
 
 interface chatBarProps {
     name: string,
@@ -50,7 +51,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("获取群聊成员: " + err));
+                .catch((err) => swal("获取群聊成员: " + err));
             // 获取管理员（不含群主）
             fetch(
                 "/api/user/get_group_administrators/",
@@ -72,7 +73,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("获取管理员: " + err));
+                .catch((err) => swal("获取管理员: " + err));
             // 获取群主
             fetch(
                 "/api/user/get_group_owner/",
@@ -96,7 +97,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("获取群主: " + err));
+                .catch((err) => swal("获取群主: " + err));
             // 获取群公告
             fetch(
                 "/api/user/get_group_announcement/",
@@ -118,7 +119,7 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("获取群公告: " + err));
+                .catch((err) => swal("获取群公告: " + err));
         }
 
     }, [props]);
@@ -140,13 +141,13 @@ const ChatBar = (props: chatBarProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    alert("设置群公告成功");
+                    swal("设置群公告成功");
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("设置群公告: " + err));
+            .catch((err) => swal("设置群公告: " + err));
     };
 
     const closeNoticeBoard = () => {

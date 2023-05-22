@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChatMetaData, GroupChatMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
+import swal from "@sweetalert/with-react";
 
 interface MsgBarProps {
     currentChatID?: number
@@ -51,7 +52,7 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("获取个人信息: " + err));
+            .catch((err) => swal("获取个人信息: " + err));
         fetchList();
     }, [router, query]);
 
@@ -83,7 +84,7 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("检查二级密码: " + err));
+            .catch((err) => swal("检查二级密码: " + err));
     };
 
     const checkPwdGroup = (password: string) => {
@@ -107,7 +108,7 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("检查二级密码: " + err));
+            .catch((err) => swal("检查二级密码: " + err));
     };
 
     useEffect(() => {
@@ -344,7 +345,7 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("获取置顶私聊: " + err));
+            .catch((err) => swal("获取置顶私聊: " + err));
         await fetch(
             "/api/user/get_sticky_group_conversations/",
             {
@@ -365,7 +366,7 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("获取置顶群聊: " + err));
+            .catch((err) => swal("获取置顶群聊: " + err));
         await fetch(
             "/api/user/get_private_conversations/",
             {
@@ -388,7 +389,7 @@ const MsgBar = (props: MsgBarProps) => {
                 }
             })
             .catch((err) => {
-                alert("获取私聊列表: " + err);
+                swal("获取私聊列表: " + err);
                 setRefreshing(false);
             });
 
@@ -414,7 +415,7 @@ const MsgBar = (props: MsgBarProps) => {
                 }
             })
             .catch((err) => {
-                alert("获取群聊消息列表: " + err);
+                swal("获取群聊消息列表: " + err);
                 setRefreshing(false);
             });
     };

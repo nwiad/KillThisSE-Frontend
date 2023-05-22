@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import FriendBar from "./friendbar";
+import swal from "@sweetalert/with-react";
 
 const InitPage = () => {
     const [friend, setFriend] = useState<number>();
@@ -24,13 +25,13 @@ const InitPage = () => {
             .then((res) => res.json())
             .then((res) => {
                 if (res.code === 0) {
-                    alert("成功发送请求");
+                    swal("成功发送请求");
                 } else {
                     throw new Error(`${res.info}`);
                 }
 
             })
-            .catch((err) => alert("发送好友请求: " + err));
+            .catch((err) => swal("发送好友请求: " + err.message));
     };
 
     useEffect(() => {
@@ -53,7 +54,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => { alert("获取个人信息: " + err); });
+            .catch((err) => { swal("获取个人信息: " + err.message); });
 
         fetch(
             "/api/user/search_by_id/",
@@ -76,7 +77,7 @@ const InitPage = () => {
                 }
             })
             .catch((err) => {
-                alert("获取好友信息: " + err);
+                swal("获取好友信息: " + err.message);
                 router.push("/user/friend/searchfriend");
             });
     }, [id, router, router.query]);

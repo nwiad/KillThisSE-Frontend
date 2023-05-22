@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhone, faComment, faUsers, faUser, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import GroupStarter from "./startgroup"; 
 import {GlobalContext} from "../../constants/GlobalContext";
+import swal from "@sweetalert/with-react";
 
 
 interface infoProps {
@@ -38,7 +39,7 @@ const Navbar = (props: infoProps) => {
                     throw new Error(`Request failed with status ${res.status}`);
                 }
             })
-            .catch((err) => alert("登出失败: " + err));
+            .catch((err) => swal("登出失败: " + err));
     };
 
     useEffect(() => {
@@ -58,7 +59,7 @@ const Navbar = (props: infoProps) => {
                 setAvatar(data.avatar);
 
             })
-            .catch((err) => alert("获取个人信息失败: " + err));
+            .catch((err) => swal("获取个人信息失败: " + err));
     }, []);
 
     return (

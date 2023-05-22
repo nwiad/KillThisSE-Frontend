@@ -6,11 +6,12 @@ import { transform } from "../utils/youdao";
 import { faKey, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { voiceService } from "../utils/youdao";
+import swal from "@sweetalert/with-react";
 
 const test = async () => {
     voiceService("http://killthisse-avatar.oss-cn-beijing.aliyuncs.com/1684060999727recording.wav")
         .then((res) => console.log("测试测试" + res))
-        .catch((err) => alert("调用失败"));
+        .catch((err) => swal("调用失败"));
 };
 
 const InitLoginPage = () => {
@@ -89,7 +90,7 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { alert("登陆失败: " + err); });
+            .catch((err) => { swal("登陆失败: " + err); });
     };
 
     const checkName = (name_: string) => {
@@ -116,12 +117,12 @@ const InitLoginPage = () => {
             .then((res) => { return res.json(); })
             .then((res) => {
                 if (res.code === 0) {
-                    alert("成功发送验证码");
+                    swal("成功发送验证码");
                 } else {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { alert("发送验证码失败: " + err); });
+            .catch((err) => { swal("发送验证码失败: " + err); });
     };
 
     const checkEmail = (address: string) => {
@@ -158,7 +159,7 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { alert("登陆失败: " + err); });
+            .catch((err) => { swal("登陆失败: " + err); });
     };
 
     return (

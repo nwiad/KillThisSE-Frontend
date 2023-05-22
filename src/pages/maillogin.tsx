@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
+import swal from "@sweetalert/with-react";
 
 const str = "fuck you";
 
@@ -36,7 +37,7 @@ const InitPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {alert("登陆失败: " + err);});
+            .catch((err) => {swal("登陆失败: " + err);});
     };
 
     const getPassword = () => {
@@ -61,7 +62,7 @@ const InitPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {alert("登陆失败: " + err);});
+            .catch((err) => {swal("登陆失败: " + err);});
     };
 
     const checkName = (name_: string) => {

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { uploadFile } from "../../utils/oss";
 import { nameValid, passwordValid } from "../../utils/valid";
 import Navbar from "./navbar";
+import swal from "@sweetalert/with-react";
 
 
 const InitPage = () => {
@@ -68,12 +69,12 @@ const InitPage = () => {
         )
             .then((res) => {
                 if (res.ok) {
-                    alert("注销成功");
+                    swal("注销成功");
                 } else {
                     throw new Error(`Request failed with status ${res.status}`);
                 }
             })
-            .catch((err) => alert("注销失败: " + err));
+            .catch((err) => swal("注销失败: " + err));
         router.push("/");
     };
 
@@ -111,14 +112,14 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    alert(`成功修改用户名为${newname}`);
+                    swal(`成功修改用户名为${newname}`);
                     setName(newname);
                 } else {
                     throw new Error(`${res.info}`);
                 }
 
             })
-            .catch((err) => alert("修改用户名失败: " + err));
+            .catch((err) => swal("修改用户名失败: " + err));
         router.push("/user/info");
     };
 
@@ -139,14 +140,14 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    alert(`成功修改用户名为${newname}`);
+                    swal(`成功修改用户名为${newname}`);
                     setName(newname);
                 } else {
                     throw new Error(`${res.info}`);
                 }
 
             })
-            .catch((err) => alert("修改用户名失败: " + err));
+            .catch((err) => swal("修改用户名失败: " + err));
         router.push("/user/info");
     };
 
@@ -168,19 +169,19 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    alert("成功修改密码");
+                    swal("成功修改密码");
                 } else {
                     throw new Error(`${res.info}`);
                 }
 
             })
-            .catch((err) => alert("修改密码失败: " + err));
+            .catch((err) => swal("修改密码失败: " + err));
         router.push("/user/info");
     };
 
     const resetAvatar = async (pic: File | undefined) => {
         if (pic === undefined) {
-            alert("未检测到图片");
+            swal("未检测到图片");
             return;
         }
         // const croppedImageFile = await cropImageToSquare(pic);
@@ -204,14 +205,14 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    alert("修改成功");
+                    swal("修改成功");
                     setAvatar(image_url);
                 } else {
                     throw new Error(`${res.info}`);
                 }
 
             })
-            .catch((err) => alert("修改头像失败: " + err));
+            .catch((err) => swal("修改头像失败: " + err));
         router.push("/user/info");
     };
 
@@ -228,7 +229,7 @@ const InitPage = () => {
 
     const bindEmail = async () => {
         if(!emailLegal) {
-            alert("邮箱不合法");
+            swal("邮箱不合法");
             return;
         }
         await fetch(
@@ -246,13 +247,13 @@ const InitPage = () => {
             .then((res) => res.json())
             .then((res) => {
                 if(res.code === 0) {
-                    alert(`成功绑定邮箱: ${email}`);
+                    swal(`成功绑定邮箱: ${email}`);
                 }
                 else {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => alert("绑定邮箱失败: " + err));
+            .catch((err) => swal("绑定邮箱失败: " + err));
     };
 
     useEffect(() => {
@@ -272,7 +273,7 @@ const InitPage = () => {
                 setAvatar(data.avatar);
 
             })
-            .catch((err) => alert("获取个人信息失败: " + err));
+            .catch((err) => swal("获取个人信息失败: " + err));
     }, [avatar, name]);
 
     return (

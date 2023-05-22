@@ -3,6 +3,7 @@ import FriendBar from "./friendbar";
 import { useEffect, useState } from "react";
 import { faMessage, faUserXmark, faUserTag , faXmark} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import swal from "@sweetalert/with-react";
 
 interface Group {
     group_id: number;
@@ -58,7 +59,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("获取群组: " + err));
+            .catch((err) => swal("获取群组: " + err));
     }, []);
 
     const sendDelete = async () => {
@@ -76,12 +77,12 @@ const InitPage = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    alert("成功");
+                    swal("成功");
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("从群组中删除好友: " + err));
+            .catch((err) => swal("从群组中删除好友: " + err));
         router.push("/user/friend/friendindex");
     };
 
@@ -101,12 +102,12 @@ const InitPage = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    alert("成功");
+                    swal("成功");
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("在群组中添加好友:" + err));
+            .catch((err) => swal("在群组中添加好友:" + err));
         router.push("/user/friend/friendindex");
     };
     const startChat = async () => {
@@ -133,7 +134,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("创建私聊:" + err));
+            .catch((err) => swal("创建私聊:" + err));
         router.push("/user/friend/friendindex");
     };
 

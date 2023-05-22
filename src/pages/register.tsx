@@ -9,6 +9,9 @@ import { title } from "process";
 import { randomInt } from "crypto";
 import { faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
+import swal from "@sweetalert/with-react";
+import { stringify } from "querystring";
 
 const InitRegisterPage = () => {
     const [name, setName] = useState<string>("");
@@ -30,16 +33,20 @@ const InitRegisterPage = () => {
                 })
             }
         )
-            .then((res) => {
-                if(res.ok){
-                    alert(CREATE_USER_SUCCESS);
+            .then((res) => (res.json()))
+            .then((data) => {
+                if (data.code === 0){
+                    swal(CREATE_USER_SUCCESS);
                     router.push("/");
                     console.log("成功注册");
-                } else {
-                    throw new Error(`Request failed with status ${res.status}`);
+                } 
+                else { 
+                    throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(CREATE_USER_FAILURE_PERFIX + err));
+            .catch((err) => {
+                swal(CREATE_USER_FAILURE_PERFIX + err.message);
+            });
     };
 
     const checkName = (name_: string) => {

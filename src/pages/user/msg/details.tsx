@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { MsgMetaData } from "../../../utils/type";
+import swal from "@sweetalert/with-react";
 
 interface memberMetaData {
     id: number,

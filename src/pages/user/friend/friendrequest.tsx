@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { Socket, suffix } from "../../../utils/websocket";
 import FriendBar from "./friendbar";
+import swal from "@sweetalert/with-react";
 
 interface FriendRequest {
     user_id: number;
@@ -39,7 +40,7 @@ const InitPage = () => {
                     setMyID(data.user_id);
                 }
             })
-            .catch((err) => alert("获取个人信息:" + err));
+            .catch((err) => swal("获取个人信息:" + err));
         fetch(
             "/api/user/get_friend_requests/",
             {
@@ -58,7 +59,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("获取好友请求:" + err));
+            .catch((err) => swal("获取好友请求:" + err));
         return cleanUp;
     },[]);
 
@@ -116,13 +117,13 @@ const InitPage = () => {
                                 throw new Error(`${data.info}`);
                             }
                         })
-                        .catch((err) => alert("通过id搜索好友:" + err));
+                        .catch((err) => swal("通过id搜索好友:" + err));
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert(err));
+            .catch((err) => swal(err));
     };
 
     const sendRespond = async (id:number, respond:string) => {
@@ -145,7 +146,7 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("回应好友请求: " + err));
+            .catch((err) => swal("回应好友请求: " + err));
         // if(respond === "accept") {
         //     startChat(id);            
         // }

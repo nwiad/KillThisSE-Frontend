@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "./navbar";
 import { useRouter } from "next/router";
 import { assert } from "console";
+import swal from "@sweetalert/with-react";
 
 interface Friend {
     user_id: number;
@@ -45,7 +46,7 @@ const GroupStarter = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("获取好友列表失败: " + err));
+            .catch((err) => swal("获取好友列表失败: " + err));
     };
 
     useEffect(() => {
@@ -80,12 +81,12 @@ const GroupStarter = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    alert("成功创建群聊");
+                    swal("成功创建群聊");
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("创建群聊失败: " + err));
+            .catch((err) => swal("创建群聊失败: " + err));
     };
 
     return (

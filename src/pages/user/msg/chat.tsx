@@ -12,6 +12,7 @@ import { translate } from "../../../utils/youdao";
 import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
+import swal from "@sweetalert/with-react";
 
 
 // import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
@@ -177,7 +178,7 @@ const ChatScreen = () => {
                             // 将消息中的"@name"创建链接
                             // todo: 创建链接
                             setInput(message.replace(`@${member.user_name}`,
-                                `<a href="http://localhost:3000/user" onclick="alert("点击了${member.user_name}")">@${member.user_name}</a>`));
+                                `<a href="http://localhost:3000/user" onclick="swal("点击了${member.user_name}")">@${member.user_name}</a>`));
 
                             mentioned_members.push(member.user_name);
                         }
@@ -212,7 +213,7 @@ const ChatScreen = () => {
     // 功能：发送图片
     const sendPic = async (pic: File | undefined) => {
         if (pic === undefined) {
-            alert("未检测到图片");
+            swal("未检测到图片");
             return;
         }
         const image_url = await uploadFile(pic);
@@ -226,7 +227,7 @@ const ChatScreen = () => {
     // 功能：发送视频
     const sendVideo = async (pic: File | undefined) => {
         if (pic === undefined) {
-            alert("未检测到视频文件");
+            swal("未检测到视频文件");
             return;
         }
         const video_url = await uploadFile(pic);
@@ -240,7 +241,7 @@ const ChatScreen = () => {
     // 功能：发送文件
     const sendFile = async (pic: File | undefined) => {
         if (pic === undefined) {
-            alert("未检测到文件");
+            swal("未检测到文件");
             return;
         }
         const file_url = await uploadFile(pic);
@@ -268,7 +269,7 @@ const ChatScreen = () => {
                 setMyName(data.name);
                 setSig(data.sig);
             })
-            .catch((err) => alert("获取个人信息: " + err));
+            .catch((err) => swal("获取个人信息: " + err.message));
     }, []);
 
     const getAvatar = (name: string) => {
@@ -286,7 +287,7 @@ const ChatScreen = () => {
             .then((data) => {
                 return (data.avatar);
             })
-            .catch((err) => alert("获取头像: " + err));
+            .catch((err) => swal("获取头像: " + err.message));
     };
     // 功能：创建链接
     function createLinkifiedMsgBody(msgBody: string) {
@@ -347,7 +348,7 @@ const ChatScreen = () => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("获取at成员: " + err));
+                .catch((err) => swal("获取at成员: " + err.message));
             // if (msgBody.includes(`@${all}`)) {
             //     console.log(`消息有@${all}`);
             // }
@@ -648,10 +649,10 @@ const ChatScreen = () => {
                     setnowuserowner(data.is_owner);
                 }
                 else {
-                    throw new Error(`获取该用户在本会话中的身份: ${data.info}`);
+                    throw new Error(`${data.info}`);
                 }
             })
-            .catch(((err) => alert("获取该用户在本会话中的身份: " + err)));
+            .catch(((err) => swal("获取该用户在本会话中的身份: " + err.message)));
 
         fetch(
             "/api/user/get_member_status/",
@@ -673,10 +674,10 @@ const ChatScreen = () => {
                     setmsg_ownerowner(data.is_owner);
                 }
                 else {
-                    throw new Error(`获取该用户在本会话中的身份: ${data.info}`);
+                    throw new Error(`${data.info}`);
                 }
             })
-            .catch(((err) => alert("获取该用户在本会话中的身份: " + err)));
+            .catch(((err) => swal("获取该用户在本会话中的身份: " + err.message)));
 
 
         const withdrawInFive = () => {
@@ -699,7 +700,7 @@ const ChatScreen = () => {
             // 计算时间差，单位为分钟
             let time_diff = now_time_use.diff(msg_time_use, "minutes");
             if (time_diff > 5) {
-                alert("该消息发送超过5分钟，不能撤回");
+                swal("该消息发送超过5分钟，不能撤回");
                 return;
             }
 
@@ -865,10 +866,10 @@ const ChatScreen = () => {
                             setShowReadMembers(true);
                         }
                         else {
-                            throw new Error(`获取已读成员列表失败: ${data.info}`);
+                            throw new Error(`${data.info}`);
                         }
                     })
-                    .catch(((err) => alert("获取已读成员列表: " + err)));
+                    .catch(((err) => swal("获取已读成员列表失败: " + err.message)));
             };
             readItem.addEventListener("click", readEventListeners);
             contextMenu.appendChild(readItem);
@@ -951,10 +952,10 @@ const ChatScreen = () => {
                     );
                 }
                 else {
-                    throw new Error(`获取转发的聊天记录失败: ${data.info}`);
+                    throw new Error(`${data.info}`);
                 }
             })
-            .catch(((err) => alert("获取转发的聊天记录: " + err)));
+            .catch(((err) => swal("获取转发的聊天记录: " + err.message)));
     };
 
     // 计算转发消息的数量
@@ -1057,7 +1058,7 @@ const ChatScreen = () => {
                             throw new Error(`${data.info}`);
                         }
                     })
-                    .catch((err) => alert("设置已读消息: " + err));
+                    .catch((err) => swal("设置已读消息失败: " + err));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -1085,7 +1086,7 @@ const ChatScreen = () => {
             .then((data) => {
                 setID(data.user_id);
             })
-            .catch((err) => alert("获取个人信息: " + err));
+            .catch((err) => swal("获取个人信息失败: " + err));
     }, []);
 
     useEffect(() => {

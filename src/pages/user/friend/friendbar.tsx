@@ -5,6 +5,7 @@ import { all } from "axios";
 import { MouseEvent as ReactMouseEvent } from "react";
 import { faUserPlus, faEnvelope, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import swal from "@sweetalert/with-react";
 
 interface Friend {
     user_id: number;
@@ -52,7 +53,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("获取好友: "+err));
+            .catch((err) => swal("获取好友: "+err.message));
 
         fetch(
             "/api/user/get_group/",
@@ -77,7 +78,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("获取群组: "+err));
+            .catch((err) => swal("获取群组: "+ err.message));
     }, [refresh]);
 
     const createNewGroup = async () => {
@@ -95,13 +96,13 @@ const FriendBar = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    alert("成功");
+                    swal("成功");
                     setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("创建群租: "+err));
+            .catch((err) => swal("创建群组失败: "+ err.message));
         router.push("/user/friend/friendindex");
     };
 
@@ -133,7 +134,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("获取分组好友: "+err));
+            .catch((err) => swal("获取分组好友: "+ err.message));
         router.push("/user/friend/friendindex");
     };
 
@@ -152,13 +153,13 @@ const FriendBar = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    alert("成功");
+                    swal("成功");
                     setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("删除分组: "+ err));
+            .catch((err) => swal("删除分组: "+ err.message));
         router.push("/user/friend/friendindex");
     };
 
@@ -178,13 +179,13 @@ const FriendBar = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    alert("成功");
+                    swal("成功");
                     setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("从群组中移除好友: "+err));
+            .catch((err) => swal("从群组中移除好友: "+ err.message));
         router.push("/user/friend/friendindex");
     };
 
