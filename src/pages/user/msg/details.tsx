@@ -123,7 +123,7 @@ const DetailsPage = (props: detailProps) => {
         setSilent(query.silent as string);
         setTop(query.sticked as string);
         setValidation(query.validation as string);
-        //alert(props.silent);
+        //swal(props.silent);
         console.log(router.query.id);
     }, [router, query]);
 
@@ -153,7 +153,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("获取群成员: " + err));
+                .catch((err) => swal("获取群成员: " + err));
             // 获取管理员（不含群主）
             fetch(
                 "/api/user/get_group_administrators/",
@@ -175,7 +175,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("获取管理员: " + err));
+                .catch((err) => swal("获取管理员: " + err));
             // 获取群主
             fetch(
                 "/api/user/get_group_owner/",
@@ -198,7 +198,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("获取群主: " + err));
+                .catch((err) => swal("获取群主: " + err));
             // 获取群公告
             fetch(
                 "/api/user/get_group_announcement/",
@@ -220,7 +220,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("获取群公告: " + err));
+                .catch((err) => swal("获取群公告: " + err));
             fetch(
                 "/api/user/get_group_invitations/",
                 {
@@ -241,7 +241,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`拉取入群邀请: ${data.info}`);
                     }
                 })
-                .catch((err) => alert("拉取入群邀请: " + err));
+                .catch((err) => swal("拉取入群邀请: " + err));
         }
         // }
         // else if (props.group === "0") {
@@ -282,7 +282,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("获取好友信息: " + err));
+                .catch((err) => swal("获取好友信息: " + err));
         };
 
         // 筛选不在群里的好友
@@ -371,13 +371,13 @@ const DetailsPage = (props: detailProps) => {
                                     throw new Error(`${data.info}`);
                                 }
                             })
-                            .catch((err) => alert("聊天获取对方id: " + err));
+                            .catch((err) => swal("聊天获取对方id: " + err));
                     }
                     else {
                         throw new Error(`聊天获取对方id: ${data.info}`);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => swal(err));
             // setRefreshing(false);
         }
     }, [owner, admins, members, props]);
@@ -417,13 +417,13 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    alert("设置群公告成功");
+                    swal("设置群公告成功");
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("设置群公告: " + err));
+            .catch((err) => swal("设置群公告: " + err));
     };
 
     // 邀请新成员（能不能改成列表啊）
@@ -443,14 +443,14 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    alert(hasPermit ? "已拉取入群" : "已发送邀请");
+                    swal(hasPermit ? "已拉取入群" : "已发送邀请");
                     console.log("邀请：", invitees);
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation === "1" ? 1 : 0}`);
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("邀请新成员入群: " + err));
+            .catch((err) => swal("邀请新成员入群: " + err));
     };
 
     const startGroup = () => {
@@ -470,14 +470,14 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    alert("成功创建群聊");
+                    swal("成功创建群聊");
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation === "1" ? 1 : 0}`);
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("创建群聊: " + err));
+            .catch((err) => swal("创建群聊: " + err));
     };
 
     const closeInvite = () => {
@@ -562,14 +562,14 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    alert("移除管理员成功");
+                    swal("移除管理员成功");
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("移除管理员失败: " + err));
+            .catch((err) => swal("移除管理员失败: " + err));
     };
 
     const assign = () => {
@@ -589,14 +589,14 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    alert("增设管理员成功");
+                    swal("增设管理员成功");
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("增设管理员失败" + err));
+            .catch((err) => swal("增设管理员失败" + err));
     };
 
     const closeAssign = () => {
@@ -627,14 +627,14 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    alert("已移除成员");
+                    swal("已移除成员");
                     console.log("移除：", removed);
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation === "1" ? 1 : 0}`);
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("移除成员: " + err));
+            .catch((err) => swal("移除成员: " + err));
     };
 
     const makeOrUnmakeTop = (isTop: boolean) => {
@@ -661,7 +661,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("获取置顶私聊: " + err));
+            .catch((err) => swal("获取置顶私聊: " + err));
     };
 
     const setOrUnsetValidation = (validated: boolean) => {
@@ -687,13 +687,13 @@ const DetailsPage = (props: detailProps) => {
                     if (data.code === 0) {
                         setValidation("1");
                         setShowSecondValid(false);
-                        alert("成功设置二次验证");
+                        swal("成功设置二次验证");
                     }
                     else {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("设置二次验证: " + err));
+                .catch((err) => swal("设置二次验证: " + err));
         }
     };
 
@@ -732,23 +732,23 @@ const DetailsPage = (props: detailProps) => {
                                 if (data.code === 0) {
                                     setShowSecondValid(false);
                                     setValidation("0");
-                                    alert("解除二次验证");
+                                    swal("解除二次验证");
                                 }
                                 else {
                                     throw new Error(`${data.info}`);
                                 }
                             })
-                            .catch((err) => alert("解除二次验证: " + err));
+                            .catch((err) => swal("解除二次验证: " + err));
                     }
                     else {
-                        alert("密码错误");
+                        swal("密码错误");
                     }
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("检查二级密码: " + err));
+            .catch((err) => swal("检查二级密码: " + err));
     };
 
     const makeOrUnmakeSilent = (isSilent: boolean) => {
@@ -775,7 +775,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => alert("设置免打扰: " + err));
+            .catch((err) => swal("设置免打扰: " + err));
     };
 
     useEffect(() => {
@@ -800,14 +800,14 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    alert("删除成功");
+                    swal("删除成功");
                     router.push("/user");
                 }
                 else {
                     throw new Error(`从详情页删除好友: ${data.info}`);
                 }
             })
-            .catch((err) => alert("从详情页删除好友: " + err));
+            .catch((err) => swal("从详情页删除好友: " + err));
     };
 
     const dismissOrQuit = () => {
@@ -826,14 +826,14 @@ const DetailsPage = (props: detailProps) => {
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.code === 0) {
-                        alert("解散成功");
+                        swal("解散成功");
                         router.push("/user");
                     }
                     else {
                         throw new Error(`解散群聊: ${data.info}`);
                     }
                 })
-                .catch((err) => alert("解散群聊: " + err));
+                .catch((err) => swal("解散群聊: " + err));
         }
         else {  // 非群主退出群聊
             fetch(
@@ -850,14 +850,14 @@ const DetailsPage = (props: detailProps) => {
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.code === 0) {
-                        alert("已退出群聊");
+                        swal("已退出群聊");
                         router.push("/user");
                     }
                     else {
                         throw new Error(`退出群聊${data.info}`);
                     }
                 })
-                .catch((err) => alert("退出群聊" + err));
+                .catch((err) => swal("退出群聊" + err));
         }
     };
 
@@ -882,7 +882,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`拉取入群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => alert("拉取入群邀请: " + err));
+            .catch((err) => swal("拉取入群邀请: " + err));
     };
 
     const consent = (invitation_id: number) => {
@@ -909,7 +909,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`同意进群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => alert("同意进群邀请" + err));
+            .catch((err) => swal("同意进群邀请" + err));
     };
 
     const reject = (invitation_id: number) => {
@@ -936,7 +936,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`拒绝进群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => alert("拒绝进群邀请" + err));
+            .catch((err) => swal("拒绝进群邀请" + err));
     };
 
     const openFilter = () => {
@@ -972,7 +972,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`获取全部聊天记录失败: ${data.info}`);
                 }
             })
-            .catch(((err) => alert("获取聊天记录: " + err)));
+            .catch(((err) => swal("获取聊天记录: " + err)));
     };
 
     useEffect(() => {
@@ -1028,7 +1028,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`根据类型${type}筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => alert(`根据类型${type}筛选失败: ` + err));
+                .catch((err) => swal(`根据类型${type}筛选失败: ` + err));
         }
         else if (value === "filter_by_content") {  // 按内容筛选
             setShowContentInput(true);
@@ -1080,7 +1080,7 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`获取转发的聊天记录失败: ${data.info}`);
                 }
             })
-            .catch(((err) => alert("获取转发的聊天记录: " + err)));
+            .catch(((err) => swal("获取转发的聊天记录: " + err)));
     };
 
     const closeFwdFilter = () => {
@@ -1123,7 +1123,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`根据发送者筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => alert("根据发送者筛选失败: " + err));
+                .catch((err) => swal("根据发送者筛选失败: " + err));
         }
     }, [sender, props]);
 
@@ -1156,7 +1156,7 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`根据内容${content}筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => alert(`根据类型${content}筛选失败: ` + err));
+                .catch((err) => swal(`根据类型${content}筛选失败: ` + err));
         }
     }, [content, props]);
 
@@ -1177,7 +1177,7 @@ const DetailsPage = (props: detailProps) => {
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.code === 0) {
-                        alert("转让群主成功");
+                        swal("转让群主成功");
                         setNewOwner(undefined);
                         router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
                     }
@@ -1185,13 +1185,13 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => alert("转让群主失败: " + err));
+                .catch((err) => swal("转让群主失败: " + err));
         }
     }, [newOwner, props]);
 
     const sendFriendRequest = (id: number | undefined) => {
         if (id === undefined) {
-            alert("发送好友请求: 非法id");
+            swal("发送好友请求: 非法id");
         }
         fetch(
             "/api/user/send_friend_request/",
@@ -1207,19 +1207,19 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    alert("成功发送好友请求");
+                    swal("成功发送好友请求");
                 }
                 else if (data.code === 3) {
-                    alert("你们已经是好友了");
+                    swal("你们已经是好友了");
                 }
                 else if (data.code === 4) {
-                    alert("已发送过好友请求，请耐心等候对方回复");
+                    swal("已发送过好友请求，请耐心等候对方回复");
                 }
                 else {
                     throw new Error(`${data.infp}`);
                 }
             })
-            .catch((err) => alert("发送好友请求: " + err));
+            .catch((err) => swal("发送好友请求: " + err));
     };
 
     return refreshing ? (
