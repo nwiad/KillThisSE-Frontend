@@ -249,7 +249,7 @@
 }
 
 .msgbutton .Icon {
-    color: #0660e9;
+    color: #39c5bb;
     width: 30px;
     height: 30px;
 }
@@ -259,7 +259,7 @@
 }
 
 .msgbutton:hover .Icon{
-    color: #003a92;
+    color: #26a299;
 }
 
 .msgbox {
@@ -421,7 +421,7 @@
     float: right;
     overflow-y: auto;
     border-radius: 15px;
-    background-color: #ffffff;
+    background-color: #ffffff7e;
     opacity: 85%;
 }
 

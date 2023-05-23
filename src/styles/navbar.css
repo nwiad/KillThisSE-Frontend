@@ -7,10 +7,10 @@
     list-style-type: none;
     margin: 0;
     padding: 0;
-    background-color: #0559d7;
+    background-color: #39c5bce0;
     border-radius: 15px;
     margin: 20px;
-    opacity: 70%;
+    opacity: 90%;
 }
 
 .navbar li {
@@ -28,14 +28,11 @@
     border-style:solid;
     border-width:0px;
     border-radius: 15px;
-    border-left-color: #0660e9;
-    border-right-color: #589bff;
-    border-top-color: #0660e9;
-    border-bottom-color: #0660e9;
 }
 
 .navbar li:hover {
-    background-color: #004dc0;
+    background-color: #39c5bb;
+    opacity: 100%;
 }
 
 .navbar .navbar_ele_l {
@@ -51,10 +48,6 @@
     border-style:solid;
     border-width:0px;
     border-radius: 15px;
-    border-right-color: #0660e9;
-    border-left-color: #589bff;
-    border-top-color: #0660e9;
-    border-bottom-color: #0660e9;
 }
 
 .navbar .navbar_ele_info {
@@ -70,10 +63,6 @@
     border-style:solid;
     border-width:0px;
     border-radius: 15px;
-    border-right-color: #0660e9;
-    border-left-color: #589bff;
-    border-top-color: #0660e9;
-    border-bottom-color: #0660e9;
 }
 
 .navbar .navbar_ele_info p {

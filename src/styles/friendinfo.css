@@ -85,7 +85,7 @@
     float: right;
     overflow-y: auto;
     border-radius: 15px;
-    background-color: #f0f0f0;
+    background-color: #f0f0f098;
 }
 
 .friendinfoname {
@@ -131,7 +131,7 @@
 
 .friendinfobuttoninfo{
   margin: 10px auto;
-  color: #0660e9;
+  color: #39c5bb;
 }
 
 .frienddeletebuttoninfo{
@@ -143,7 +143,7 @@
   margin: auto;
   padding: 20px;
   border-radius: 50%;
-  background-color: #0660e9;
+  background-color: #39c5bb;
   width: 75px;
   height: 75px;
 }
@@ -152,7 +152,7 @@
   margin: auto;
   padding: auto;
   border-radius: 50%;
-  background-color: #001eb1;
+  background-color: #26857e;
   width: 75px;
   height: 75px;
 }

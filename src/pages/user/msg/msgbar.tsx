@@ -473,7 +473,7 @@ const MsgBar = (props: MsgBarProps) => {
             ) : (
                 <ul className="friendlist" style={{top:"95px"}}>
                     {stickedPrivate!.map((chat) => (
-                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#434343" }}
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#4343439d" }}
                             onClick={() => {
                                 if (!chat.validation)
                                     router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${chat.validation ? 1 : 0}`);
@@ -498,7 +498,7 @@ const MsgBar = (props: MsgBarProps) => {
                         </li>)
                     ))}
                     {stickedGroup!.map((chat) => (
-                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#434343" }}
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#4343439d" }}
                             onClick={() => {
                                 if (!chat.validation)
                                     router.push(`/user/msg/chat?id=${chat?.id}&name=${chat?.name}&group=1&sticked=${chat?.sticked ? 1 : 0}&silent=${chat?.silent ? 1 : 0}&validation=${chat?.validation ? 1 : 0}`);
