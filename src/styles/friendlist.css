@@ -9,6 +9,7 @@
     background-color: #535353;
     overflow-y: auto;
     border-radius: 15px;
+    opacity: 95%;
 }
 
 .friendlist li {

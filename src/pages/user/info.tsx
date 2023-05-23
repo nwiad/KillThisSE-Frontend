@@ -199,7 +199,12 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    swal("成功修改密码");
+                    swal("成功修改密码", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                 } else {
                     throw new Error(`${res.info}`);
                 }
@@ -216,7 +221,12 @@ const InitPage = () => {
 
     const resetAvatar = async (pic: File | undefined) => {
         if (pic === undefined) {
-            swal("未检测到图片");
+            swal("未检测到图片", {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            });
             return;
         }
         // const croppedImageFile = await cropImageToSquare(pic);
@@ -240,7 +250,12 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    swal("修改成功");
+                    swal("修改成功", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "success"
+                    });
                     setAvatar(image_url);
                 } else {
                     throw new Error(`${res.info}`);

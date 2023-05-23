@@ -53,7 +53,12 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取好友: "+err.message));
+            .catch((err) => swal("获取好友: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
 
         fetch(
             "/api/user/get_group/",
@@ -78,7 +83,12 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取群组: "+ err.message));
+            .catch((err) => swal("获取群组: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     }, [refresh]);
 
     const createNewGroup = async () => {
@@ -139,7 +149,12 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取分组好友: "+ err.message));
+            .catch((err) => swal("获取分组好友: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         router.push("/user/friend/friendindex");
     };
 
@@ -169,7 +184,12 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("删除分组: "+ err.message));
+            .catch((err) => swal("删除分组: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         router.push("/user/friend/friendindex");
     };
 
@@ -200,7 +220,12 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("从群组中移除好友: "+ err.message));
+            .catch((err) => swal("从群组中移除好友: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         router.push("/user/friend/friendindex");
     };
 

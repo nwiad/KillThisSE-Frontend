@@ -36,7 +36,12 @@ const InitPage = () => {
                 }
 
             })
-            .catch((err) => swal("发送好友请求: " + err.message));
+            .catch((err) => swal("发送好友请求: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     useEffect(() => {
@@ -59,7 +64,12 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => { swal("获取个人信息: " + err.message); });
+            .catch((err) => { swal("获取个人信息: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }); });
 
         fetch(
             "/api/user/search_by_id/",
@@ -82,7 +92,12 @@ const InitPage = () => {
                 }
             })
             .catch((err) => {
-                swal("获取好友信息: " + err.message);
+                swal("获取好友信息: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                });
                 router.push("/user/friend/searchfriend");
             });
     }, [id, router, router.query]);
