@@ -42,6 +42,7 @@
     float: right;
     background-color: #535353;
     overflow-y: auto;
+    overflow-x: hidden;
     opacity: 85%;
 }
 
@@ -134,7 +135,7 @@
 
 .owner {
     margin: auto 20px;
-    color: #0660e9;
+    color: #39c5bb;
     background-color: #2374ed77;
     padding: 2px 5px;
     font-size: 12px;

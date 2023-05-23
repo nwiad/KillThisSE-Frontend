@@ -124,16 +124,21 @@
 
 .msginput {
     float: right;
-    text-align:left;
     margin-left: 20px;
     margin-top: 40px;
+    text-align: left;
     height: 40%;
     width: 80%;
     border-radius: 15px;
     border: 1px solid #7d7d7d;
     color: rgb(0, 0, 0);
-    font-size:15px;
+    font-size:12px;
     padding: 12;
+    opacity: 70%;
+}
+
+.msginput:hover{
+    border: 1px solid #39c5bb;
 }
 
 .record-button{
@@ -354,7 +359,7 @@
     float: right;
     display: block;
     border-radius: 5px;
-    background-color: #0660e9;
+    background-color: #39c5bb;
     max-width: 500px;
     width: auto;
     word-break: break-all;
@@ -451,29 +456,32 @@
 
 .ContextMenuLi {
     margin: 0;
-    height: 25px;
+    height: 35px;
     font-size: 12px;
     text-align: center;
-    padding: 5px;
+    padding: 10px;
+    opacity: 80%;
 }
 
 .ContextMenuLi:hover {
     margin: 0;
-    background-color: rgb(179, 179, 179);
+    background-color: rgb(128, 135, 118);
+    opacity: 90%;
+    border-radius: 5px;
+    color: #ffffff;
 }
 
 .msgContextMenu {
     position: absolute;
-    background-color: rgb(226, 226, 226);
+    background-color: #c6c9bd;
     text-align:center;
-    width: 100px;
+    width: 125px;
     font-size: 12px;
     padding: 0;
     border-radius: 5px;
-    border: 1px solid #a8a8a8;
+    border: 1px solid #6b6969;
     list-style-type: none;
-    overflow-y: auto;
-    max-height: 110px;
+    opacity: 60%;
 }
 
 .translate {

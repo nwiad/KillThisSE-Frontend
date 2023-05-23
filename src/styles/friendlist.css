@@ -27,7 +27,7 @@
     font-size:20px;
     font-weight: 100;
     border-style:solid;
-    border-width:1px;
+    border-width:0px;
     border-left-color: #535353;
     border-right-color: #535353;
     border-top-color: #a0a0a0;
@@ -36,11 +36,13 @@
 
 .friendlist li:hover {
     background-color: #888888;
+    border-radius: 15px;
     border: 0;
 }
 
 .friendinList {
-    background-color: #3d3d3d77;
+    background-color: #1d1d1d77;
+    border-radius: 15px;
 }
 
 .friendlist img{
@@ -84,11 +86,13 @@
     position: absolute;
     background-color: rgb(226, 226, 226);
     text-align:center;
-    width: 100px;
+    width: 125px;
+    height: 35px;
     font-size: 12px;
-    padding: 5px;
-    border-radius: 2px;
-    border: 1px solid #a8a8a8;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #8e9185;
+    opacity: 70%;
 }
 
 .deleteContextMenu:hover{

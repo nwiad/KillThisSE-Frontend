@@ -90,10 +90,10 @@
 .info {
     display: flex;
     flex-direction: column;
-    width: 400px;
+    width: 600px;
     height: auto;
-    padding: 5px;
-    margin: 95px auto;
+    padding: 20px;
+    margin: 115px auto;
     margin-bottom: 20px;
     background-size: cover;
     background-position: center;
@@ -101,6 +101,15 @@
     border-radius: 15px;
     border: 1px solid #ccc;
     background-color: #ffffffac;
+}
+
+.infobuttons{
+  display: flex;
+  margin: 30px auto;
+  flex-wrap: wrap;
+  width: 400px;
+  justify-content: center;
+  align-items: center; 
 }
 
 #infoTitle {

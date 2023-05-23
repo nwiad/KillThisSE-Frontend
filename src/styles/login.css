@@ -29,6 +29,7 @@ input {
     border-radius: 5px;
     border: 1px solid #7d7d7d;
     font-size: 14px;
+    opacity: 85%;
 }
 
 input:hover {
@@ -44,7 +45,7 @@ button {
     text-align: center;
     height: 50px;
     width: 300px;
-    background-color: #0660e9;
+    background-color: #39c5bb;
     border-radius: 5px;
     border: 1px solid #7d7d7d;
     color: rgb(255, 255, 255);
@@ -72,15 +73,15 @@ button {
 }
 
 button:hover {
-    background-color: #001eb1
+    background-color: #27857f
 }
 
 button:active {
-    background-color: #001683
+    background-color: #27857f
 }
 
 button:disabled {
-    background-color: #589bff;
+    background-color: #63a39f;
 }
 
 img {
@@ -130,44 +131,6 @@ img {
     color: #8c8c8c;
 }
 
-.registerbar,
-.indexbar {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    height: 65px;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    background-color: #0660e9;
-    border-radius: 15px;
-}
-
-.loginbarli {
-    float: right;
-    height: 65px;
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    text-decoration: none;
-    margin: auto;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 22px;
-    font-weight: 100;
-    border-style: solid;
-    border-width: 0px;
-    border-left-color: #0660e9;
-    border-right-color: #589bff;
-    border-top-color: #0660e9;
-    border-bottom-color: #0660e9;
-}
-
-.loginbarli:hover {
-    background-color: #004dc0;
-    border-radius: 15px;
-}
 
 .hometitle,
 .registerbarli {
@@ -186,17 +149,6 @@ img {
     border-width: 0px;
 }
 
-.hometitle:hover {
-    background-color: #0660e9;
-    border-radius: 15px;
-}
-
-.registerbarli:hover {
-    background-color: #0660e9;
-    border-radius: 15px;
-    color: #e6e6e6;
-}
-
 @keyframes fade-in-animation {
     from {
         opacity: 0;
@@ -209,18 +161,23 @@ img {
 
 .entry {
     position: fixed;
+    display: flex;
     height: 100%;
     width: 100%;
     top: 0;
     left: 0;
+    justify-content: center;
+    align-items: center;
 }
 
 .entrytitle {
     position: fixed;
     font-size: 50px;
     font-weight: 100;
-    top: 40%;
-    left: 33%;
+    text-align: center;
+    top:40%;
+    justify-content: center;
+    align-items: center;
 }
 
 .newuser {
@@ -232,17 +189,17 @@ img {
 }
 
 .newuser:hover {
-    color: #0660e9;
+    color: #39c5bb;
 }
 
-.registerlink{
+.registerlink {
     display: flex;
     flex-direction: row;
     margin: 20px auto;
     height: 40px;
 }
 
-.copyright{
+.copyright {
     margin: 20px;
     text-align: center;
 }

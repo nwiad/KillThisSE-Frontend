@@ -316,7 +316,7 @@ const FriendBar = () => {
 
                 </div>
                 <ul className="friendlist">
-                    <li className="newfriend"
+                    <li className="friend"
                         onClick={() => { setAllCollapsed(!allCollapsed); }}
                         style={{ padding: 20 , border: 0}}>
                         全部好友
@@ -333,7 +333,7 @@ const FriendBar = () => {
                     {groupsList?.map((item: Group) => (
                         <div key={item.group_id}>
                             <li key={item.group_id} className="friend"
-                                style={{borderRadius:"0"}}
+                                style={{borderRadius:"15px"}}
                                 onClick={() => {
                                     getGroupInfo(item.group_id);
                                     const foundGroup = groupsList.find(group => group.group_id === item.group_id);

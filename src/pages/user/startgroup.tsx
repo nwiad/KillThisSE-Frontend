@@ -111,7 +111,7 @@ const GroupStarter = () => {
             <div className="startgroupfriends">请选择需要邀请的好友</div>
             <ul className="startgroupchoice">
                 {groupFriendList?.map((item: Friend) => (
-                    <div className="startgroupchoicebox" key={item.user_id} style={{backgroundColor: `${item.chosen ? "#0660e9" : "white"}`}} onClick={() => { item.chosen = !item.chosen; addOrRemoveGroupMember(item.user_id); }}>
+                    <div className="startgroupchoicebox" key={item.user_id} style={{backgroundColor: `${item.chosen ? "#39c5bb" : "white"}`}} onClick={() => { item.chosen = !item.chosen; addOrRemoveGroupMember(item.user_id); }}>
                         <img className="startgroupavatar" src={`${item.avatar}`} alt="oops" />
                         <p className="startgroupname">
                             {item.name} </p>

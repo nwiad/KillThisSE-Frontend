@@ -4,6 +4,8 @@ import { uploadFile } from "../../utils/oss";
 import { nameValid, passwordValid } from "../../utils/valid";
 import Navbar from "./navbar";
 import swal from "@sweetalert/with-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope, faKey, faUser, faPen, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 
 const InitPage = () => {
@@ -55,7 +57,7 @@ const InitPage = () => {
     //         reader.readAsDataURL(imageFile);
     //     });
     // };
-      
+
     const deleteUser = async () => {
         await fetch(
             "/api/user/cancel_account/",
@@ -283,7 +285,7 @@ const InitPage = () => {
     };
 
     const bindEmail = async () => {
-        if(!emailLegal) {
+        if (!emailLegal) {
             swal("邮箱不合法", {
                 button: {
                     className: "swal-button"
@@ -302,11 +304,11 @@ const InitPage = () => {
                     password: pwd4Verify,
                     email: email
                 })
-            }                
+            }
         )
             .then((res) => res.json())
             .then((res) => {
-                if(res.code === 0) {
+                if (res.code === 0) {
                     swal(`成功绑定邮箱: ${email}`, {
                         button: {
                             className: "swal-button"
@@ -353,7 +355,7 @@ const InitPage = () => {
 
     return (
         <div style={{ padding: 12 }}>
-            <Navbar name={name} avatar={avatar}/>
+            <Navbar name={name} avatar={avatar} />
             <div className="info" >
                 {avatar && (
                     <div
@@ -372,23 +374,52 @@ const InitPage = () => {
                 <p id="infoTitle">
                     {name}
                 </p>
-                <button className="resetName" onClick={() => { setShowPopupAvatar(true); }}>
-                    修改头像
-                </button>
+                <div className="infobuttons">
+                    <button className="friendinfobutton" onClick={() => { setShowPopupAvatar(true); }}>
+                        <div className="friendinfoiconbg">
+                            <FontAwesomeIcon className="friendinfoicon" icon={faUser} />
+                        </div>
+                        <p className="friendinfobuttoninfo">修改头像</p>
+                    </button>
+                    <button className="friendinfobutton" onClick={() => { setShowPopupName(true); setNewName(""); }}>
+                        <div className="friendinfoiconbg">
+                            <FontAwesomeIcon className="friendinfoicon" icon={faPen} />
+                        </div>
+                        <p className="friendinfobuttoninfo">修改用户名</p>
+                    </button>
+                    <button className="friendinfobutton" onClick={() => { setShowPopupPwd(true); setPassword(""); setNewPassword(""); }}>
+                        <div className="friendinfoiconbg">
+                            <FontAwesomeIcon className="friendinfoicon" icon={faKey} />
+                        </div>
+                        <p className="friendinfobuttoninfo">修改密码</p>
+                    </button>
+                    <button className="friendinfobutton" onClick={() => {
+                        setEmail(""); setEmailLegal(false);
+                        setPwd4Verify(""); setLegalVerify(false); setShowPopUpEmail(true);
+                    }}>
+                        <div className="friendinfoiconbg">
+                            <FontAwesomeIcon className="friendinfoicon" icon={faEnvelope} />
+                        </div>
+                        <p className="friendinfobuttoninfo">修改邮箱</p>
+                    </button>
+                    <button className="friendinfobutton" onClick={() => { deleteUser(); }}>
+                        <div className="frienddeleteiconbg">
+                            <FontAwesomeIcon className="friendinfoicon" icon={faXmark} />
+                        </div>
+                        <p className="frienddeletebuttoninfo">注销</p>
+                    </button>
+                </div>
                 {showPopupAvatar && (
-                    <div className="popupAvatar" style={{padding: "15px"}}>
+                    <div className="popupAvatar" style={{ padding: "15px" }}>
                         <div>修改头像</div>
-                        <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false);  setShowPopupAvatar(false);  }}>
-                            <input placeholder = "uploaded image" className="fileupload" type="file" name="avatar" accept="image/*" 
+                        <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false); setShowPopupAvatar(false); }}>
+                            <input placeholder="uploaded image" className="fileupload" type="file" name="avatar" accept="image/*"
                                 onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
                             <button type="submit" disabled={!isAvatarUploaded}>上传头像</button>
                         </form>
                         <button onClick={() => { setShowPopupAvatar(false); }}>取消</button>
                     </div>
                 )}
-                <button className="resetName" onClick={() => { setShowPopupName(true); setNewName(""); }}>
-                    修改用户名
-                </button>
                 {showPopupName && (
                     <div className="popup">
                         <p>修改用户名</p>
@@ -403,9 +434,6 @@ const InitPage = () => {
                         <button onClick={() => { setShowPopupName(false); }}>取消</button>
                     </div>
                 )}
-                <button className="resetName" onClick={() => { setShowPopupPwd(true); setPassword(""); setNewPassword(""); }}>
-                    修改密码
-                </button>
                 {showPopupPwd && (
                     <div className="popuppwd">
                         <p>修改密码</p>
@@ -416,23 +444,16 @@ const InitPage = () => {
                         <button onClick={() => { setShowPopupPwd(false); }}>取消</button>
                     </div>
                 )}
-                <button className="resetName" onClick={() => { setEmail(""); setEmailLegal(false); 
-                    setPwd4Verify(""); setLegalVerify(false); setShowPopUpEmail(true); }}>
-                    邮箱绑定
-                </button>
                 {showPopUpEmail && (
                     <div className="popuppwd">
                         <p>邮箱绑定</p>
                         <input type="resetname" value={email} onChange={(e) => { checkEmail(e.target.value); }} placeholder="请输入邮箱" />
                         <span id={emailLegal ? "pwdlegaltip" : "pwdillegaltip"}>*请输入合法邮箱</span>
                         <input type="password" value={pwd4Verify} onChange={(e) => { checkPwd4Verify(e.target.value); }} placeholder="请输入密码" id="pwdinput" />
-                        <button onClick={() => { bindEmail();  setShowPopUpEmail(false); }} disabled={!emailLegal || !legalVerify}>绑定</button>
+                        <button onClick={() => { bindEmail(); setShowPopUpEmail(false); }} disabled={!emailLegal || !legalVerify}>绑定</button>
                         <button onClick={() => { setShowPopUpEmail(false); }}>取消</button>
                     </div>
                 )}
-                <button className="delete" onClick={() => {deleteUser();}}>
-                    注销本用户
-                </button>
             </div>
         </div>
     );

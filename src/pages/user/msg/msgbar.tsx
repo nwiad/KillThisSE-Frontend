@@ -256,7 +256,7 @@ const MsgBar = (props: MsgBarProps) => {
                 const msg_len = data.len_of_msgs;
                 const last_msg = JSON.parse(event.data).last_msg;
                 const prefix = (data.mentioned === true) ? "[有人@你] " : "";
-                if(msg_len === 0) {
+                if (msg_len === 0) {
                     target.innerHTML = "";
                 }
                 else {
@@ -277,7 +277,7 @@ const MsgBar = (props: MsgBarProps) => {
                     }
                     else {
                         // target.innerHTML = last_msg.msg_body;
-                        target.innerHTML = last_msg.msg_body.length > 10 ? prefix+last_msg.msg_body.slice(0,10)+"......" : prefix+last_msg.msg_body;
+                        target.innerHTML = last_msg.msg_body.length > 10 ? prefix + last_msg.msg_body.slice(0, 10) + "......" : prefix + last_msg.msg_body;
                     }
                 }
                 const unread = data.unread_msgs;
@@ -459,21 +459,23 @@ const MsgBar = (props: MsgBarProps) => {
     };
 
     return refreshing ? (
-        <p> Loading... </p>
+        <div className="entry">
+            <p className="entrytitle"> Loading... </p>
+        </div>
     ) : (
         <div style={{ padding: 12 }}>
             <Navbar />
 
             {chatList!.length + groupChatList!.length + stickedPrivate!.length + stickedGroup!.length === 0 ? (
-                <ul className="friendlist" style={{top:"95px"}}>
-                    <li style={{marginTop:"20px"}}>
+                <ul className="friendlist" style={{ top: "95px" }}>
+                    <li style={{ marginTop: "20px" }}>
                         当前没有会话
                     </li>
                 </ul>
             ) : (
-                <ul className="friendlist" style={{top:"95px"}}>
+                <ul className="friendlist" style={{ top: "95px" }}>
                     {stickedPrivate!.map((chat) => (
-                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#4343439d" }}
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row" }}
                             onClick={() => {
                                 if (!chat.validation)
                                     router.push(`/user/msg/chat?id=${chat.id}&name=${chat.friend_name}&group=0&sticked=${chat.sticked ? 1 : 0}&silent=${chat.silent ? 1 : 0}&validation=${chat.validation ? 1 : 0}`);
@@ -498,7 +500,7 @@ const MsgBar = (props: MsgBarProps) => {
                         </li>)
                     ))}
                     {stickedGroup!.map((chat) => (
-                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row", backgroundColor: "#4343439d" }}
+                        (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row" }}
                             onClick={() => {
                                 if (!chat.validation)
                                     router.push(`/user/msg/chat?id=${chat?.id}&name=${chat?.name}&group=1&sticked=${chat?.sticked ? 1 : 0}&silent=${chat?.silent ? 1 : 0}&validation=${chat?.validation ? 1 : 0}`);
@@ -521,7 +523,7 @@ const MsgBar = (props: MsgBarProps) => {
                             )}
                         </li>)
                     ))}
-                    <li style={{height:"30px", fontSize:"15px", padding:"5px", backgroundColor:"#434343"}}>以上为置顶会话</li>
+                    <li style={{ height: "30px", fontSize: "15px", padding: "5px", backgroundColor: "#434343" }}>以上为置顶会话</li>
                     {chatList!.map((chat) => (
                         (!chat.disabled && <li key={chat.id} style={{ display: "flex", flexDirection: "row" }}
                             onClick={() => {

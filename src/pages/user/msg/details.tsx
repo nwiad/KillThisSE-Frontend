@@ -1468,8 +1468,8 @@ const DetailsPage = (props: detailProps) => {
     };
 
     return refreshing ? (
-        <div style={{ padding: 12 }}>
-            <p>Loading...</p>
+        <div className="entry">
+            <p className="entrytitle">Loading...</p>
         </div>
     ) : (props.group === "1" ? (
         <div style={{ padding: 12 }}>
@@ -1537,7 +1537,7 @@ const DetailsPage = (props: detailProps) => {
                     <FontAwesomeIcon className="closepopup" icon={faXmark} onClick={() => { setShowPopUpMembers(false); }} />
                     <div className="membersort">
                         <div key={0} className="member">
-                            <img className="sender_avatar" style={{ borderColor: "#0660e9" }} src={`${owner?.avatar}`} alt="oops" />
+                            <img className="sender_avatar" style={{ borderColor: "#39c5bb" }} src={`${owner?.avatar}`} alt="oops" />
                             <p style={{ color: "black", margin: "auto 10px", fontSize: "30px" }}>{owner?.name}</p>
                             <p className="owner">群主</p>
                             {owner?.id.toString() !== props.myID && <button style={{ width: "8%" }} onClick={() => { sendFriendRequest(owner?.id); }}>+</button>}
@@ -1596,7 +1596,7 @@ const DetailsPage = (props: detailProps) => {
                 <div className="popup" style={{ padding: "20px", height: "auto" }}>
                     <ul className="startgroupchoice">
                         {otherFriends?.map((item) => (
-                            <div className="startgroupchoicebox" key={item.user_id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveGroupMember(item.user_id); }}>
+                            <div className="startgroupchoicebox" key={item.user_id} style={{ backgroundColor: `${item.chosen ? "#39c5bb" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveGroupMember(item.user_id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -1620,7 +1620,7 @@ const DetailsPage = (props: detailProps) => {
                     <ul className="startgroupchoice">
                         {/* 只有群主可以移除管理员 */}
                         {(props.myID === owner?.id.toString()) && admins?.map((item) => ((
-                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveSuckers(item.id); }}>
+                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#39c5bb" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveSuckers(item.id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -1631,7 +1631,7 @@ const DetailsPage = (props: detailProps) => {
                         )))}
                         {/* 管理员和群主都可以移除其他成员 */}
                         {members?.map((item) => ((
-                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveSuckers(item.id); }}>
+                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#39c5bb" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveSuckers(item.id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -1823,7 +1823,7 @@ const DetailsPage = (props: detailProps) => {
                 <p className="members">
                     <div className="membersort">
                         <div key={0} className="member" onClick={() => { setSender(owner?.id); setShowSenders(false); }}>
-                            <img className="sender_avatar" style={{ borderColor: "#0660e9" }} src={`${owner?.avatar}`} alt="oops" />
+                            <img className="sender_avatar" style={{ borderColor: "#39c5bb" }} src={`${owner?.avatar}`} alt="oops" />
                             <p style={{ color: "black", margin: "auto 10px", fontSize: "30px" }}>{owner?.name}</p>
                             <p className="owner">群主</p>
                         </div>
@@ -1916,7 +1916,7 @@ const DetailsPage = (props: detailProps) => {
                 <div className="popup" style={{ padding: "20px", height: "auto" }}>
                     <ul className="startgroupchoice">
                         {members?.map((item) => (
-                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveAssignee(item.id); }}>
+                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#39c5bb" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveAssignee(item.id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -1939,7 +1939,7 @@ const DetailsPage = (props: detailProps) => {
                 <div className="popup" style={{ padding: "20px", height: "auto" }}>
                     <ul className="startgroupchoice">
                         {admins?.map((item) => (
-                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveFiree(item.id); }}>
+                            <div className="startgroupchoicebox" key={item.id} style={{ backgroundColor: `${item.chosen ? "#39c5bb" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveFiree(item.id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -1994,7 +1994,7 @@ const DetailsPage = (props: detailProps) => {
                     <ul className="startgroupchoice">
                         <input onChange={(e) => setGroupName(e.target.value)} placeholder="群聊名称" />
                         {myFriends?.map((item) => (
-                            <div className="startgroupchoicebox" key={item.user_id} style={{ backgroundColor: `${item.chosen ? "#0660e9" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveGroupMember(item.user_id); }}>
+                            <div className="startgroupchoicebox" key={item.user_id} style={{ backgroundColor: `${item.chosen ? "#39c5bb" : "white"}` }} onClick={() => { item.chosen = !item.chosen; addOrRemoveGroupMember(item.user_id); }}>
                                 <li
                                     className="navbar_ele_info"
                                     style={{ display: "flex", width: "100%" }}>
@@ -2091,14 +2091,14 @@ const DetailsPage = (props: detailProps) => {
                 <p className="members">
                     <div className="membersort">
                         <div key={0} className="member" onClick={() => { setSender(parseInt(props.myID)); setShowSenders(false); }}>
-                            <img className="sender_avatar" style={{ borderColor: "#0660e9" }} src={`${myAvatar}`} alt="oops" />
+                            <img className="sender_avatar" style={{ borderColor: "#39c5bb" }} src={`${myAvatar}`} alt="oops" />
                             <p style={{ color: "black", margin: "auto 10px", fontSize: "30px" }}>{myName}</p>
                             <p className="owner">我</p>
                         </div>
                     </div>
                     <div className="membersort">
                         <div key={1} className="member" onClick={() => { setSender(who); setShowSenders(false); }}>
-                            <img className="sender_avatar" style={{ borderColor: "#0660e9" }} src={`${myAvatar}`} alt="oops" />
+                            <img className="sender_avatar" style={{ borderColor: "#39c5bb" }} src={`${myAvatar}`} alt="oops" />
                             <p style={{ color: "black", margin: "auto 10px", fontSize: "30px" }}>{props.chatName}</p>
                         </div>
                     </div>
