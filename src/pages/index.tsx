@@ -95,7 +95,7 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { swal("登陆失败: " + err, {
+            .catch((err) => { swal("登陆失败: " + err.message, {
                 button: {
                     className: "swal-button"
                 },
@@ -137,7 +137,7 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { swal("发送验证码失败: " + err, {
+            .catch((err) => { swal("发送验证码失败: " + err.message, {
                 button: {
                     className: "swal-button"
                 },
@@ -179,7 +179,7 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { swal("登陆失败: " + err, {
+            .catch((err) => { swal("登陆失败: " + err.message, {
                 button: {
                     className: "swal-button"
                 },

@@ -39,7 +39,7 @@ const Navbar = (props: infoProps) => {
                     throw new Error(`Request failed with status ${res.status}`);
                 }
             })
-            .catch((err) => swal("登出失败: " + err, {
+            .catch((err) => swal("登出失败: " + err.message, {
                 button: {
                     className: "swal-button"
                 },
@@ -64,7 +64,7 @@ const Navbar = (props: infoProps) => {
                 setAvatar(data.avatar);
 
             })
-            .catch((err) => swal("获取个人信息失败: " + err, {
+            .catch((err) => swal("获取个人信息失败: " + err.message, {
                 button: {
                     className: "swal-button"
                 },
