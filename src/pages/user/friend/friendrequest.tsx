@@ -40,7 +40,12 @@ const InitPage = () => {
                     setMyID(data.user_id);
                 }
             })
-            .catch((err) => swal("获取个人信息:" + err.message));
+            .catch((err) => swal("获取个人信息:" + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         fetch(
             "/api/user/get_friend_requests/",
             {
@@ -59,7 +64,12 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取好友请求:" + err.message));
+            .catch((err) => swal("获取好友请求:" + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         return cleanUp;
     },[]);
 
@@ -117,13 +127,23 @@ const InitPage = () => {
                                 throw new Error(`${data.info}`);
                             }
                         })
-                        .catch((err) => swal("通过id搜索好友:" + err.message));
+                        .catch((err) => swal("通过id搜索好友:" + err.message, {
+                            button: {
+                                className: "swal-button"
+                            },
+                            icon: "error"
+                        }));
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal(err.message));
+            .catch((err) => swal(err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const sendRespond = async (id:number, respond:string) => {

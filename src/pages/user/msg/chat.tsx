@@ -284,7 +284,12 @@ const ChatScreen = () => {
                 setMyName(data.name);
                 setSig(data.sig);
             })
-            .catch((err) => swal("获取个人信息: " + err.message));
+            .catch((err) => swal("获取个人信息: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     }, []);
 
     const getAvatar = (name: string) => {
@@ -302,7 +307,12 @@ const ChatScreen = () => {
             .then((data) => {
                 return (data.avatar);
             })
-            .catch((err) => swal("获取头像: " + err.message));
+            .catch((err) => swal("获取头像: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
     // 功能：创建链接
     function createLinkifiedMsgBody(msgBody: string) {
@@ -363,7 +373,12 @@ const ChatScreen = () => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取at成员: " + err.message));
+                .catch((err) => swal("获取at成员: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
             // if (msgBody.includes(`@${all}`)) {
             //     console.log(`消息有@${all}`);
             // }
@@ -667,7 +682,12 @@ const ChatScreen = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch(((err) => swal("获取该用户在本会话中的身份: " + err.message)));
+            .catch(((err) => swal("获取该用户在本会话中的身份: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            })));
 
         fetch(
             "/api/user/get_member_status/",
@@ -692,7 +712,12 @@ const ChatScreen = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch(((err) => swal("获取该用户在本会话中的身份: " + err.message)));
+            .catch(((err) => swal("获取该用户在本会话中的身份: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            })));
 
 
         const withdrawInFive = () => {
@@ -887,7 +912,12 @@ const ChatScreen = () => {
                             throw new Error(`${data.info}`);
                         }
                     })
-                    .catch(((err) => swal("获取已读成员列表失败: " + err.message)));
+                    .catch(((err) => swal("获取已读成员列表失败: " + err.message, {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "error"
+                    })));
             };
             readItem.addEventListener("click", readEventListeners);
             contextMenu.appendChild(readItem);
@@ -973,7 +1003,12 @@ const ChatScreen = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch(((err) => swal("获取转发的聊天记录: " + err.message)));
+            .catch(((err) => swal("获取转发的聊天记录: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            })));
     };
 
     // 计算转发消息的数量
@@ -1076,7 +1111,12 @@ const ChatScreen = () => {
                             throw new Error(`${data.info}`);
                         }
                     })
-                    .catch((err) => swal("设置已读消息失败: " + err));
+                    .catch((err) => swal("设置已读消息失败: " + err, {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "error"
+                    }));
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -1104,7 +1144,12 @@ const ChatScreen = () => {
             .then((data) => {
                 setID(data.user_id);
             })
-            .catch((err) => swal("获取个人信息失败: " + err));
+            .catch((err) => swal("获取个人信息失败: " + err, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     }, []);
 
     useEffect(() => {

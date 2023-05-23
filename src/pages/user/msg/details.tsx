@@ -505,7 +505,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("邀请新成员入群: " + err.message));
+            .catch((err) => swal("邀请新成员入群: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const startGroup = () => {
@@ -537,7 +542,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("创建群聊: " + err.message));
+            .catch((err) => swal("创建群聊: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const closeInvite = () => {
@@ -634,7 +644,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("移除管理员失败: " + err.message));
+            .catch((err) => swal("移除管理员失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const assign = () => {
@@ -666,7 +681,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("增设管理员失败" + err.message));
+            .catch((err) => swal("增设管理员失败" + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const closeAssign = () => {
@@ -709,7 +729,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("移除成员: " + err.message));
+            .catch((err) => swal("移除成员: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const makeOrUnmakeTop = (isTop: boolean) => {
@@ -736,7 +761,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取置顶私聊: " + err.message));
+            .catch((err) => swal("获取置顶私聊: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const setOrUnsetValidation = (validated: boolean) => {
@@ -773,7 +803,12 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("设置二次验证: " + err.message));
+                .catch((err) => swal("设置二次验证: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
         }
     };
 
@@ -823,7 +858,12 @@ const DetailsPage = (props: detailProps) => {
                                     throw new Error(`${data.info}`);
                                 }
                             })
-                            .catch((err) => swal("解除二次验证: " + err.message));
+                            .catch((err) => swal("解除二次验证: " + err.message, {
+                                button: {
+                                    className: "swal-button"
+                                },
+                                icon: "error"
+                            }));
                     }
                     else {
                         swal("密码错误", {
@@ -838,7 +878,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("检查二级密码: " + err.message));
+            .catch((err) => swal("检查二级密码: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const makeOrUnmakeSilent = (isSilent: boolean) => {
@@ -865,7 +910,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("设置免打扰: " + err.message));
+            .catch((err) => swal("设置免打扰: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     useEffect(() => {
@@ -902,7 +952,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`从详情页删除好友: ${data.info}`);
                 }
             })
-            .catch((err) => swal("从详情页删除好友: " + err.message));
+            .catch((err) => swal("从详情页删除好友: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const dismissOrQuit = () => {
@@ -933,7 +988,12 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`解散群聊: ${data.info}`);
                     }
                 })
-                .catch((err) => swal("解散群聊: " + err.message));
+                .catch((err) => swal("解散群聊: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
         }
         else {  // 非群主退出群聊
             fetch(
@@ -962,7 +1022,12 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`退出群聊${data.info}`);
                     }
                 })
-                .catch((err) => swal("退出群聊" + err.message));
+                .catch((err) => swal("退出群聊" + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
         }
     };
 
@@ -987,7 +1052,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`拉取入群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => swal("拉取入群邀请: " + err.message));
+            .catch((err) => swal("拉取入群邀请: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const consent = (invitation_id: number) => {
@@ -1014,7 +1084,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`同意进群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => swal("同意进群邀请" + err.message));
+            .catch((err) => swal("同意进群邀请" + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const reject = (invitation_id: number) => {
@@ -1041,7 +1116,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`拒绝进群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => swal("拒绝进群邀请" + err.message));
+            .catch((err) => swal("拒绝进群邀请" + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const openFilter = () => {
@@ -1077,7 +1157,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`获取全部聊天记录失败: ${data.info}`);
                 }
             })
-            .catch(((err) => swal("获取聊天记录: " + err.message)));
+            .catch(((err) => swal("获取聊天记录: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            })));
     };
 
     useEffect(() => {
@@ -1133,7 +1218,12 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`根据类型${type}筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => swal(`根据类型${type}筛选失败: ` + err.message));
+                .catch((err) => swal(`根据类型${type}筛选失败: ` + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
         }
         else if (value === "filter_by_content") {  // 按内容筛选
             setShowContentInput(true);
@@ -1185,7 +1275,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`获取转发的聊天记录失败: ${data.info}`);
                 }
             })
-            .catch(((err) => swal("获取转发的聊天记录: " + err.message)));
+            .catch(((err) => swal("获取转发的聊天记录: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            })));
     };
 
     const closeFwdFilter = () => {
@@ -1228,7 +1323,12 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`根据发送者筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => swal("根据发送者筛选失败: " + err.message));
+                .catch((err) => swal("根据发送者筛选失败: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
         }
     }, [sender, props]);
 
@@ -1261,7 +1361,12 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`根据内容${content}筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => swal(`根据类型${content}筛选失败: ` + err.message));
+                .catch((err) => swal(`根据类型${content}筛选失败: ` + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
         }
     }, [content, props]);
 
@@ -1295,7 +1400,12 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("转让群主失败: " + err.message));
+                .catch((err) => swal("转让群主失败: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
         }
     }, [newOwner, props]);
 
@@ -1349,7 +1459,12 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.infp}`);
                 }
             })
-            .catch((err) => swal("发送好友请求: " + err.message));
+            .catch((err) => swal("发送好友请求: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     return refreshing ? (

@@ -51,7 +51,12 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群聊成员: " + err.message));
+                .catch((err) => swal("获取群聊成员: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
             // 获取管理员（不含群主）
             fetch(
                 "/api/user/get_group_administrators/",
@@ -73,7 +78,12 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取管理员: " + err.message));
+                .catch((err) => swal("获取管理员: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
             // 获取群主
             fetch(
                 "/api/user/get_group_owner/",
@@ -97,7 +107,12 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群主: " + err.message));
+                .catch((err) => swal("获取群主: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
             // 获取群公告
             fetch(
                 "/api/user/get_group_announcement/",
@@ -119,7 +134,12 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群公告: " + err.message));
+                .catch((err) => swal("获取群公告: " + err.message, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                }));
         }
 
     }, [props]);
@@ -152,7 +172,12 @@ const ChatBar = (props: chatBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("设置群公告: " + err.message));
+            .catch((err) => swal("设置群公告: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     };
 
     const closeNoticeBoard = () => {

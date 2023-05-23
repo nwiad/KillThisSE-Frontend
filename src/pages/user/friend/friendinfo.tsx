@@ -55,7 +55,12 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取群组: " + err.message));
+            .catch((err) => swal("获取群组: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
     }, []);
 
     const sendDelete = async () => {
@@ -83,7 +88,12 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("从群组中删除好友: " + err.message));
+            .catch((err) => swal("从群组中删除好友: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         router.push("/user/friend/friendindex");
     };
 
@@ -113,7 +123,12 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("在群组中添加好友:" + err.message));
+            .catch((err) => swal("在群组中添加好友:" + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
         router.push("/user/friend/friendindex");
     };
     const startChat = async () => {
