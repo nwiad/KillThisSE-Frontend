@@ -7,9 +7,10 @@
     list-style-type: none;
     margin: 0;
     padding: 0;
-    background-color: #0660e9;
+    background-color: #0559d7;
     border-radius: 15px;
     margin: 20px;
+    opacity: 70%;
 }
 
 .navbar li {
