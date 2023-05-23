@@ -1,5 +1,5 @@
 {
-  "name": "conway-game",
+  "name": "IM-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -34,6 +34,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sweetalert": "^2.1.2",
+    "sweetalert2": "^11.7.5",
     "trtc-js-sdk": "^4.15.7",
     "uuid": "^9.0.0"
   },

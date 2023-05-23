@@ -1111,7 +1111,7 @@ const ChatScreen = () => {
                             throw new Error(`${data.info}`);
                         }
                     })
-                    .catch((err) => swal("设置已读消息失败: " + err, {
+                    .catch((err) => swal("设置已读消息失败: " + err.message, {
                         button: {
                             className: "swal-button"
                         },
@@ -1144,7 +1144,7 @@ const ChatScreen = () => {
             .then((data) => {
                 setID(data.user_id);
             })
-            .catch((err) => swal("获取个人信息失败: " + err, {
+            .catch((err) => swal("获取个人信息失败: " + err.message, {
                 button: {
                     className: "swal-button"
                 },

@@ -6,6 +6,7 @@ import Navbar from "./navbar";
 import swal from "@sweetalert/with-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faKey, faUser, faPen, faXmark } from "@fortawesome/free-solid-svg-icons";
+import Swal from "sweetalert2";
 
 
 const InitPage = () => {
@@ -59,35 +60,45 @@ const InitPage = () => {
     // };
 
     const deleteUser = async () => {
-        await fetch(
-            "/api/user/cancel_account/",
-            {
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify({
-                    token: localStorage.getItem("token")
-                })
-            }
-        )
-            .then((res) => {
-                if (res.ok) {
-                    swal("注销成功", {
+        Swal.fire({
+            title: "真的要离开我们嘛ToT?",
+            showDenyButton: true,
+            confirmButtonText: "再见，世界",
+            denyButtonText: "取消",
+            icon: "warning"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(
+                    "/api/user/cancel_account/",
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify({
+                            token: localStorage.getItem("token")
+                        })
+                    }
+                )
+                    .then((res) => {
+                        if (res.ok) {
+                            swal("注销成功", {
+                                button: {
+                                    className: "swal-button"
+                                },
+                                icon: "success"
+                            });
+                        } else {
+                            throw new Error(`Request failed with status ${res.status}`);
+                        }
+                    })
+                    .catch((err) => swal("注销失败: " + err.message, {
                         button: {
                             className: "swal-button"
                         },
-                        icon: "success"
-                    });
-                } else {
-                    throw new Error(`Request failed with status ${res.status}`);
-                }
-            })
-            .catch((err) => swal("注销失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
-        router.push("/");
+                        icon: "error"
+                    }));
+                router.push("/");
+            }
+        });
     };
 
     const checkName = (name_: string) => {
