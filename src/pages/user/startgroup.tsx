@@ -46,7 +46,7 @@ const GroupStarter = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取好友列表失败: " + err, {
+            .catch((err) => swal("获取好友列表失败: " + err.message, {
                 button: {
                     className: "swal-button"
                 },
@@ -96,7 +96,7 @@ const GroupStarter = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("创建群聊失败: " + err, {
+            .catch((err) => swal("创建群聊失败: " + err.message, {
                 button: {
                     className: "swal-button"
                 },

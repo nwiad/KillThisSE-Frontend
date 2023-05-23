@@ -95,14 +95,12 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {
-                swal("登陆失败: " + err, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                });
-            });
+            .catch((err) => { swal("登陆失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }); });
     };
 
     const checkName = (name_: string) => {
@@ -139,14 +137,12 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {
-                swal("发送验证码失败: " + err, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                });
-            });
+            .catch((err) => { swal("发送验证码失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }); });
     };
 
     const checkEmail = (address: string) => {
@@ -183,14 +179,12 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {
-                swal("登陆失败: " + err, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                });
-            });
+            .catch((err) => { swal("登陆失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }); });
     };
 
     return (
