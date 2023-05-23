@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { uploadFile } from "../../utils/oss";
 import { nameValid, passwordValid } from "../../utils/valid";
 import Navbar from "./navbar";
@@ -30,6 +30,8 @@ const InitPage = () => {
     const [emailLegal, setEmailLegal] = useState<boolean>(false);
     const [pwd4Verify, setPwd4Verify] = useState<string>("");
     const [legalVerify, setLegalVerify] = useState<boolean>(false);
+    const [showConfirm, setShowConfirm] = useState<boolean>(false);
+    const [cancelPwd, setCancelPwd] = useState<string>("");
 
     const router = useRouter();
 
@@ -59,6 +61,72 @@ const InitPage = () => {
     //     });
     // };
 
+    const cancel4sure = () => {
+        fetch(
+            "/api/user/secondary_validate/",
+            {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                    token: localStorage.getItem("token"),
+                    password: cancelPwd
+                })
+            }
+        )
+            .then((checkRes) => checkRes.json())
+            .then((checkData) => {
+                if(checkData.code === 0) {
+                    if(checkData.Valid === true) {
+                        fetch(
+                            "/api/user/cancel_account/",
+                            {
+                                method: "POST",
+                                credentials: "include",
+                                body: JSON.stringify({
+                                    token: localStorage.getItem("token")
+                                })
+                            }
+                        )
+                            .then((res) => {
+                                if (res.ok) {
+                                    swal("注销成功", {
+                                        button: {
+                                            className: "swal-button"
+                                        },
+                                        icon: "success"
+                                    });
+                                    router.push("/");
+                                } else {
+                                    throw new Error(`${checkData.info}`);
+                                }
+                            })
+                            .catch((err) => swal("注销失败: " + err.message, {
+                                button: {
+                                    className: "swal-button"
+                                },
+                                icon: "error"
+                            }));
+                    }
+                }
+                else {
+                    swal("密码错误!", {
+                        button: {
+                            className: "swal-button"
+                        },
+                        icon: "error"
+                    });
+                }
+            })
+            .catch((err) => swal("注销失败: " + err.message, {
+                button: {
+                    className: "swal-button"
+                },
+                icon: "error"
+            }));
+        setCancelPwd("");
+        setShowConfirm(false);
+    };
+
     const deleteUser = async () => {
         Swal.fire({
             title: "真的要离开我们嘛ToT?",
@@ -68,35 +136,7 @@ const InitPage = () => {
             icon: "warning"
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(
-                    "/api/user/cancel_account/",
-                    {
-                        method: "POST",
-                        credentials: "include",
-                        body: JSON.stringify({
-                            token: localStorage.getItem("token")
-                        })
-                    }
-                )
-                    .then((res) => {
-                        if (res.ok) {
-                            swal("注销成功", {
-                                button: {
-                                    className: "swal-button"
-                                },
-                                icon: "success"
-                            });
-                        } else {
-                            throw new Error(`Request failed with status ${res.status}`);
-                        }
-                    })
-                    .catch((err) => swal("注销失败: " + err.message, {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "error"
-                    }));
-                router.push("/");
+                setShowConfirm(true);
             }
         });
     };
@@ -463,6 +503,15 @@ const InitPage = () => {
                         <input type="password" value={pwd4Verify} onChange={(e) => { checkPwd4Verify(e.target.value); }} placeholder="请输入密码" id="pwdinput" />
                         <button onClick={() => { bindEmail(); setShowPopUpEmail(false); }} disabled={!emailLegal || !legalVerify}>绑定</button>
                         <button onClick={() => { setShowPopUpEmail(false); }}>取消</button>
+                    </div>
+                )}
+                {showConfirm && (
+                    <div className="popuppwd">
+                        <p>输入密码</p>
+                        <input type="password" value={cancelPwd} onChange={(e) => { setCancelPwd(e.target.value); }} placeholder="请输入密码" />
+                        <span id={passwordLegal ? "pwdlegaltip" : "pwdillegaltip"}>*密码必须由6-16位字母、数字和下划线组成</span>
+                        <button onClick={() => { cancel4sure(); }}>确定</button>
+                        <button onClick={() => { setShowConfirm(false); }}>取消</button>
                     </div>
                 )}
             </div>
