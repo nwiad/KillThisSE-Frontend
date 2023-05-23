@@ -73,7 +73,7 @@ const InitRegisterPage = () => {
 
     return (
         <div style={{ padding: 12 }}>
-            <div className="info" style={{ display: "flex", flexDirection: "column", margin: "180px auto" }}>
+            <div className="info" style={{ display: "flex", flexDirection: "column", margin: "160px auto" }}>
                 <p id="title">欢迎，新的杀软er</p>
                 <p id="info">请在下方填写您的注册信息</p>
                 <input
@@ -110,6 +110,7 @@ const InitRegisterPage = () => {
                     返回登录界面
                 </a>
             </div>
+            <p className="copyright">Copyright © 2023 KillThisSE. All rights reserved.</p>
         </div>
     );
 };

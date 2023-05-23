@@ -241,3 +241,8 @@ img {
     margin: 20px auto;
     height: 40px;
 }
+
+.copyright{
+    margin: 20px;
+    text-align: center;
+}

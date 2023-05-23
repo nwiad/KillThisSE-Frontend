@@ -269,6 +269,7 @@ const InitLoginPage = () => {
                         </div>
                     </div>
                 )}
+                <p className="copyright">Copyright © 2023 KillThisSE. All rights reserved.</p>
             </div>
         </div>
     );
