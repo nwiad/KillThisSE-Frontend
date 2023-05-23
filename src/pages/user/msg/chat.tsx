@@ -1348,11 +1348,11 @@ const ChatScreen = () => {
                                 )) :
                                 (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
                                     (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
-                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
+                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/shipin.png" alt="📹"
                                             style={{ width: "100%", height: "auto" }} />
                                     </a> :
                                         (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                            <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                                            <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/wenjian.png" alt="📁"
                                                 style={{ width: "100%", height: "auto" }} />
                                         </a> :
                                             (msg.is_audio === true ? <a>
@@ -1456,11 +1456,11 @@ const ChatScreen = () => {
                                         ) :
                                             (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
                                                 (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
-                                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
+                                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/shipin.png" alt="📹"
                                                         style={{ width: "100%", height: "auto" }} />
                                                 </a> :
                                                     (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/wenjian.png" alt="📁"
                                                             style={{ width: "100%", height: "auto" }} />
                                                     </a> :
                                                         (msg.is_audio === true ? <a>
