@@ -95,12 +95,14 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { swal("登陆失败: " + err, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }); });
+            .catch((err) => {
+                swal("登陆失败: " + err, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                });
+            });
     };
 
     const checkName = (name_: string) => {
@@ -137,12 +139,14 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { swal("发送验证码失败: " + err, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }); });
+            .catch((err) => {
+                swal("发送验证码失败: " + err, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                });
+            });
     };
 
     const checkEmail = (address: string) => {
@@ -179,12 +183,14 @@ const InitLoginPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => { swal("登陆失败: " + err, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }); });
+            .catch((err) => {
+                swal("登陆失败: " + err, {
+                    button: {
+                        className: "swal-button"
+                    },
+                    icon: "error"
+                });
+            });
     };
 
     return (
@@ -193,28 +199,15 @@ const InitLoginPage = () => {
                 <p className="entrytitle">{text}</p>
             </div>
             <div className={fadeIn ? "fadein" : "blank"}>
-                <ul className={fadeIn ? "indexbar" : "blank"}>
-                    <li className="hometitle">
-                        <Link href="/">
-                            KillthisSE IM
-                        </Link>
-                    </li>
-                    <li className="loginbarli" onClick={() => { setPWdLogin(true); }}>
-                        <FontAwesomeIcon icon={faKey} />
-                    </li>
-                    <li className="loginbarli" onClick={() => { setPWdLogin(false); }}>
-                        <FontAwesomeIcon icon={faEnvelope} />
-                    </li>
-                </ul>
                 {pwdLogin ? (
-                    <div className="info" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
-                        <img style={{borderRadius:"50%"}} src="https://i.hd-r.cn/95c0358239b9d888355844c9dd54d67a.png"></img>
+                    <div className="info" style={{ display: "flex", flexDirection: "column", margin: "180px auto" }}>
+                        <p id="title">欢迎，杀软er</p>
                         <input
                             id="usernameinput"
                             type="text"
                             placeholder="用户名"
                             value={name}
-                            style={{margin:"10px auto"}}
+                            style={{ margin: "10px auto" }}
                             onChange={(e) => checkName(e.target.value)}
                         />
                         <input
@@ -222,25 +215,31 @@ const InitLoginPage = () => {
                             type="password"
                             placeholder="密码"
                             value={password}
-                            style={{margin:"30px auto"}}
+                            style={{ margin: "30px auto" }}
                             onChange={(e) => { checkPassword(e.target.value); }}
                         />
-                        <button onClick={userLogin} disabled={!nameLegal || !passwordLegal} style={{margin:"30px auto"}}>
+                        <button onClick={userLogin} disabled={!nameLegal || !passwordLegal} style={{ margin: "30px auto" }}>
                             登录
                         </button>
-                        <a className="newuser" onClick={() => router.push("/register")}>
-                            注册新用户
-                        </a>
+                        <div className="registerlink">
+                            <a className="newuser" onClick={() => router.push("/register")}>
+                                注册新用户
+                            </a>
+                            <p style={{marginLeft: "10px", marginRight: "10px"}}>|</p>
+                            <a className="newuser" onClick={() => { setPWdLogin(false); }}>
+                                使用邮箱登录
+                            </a>
+                        </div>
                     </div>
                 ) : (
-                    <div className="info" style={{ display: "flex", flexDirection: "column", margin: "100px auto" }}>
-                        <img style={{borderRadius:"50%"}} src="https://i.hd-r.cn/95c0358239b9d888355844c9dd54d67a.png"></img>
+                    <div className="info" style={{ display: "flex", flexDirection: "column", margin: "180px auto" }}>
+                        <p id="title">欢迎，杀软er</p>                        
                         <input
                             id="usernameinput"
                             type="text"
                             placeholder="邮箱"
                             value={email}
-                            style={{margin:"10px auto"}}
+                            style={{ margin: "10px auto" }}
                             onChange={(e) => checkEmail(e.target.value)}
                         />
                         <input
@@ -248,26 +247,32 @@ const InitLoginPage = () => {
                             type="usernameinput"
                             placeholder="验证码"
                             value={emailCode}
-                            style={{margin:"10px auto"}}
+                            style={{ margin: "10px auto" }}
                             onChange={(e) => { checkEmailCode(e.target.value); }}
                         />
                         {
                             wait ? (
-                                <button disabled={true} style={{margin:"10px auto"}}>
+                                <button disabled={true} style={{ margin: "10px auto" }}>
                                     {`${countDown}秒后方可重新发送`}
                                 </button>
                             ) : (
-                                <button style={{margin:"10px auto"}} onClick={() => { setVerificationTimeout(); sendEmailVerificationCode(); }} disabled={!emailLegal}>
+                                <button style={{ margin: "10px auto" }} onClick={() => { setVerificationTimeout(); sendEmailVerificationCode(); }} disabled={!emailLegal}>
                                     发送验证码
                                 </button>
                             )
                         }
-                        <button onClick={() => { loginWithEmail(); }} disabled={!emailCodeLegal} style={{margin:"20px auto"}}>
+                        <button onClick={() => { loginWithEmail(); }} disabled={!emailCodeLegal} style={{ margin: "20px auto" }}>
                             登录
                         </button>
-                        <a  className="newuser" onClick={() => router.push("/register")}>
-                            注册新用户
-                        </a>
+                        <div className="registerlink">
+                            <a className="newuser" onClick={() => router.push("/register")}>
+                                注册新用户
+                            </a>
+                            <p style={{marginLeft: "10px", marginRight: "10px"}}>|</p>
+                            <a className="newuser" onClick={() => { setPWdLogin(true); }}>
+                                使用密码登录
+                            </a>
+                        </div>
                     </div>
                 )}
             </div>
