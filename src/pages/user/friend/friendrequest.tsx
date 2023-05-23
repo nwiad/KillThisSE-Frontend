@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Socket, suffix } from "../../../utils/websocket";
 import FriendBar from "./friendbar";
 import swal from "@sweetalert/with-react";
+import Swal from "sweetalert2";
 
 interface FriendRequest {
     user_id: number;
@@ -40,12 +41,14 @@ const InitPage = () => {
                     setMyID(data.user_id);
                 }
             })
-            .catch((err) => swal("获取个人信息:" + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取个人信息:" + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         fetch(
             "/api/user/get_friend_requests/",
             {
@@ -64,12 +67,14 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取好友请求:" + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取好友请求:" + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         return cleanUp;
     },[]);
 
@@ -127,23 +132,27 @@ const InitPage = () => {
                                 throw new Error(`${data.info}`);
                             }
                         })
-                        .catch((err) => swal("通过id搜索好友:" + err.message, {
-                            button: {
-                                className: "swal-button"
-                            },
-                            icon: "error"
-                        }));
+                        .catch((err) => 
+                            Swal.fire({
+                                title: "通过id搜索好友:" + err.message,
+                                confirmButtonText: "OK",
+                                confirmButtonColor: "#39c5bb",
+                                icon: "error",
+                            })
+                        );
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal(err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const sendRespond = async (id:number, respond:string) => {
@@ -166,7 +175,14 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("回应好友请求: " + err.message));
+            .catch((err) => 
+                Swal.fire({
+                    title: "回应好友请求: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         // if(respond === "accept") {
         //     startChat(id);            
         // }

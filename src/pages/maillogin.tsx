@@ -3,8 +3,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { nameValid, passwordValid } from "../utils/valid";
 import swal from "@sweetalert/with-react";
-
-const str = "fuck you";
+import Swal from "sweetalert2";
 
 const InitPage = () => {
     const [name, setName] = useState<string>("");
@@ -37,12 +36,14 @@ const InitPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {swal("登陆失败: " + err, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            });});
+            .catch((err) => {
+                Swal.fire({
+                    title: "登陆失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                });
+            });
     };
 
     const getPassword = () => {
@@ -67,12 +68,14 @@ const InitPage = () => {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => {swal("登陆失败: " + err, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            });});
+            .catch((err) => {
+                Swal.fire({
+                    title: "登陆失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                });
+            });
     };
 
     const checkName = (name_: string) => {

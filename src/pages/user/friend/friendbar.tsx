@@ -6,6 +6,7 @@ import { MouseEvent as ReactMouseEvent } from "react";
 import { faUserPlus, faEnvelope, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import swal from "@sweetalert/with-react";
+import Swal from "sweetalert2";
 
 interface Friend {
     user_id: number;
@@ -53,12 +54,14 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取好友: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取好友: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
 
         fetch(
             "/api/user/get_group/",
@@ -83,12 +86,14 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取群组: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取群组: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     }, [refresh]);
 
     const createNewGroup = async () => {
@@ -106,18 +111,25 @@ const FriendBar = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "创建分组成功",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("创建群组失败: "+ err.message));
+            .catch((err) => 
+                Swal.fire({
+                    title: "创建分组失败",
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         router.push("/user/friend/friendindex");
     };
 
@@ -149,12 +161,14 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取分组好友: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取分组好友: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         router.push("/user/friend/friendindex");
     };
 
@@ -173,23 +187,25 @@ const FriendBar = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "删除分组成功",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("删除分组: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "删除分组失败",
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         router.push("/user/friend/friendindex");
     };
 
@@ -209,23 +225,25 @@ const FriendBar = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "从分组中移除好友成功",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     setRefresh(!refresh);
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("从群组中移除好友: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "从分组中移除好友失败",
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         router.push("/user/friend/friendindex");
     };
 

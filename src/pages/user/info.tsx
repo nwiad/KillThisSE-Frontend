@@ -89,40 +89,44 @@ const InitPage = () => {
                         )
                             .then((res) => {
                                 if (res.ok) {
-                                    swal("注销成功", {
-                                        button: {
-                                            className: "swal-button"
-                                        },
-                                        icon: "success"
+                                    Swal.fire({
+                                        title: "注销成功",
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: "#39c5bb",
+                                        icon: "success",
                                     });
                                     router.push("/");
                                 } else {
                                     throw new Error(`${checkData.info}`);
                                 }
                             })
-                            .catch((err) => swal("注销失败: " + err.message, {
-                                button: {
-                                    className: "swal-button"
-                                },
-                                icon: "error"
-                            }));
+                            .catch((err) => 
+                                Swal.fire({
+                                    title: "注销失败: " + err.message,
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: "#39c5bb",
+                                    icon: "error",
+                                })
+                            );
                     }
                 }
                 else {
-                    swal("密码错误!", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "error"
+                    Swal.fire({
+                        title: "密码错误!",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
                     });
                 }
             })
-            .catch((err) => swal("注销失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "注销失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         setCancelPwd("");
         setShowConfirm(false);
     };
@@ -175,11 +179,11 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    swal(`成功修改用户名为${newname}`, {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: `成功修改用户名为${newname}`,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     setName(newname);
                 } else {
@@ -187,12 +191,14 @@ const InitPage = () => {
                 }
 
             })
-            .catch((err) => swal("修改用户名失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "修改用户名失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         router.push("/user/info");
     };
 
@@ -213,11 +219,11 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    swal(`成功修改用户名为${newname}`, {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: `成功修改用户名为${newname}`,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     setName(newname);
                 } else {
@@ -225,12 +231,14 @@ const InitPage = () => {
                 }
 
             })
-            .catch((err) => swal("修改用户名失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "修改用户名失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         router.push("/user/info");
     };
 
@@ -252,33 +260,35 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    swal("成功修改密码", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "成功修改密码",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                 } else {
                     throw new Error(`${res.info}`);
                 }
 
             })
-            .catch((err) => swal("修改密码失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "修改密码失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         router.push("/user/info");
     };
 
     const resetAvatar = async (pic: File | undefined) => {
         if (pic === undefined) {
-            swal("未检测到图片", {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
+            Swal.fire({
+                title: "未检测到图片",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#39c5bb",
+                icon: "error",
             });
             return;
         }
@@ -303,11 +313,11 @@ const InitPage = () => {
             })
             .then((res) => {
                 if (res.code === 0) {
-                    swal("修改成功", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "修改成功",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     setAvatar(image_url);
                 } else {
@@ -315,12 +325,14 @@ const InitPage = () => {
                 }
 
             })
-            .catch((err) => swal("修改头像失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "修改头像失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         router.push("/user/info");
     };
 
@@ -337,11 +349,11 @@ const InitPage = () => {
 
     const bindEmail = async () => {
         if (!emailLegal) {
-            swal("邮箱不合法", {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
+            Swal.fire({
+                title: "邮箱不合法",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#39c5bb",
+                icon: "error",
             });
             return;
         }
@@ -360,23 +372,25 @@ const InitPage = () => {
             .then((res) => res.json())
             .then((res) => {
                 if (res.code === 0) {
-                    swal(`成功绑定邮箱: ${email}`, {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: `成功绑定邮箱: ${email}`,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                 }
                 else {
                     throw new Error(`${res.info}`);
                 }
             })
-            .catch((err) => swal("绑定邮箱失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "绑定邮箱失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     useEffect(() => {
@@ -396,12 +410,14 @@ const InitPage = () => {
                 setAvatar(data.avatar);
 
             })
-            .catch((err) => swal("获取个人信息失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取个人信息失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     }, [avatar, name]);
 
     return (

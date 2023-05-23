@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import FriendBar from "./friendbar";
 import swal from "@sweetalert/with-react";
+import Swal from "sweetalert2";
 
 const InitPage = () => {
     const [friend, setFriend] = useState<number>();
@@ -25,23 +26,25 @@ const InitPage = () => {
             .then((res) => {return res.json();})
             .then((res) => {
                 if (res.code === 0) {
-                    swal("成功发送请求", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "成功发送好友请求",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                 } else {
                     throw new Error(`${res.info}`);
                 }
 
             })
-            .catch((err) => swal("发送好友请求: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "发送好友请求: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
     
     useEffect(() => {
@@ -63,12 +66,14 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => { swal("获取个人信息: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }); });
+            .catch((err) => { 
+                Swal.fire({
+                    title: "获取个人信息: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                });
+            });
     
         fetch(
             "/api/user/search_by_name/",
@@ -91,12 +96,13 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => {swal("获取好友信息: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }); router.push("/user/friend/searchfriend");});
+            .catch((err) => {
+                Swal.fire({
+                    title: "获取好友信息: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                }); router.push("/user/friend/searchfriend");});
     }, [name, router, router.query]);
 
     return (

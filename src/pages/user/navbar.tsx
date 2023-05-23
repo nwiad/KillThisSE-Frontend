@@ -5,6 +5,7 @@ import { faPhone, faComment, faUsers, faUser, faRightFromBracket } from "@fortaw
 import GroupStarter from "./startgroup"; 
 import {GlobalContext} from "../../constants/GlobalContext";
 import swal from "@sweetalert/with-react";
+import Swal from "sweetalert2";
 
 
 interface infoProps {
@@ -39,12 +40,14 @@ const Navbar = (props: infoProps) => {
                     throw new Error(`Request failed with status ${res.status}`);
                 }
             })
-            .catch((err) => swal("登出失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "登出失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     useEffect(() => {
@@ -64,12 +67,14 @@ const Navbar = (props: infoProps) => {
                 setAvatar(data.avatar);
 
             })
-            .catch((err) => swal("获取个人信息失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取个人信息失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     }, []);
 
     return (

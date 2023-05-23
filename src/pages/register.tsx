@@ -37,11 +37,11 @@ const InitRegisterPage = () => {
             .then((res) => (res.json()))
             .then((data) => {
                 if (data.code === 0) {
-                    swal(CREATE_USER_SUCCESS, {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: CREATE_USER_SUCCESS,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     router.push("/");
                     console.log("成功注册");
@@ -55,7 +55,7 @@ const InitRegisterPage = () => {
                     title: "注销失败: " + err.message,
                     confirmButtonText: "OK",
                     confirmButtonColor: "#39c5bb",
-                    icon: "warning",
+                    icon: "error",
                 });
             });
     };
