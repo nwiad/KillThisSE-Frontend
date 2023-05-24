@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import swal from "@sweetalert/with-react";
 import { stringify } from "querystring";
+import Swal from "sweetalert2";
 
 const InitRegisterPage = () => {
     const [name, setName] = useState<string>("");
@@ -36,11 +37,11 @@ const InitRegisterPage = () => {
             .then((res) => (res.json()))
             .then((data) => {
                 if (data.code === 0) {
-                    swal(CREATE_USER_SUCCESS, {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: CREATE_USER_SUCCESS,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     router.push("/");
                     console.log("成功注册");
@@ -50,11 +51,11 @@ const InitRegisterPage = () => {
                 }
             })
             .catch((err) => {
-                swal(CREATE_USER_FAILURE_PERFIX + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
+                Swal.fire({
+                    title: "注销失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
                 });
             });
     };

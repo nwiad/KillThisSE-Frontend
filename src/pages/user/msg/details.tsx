@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { MsgMetaData } from "../../../utils/type";
 import swal from "@sweetalert/with-react";
+import Swal from "sweetalert2";
 
 interface memberMetaData {
     id: number,
@@ -123,7 +124,6 @@ const DetailsPage = (props: detailProps) => {
         setSilent(query.silent as string);
         setTop(query.sticked as string);
         setValidation(query.validation as string);
-        //swal(props.silent);
         console.log(router.query.id);
     }, [router, query]);
 
@@ -153,12 +153,14 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群成员: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "获取群成员: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
             // 获取管理员（不含群主）
             fetch(
                 "/api/user/get_group_administrators/",
@@ -180,12 +182,14 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取管理员: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "获取管理员: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
             // 获取群主
             fetch(
                 "/api/user/get_group_owner/",
@@ -208,12 +212,14 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群主: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "获取群主: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
             // 获取群公告
             fetch(
                 "/api/user/get_group_announcement/",
@@ -235,12 +241,14 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群公告: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "获取群公告: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
             fetch(
                 "/api/user/get_group_invitations/",
                 {
@@ -261,12 +269,14 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`拉取入群邀请: ${data.info}`);
                     }
                 })
-                .catch((err) => swal("拉取入群邀请: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "拉取入群邀请: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
         }
         // }
         // else if (props.group === "0") {
@@ -307,12 +317,14 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取好友信息: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "获取好友信息: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
         };
 
         // 筛选不在群里的好友
@@ -401,23 +413,27 @@ const DetailsPage = (props: detailProps) => {
                                     throw new Error(`${data.info}`);
                                 }
                             })
-                            .catch((err) => swal("聊天获取对方id: " + err.message, {
-                                button: {
-                                    className: "swal-button"
-                                },
-                                icon: "error"
-                            }));
+                            .catch((err) => 
+                                Swal.fire({
+                                    title: "聊天获取对方id: " + err.message,
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: "#39c5bb",
+                                    icon: "error",
+                                })
+                            );
                     }
                     else {
                         throw new Error(`聊天获取对方id: ${data.info}`);
                     }
                 })
-                .catch((err) => swal(err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
             // setRefreshing(false);
         }
     }, [owner, admins, members, props]);
@@ -457,23 +473,25 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    swal("设置群公告成功", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "设置群公告成功",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("设置群公告: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "设置群公告: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     // 邀请新成员（能不能改成列表啊）
@@ -493,11 +511,11 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal(hasPermit ? "已拉取入群" : "已发送邀请", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: hasPermit ? "已拉取入群" : "已发送邀请",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     console.log("邀请：", invitees);
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation === "1" ? 1 : 0}`);
@@ -505,12 +523,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("邀请新成员入群: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "邀请新成员入群: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const startGroup = () => {
@@ -530,11 +550,11 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功创建群聊", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title:"成功创建群聊",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation === "1" ? 1 : 0}`);
                 }
@@ -542,12 +562,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("创建群聊: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "创建群聊: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const closeInvite = () => {
@@ -632,11 +654,11 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    swal("移除管理员成功", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "移除管理员成功",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
                 }
@@ -644,12 +666,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("移除管理员失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "移除管理员失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const assign = () => {
@@ -669,11 +693,11 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    swal("增设管理员成功", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "增设管理员成功",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
                 }
@@ -681,12 +705,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("增设管理员失败" + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "增设管理员失败" + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const closeAssign = () => {
@@ -717,11 +743,11 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("已移除成员", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "已移除成员",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     console.log("移除：", removed);
                     router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top === "1" ? 1 : 0}&silent=${silent === "1" ? 1 : 0}&validation=${validation === "1" ? 1 : 0}`);
@@ -729,12 +755,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("移除成员: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "移除成员: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const makeOrUnmakeTop = (isTop: boolean) => {
@@ -761,12 +789,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取置顶私聊: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取是否置顶: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const setOrUnsetValidation = (validated: boolean) => {
@@ -792,23 +822,25 @@ const DetailsPage = (props: detailProps) => {
                     if (data.code === 0) {
                         setValidation("1");
                         setShowSecondValid(false);
-                        swal("成功设置二次验证", {
-                            button: {
-                                className: "swal-button"
-                            },
-                            icon: "success"
+                        Swal.fire({
+                            title: "成功设置二次验证",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#39c5bb",
+                            icon: "success",
                         });
                     }
                     else {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("设置二次验证: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "设置二次验证: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
         }
     };
 
@@ -847,30 +879,32 @@ const DetailsPage = (props: detailProps) => {
                                 if (data.code === 0) {
                                     setShowSecondValid(false);
                                     setValidation("0");
-                                    swal("解除二次验证", {
-                                        button: {
-                                            className: "swal-button"
-                                        },
-                                        icon: "success"
+                                    Swal.fire({
+                                        title: "解除二次验证",
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: "#39c5bb",
+                                        icon: "success",
                                     });
                                 }
                                 else {
                                     throw new Error(`${data.info}`);
                                 }
                             })
-                            .catch((err) => swal("解除二次验证: " + err.message, {
-                                button: {
-                                    className: "swal-button"
-                                },
-                                icon: "error"
-                            }));
+                            .catch((err) => 
+                                Swal.fire({
+                                    title: "解除二次验证: " + err.message,
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: "#39c5bb",
+                                    icon: "error",
+                                })
+                            );
                     }
                     else {
-                        swal("密码错误", {
-                            button: {
-                                className: "swal-button"
-                            },
-                            icon: "error"
+                        Swal.fire({
+                            title: "密码错误",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#39c5bb",
+                            icon: "error",
                         });
                     }
                 }
@@ -878,12 +912,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("检查二级密码: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "检查二级密码: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const makeOrUnmakeSilent = (isSilent: boolean) => {
@@ -910,12 +946,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("设置免打扰: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "设置免打扰: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     useEffect(() => {
@@ -940,11 +978,11 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    swal("删除成功", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "删除成功",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                     router.push("/user");
                 }
@@ -952,12 +990,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`从详情页删除好友: ${data.info}`);
                 }
             })
-            .catch((err) => swal("从详情页删除好友: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "从详情页删除好友: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const dismissOrQuit = () => {
@@ -976,11 +1016,11 @@ const DetailsPage = (props: detailProps) => {
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.code === 0) {
-                        swal("解散成功", {
-                            button: {
-                                className: "swal-button"
-                            },
-                            icon: "success"
+                        Swal.fire({
+                            title: "解散成功",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#39c5bb",
+                            icon: "success",
                         });
                         router.push("/user");
                     }
@@ -988,12 +1028,14 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`解散群聊: ${data.info}`);
                     }
                 })
-                .catch((err) => swal("解散群聊: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "解散群聊: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
         }
         else {  // 非群主退出群聊
             fetch(
@@ -1010,11 +1052,11 @@ const DetailsPage = (props: detailProps) => {
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.code === 0) {
-                        swal("已退出群聊", {
-                            button: {
-                                className: "swal-button"
-                            },
-                            icon: "success"
+                        Swal.fire({
+                            title: "已退出群聊",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#39c5bb",
+                            icon: "success",
                         });
                         router.push("/user");
                     }
@@ -1022,12 +1064,14 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`退出群聊${data.info}`);
                     }
                 })
-                .catch((err) => swal("退出群聊" + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "退出群聊" + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
         }
     };
 
@@ -1052,12 +1096,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`拉取入群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => swal("拉取入群邀请: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "拉取入群邀请: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const consent = (invitation_id: number) => {
@@ -1084,12 +1130,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`同意进群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => swal("同意进群邀请" + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "同意进群邀请" + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const reject = (invitation_id: number) => {
@@ -1116,12 +1164,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`拒绝进群邀请: ${data.info}`);
                 }
             })
-            .catch((err) => swal("拒绝进群邀请" + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "拒绝进群邀请" + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const openFilter = () => {
@@ -1157,12 +1207,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`获取全部聊天记录失败: ${data.info}`);
                 }
             })
-            .catch(((err) => swal("获取聊天记录: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            })));
+            .catch(((err) => 
+                Swal.fire({
+                    title: "获取聊天记录: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            ));
     };
 
     useEffect(() => {
@@ -1218,12 +1270,14 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`根据类型${type}筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => swal(`根据类型${type}筛选失败: ` + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: `根据类型${type}筛选失败: ` + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
         }
         else if (value === "filter_by_content") {  // 按内容筛选
             setShowContentInput(true);
@@ -1275,12 +1329,14 @@ const DetailsPage = (props: detailProps) => {
                     throw new Error(`获取转发的聊天记录失败: ${data.info}`);
                 }
             })
-            .catch(((err) => swal("获取转发的聊天记录: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            })));
+            .catch(((err) => 
+                Swal.fire({
+                    title: "获取转发的聊天记录: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            ));
     };
 
     const closeFwdFilter = () => {
@@ -1323,12 +1379,14 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`根据发送者筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => swal("根据发送者筛选失败: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "根据发送者筛选失败: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
         }
     }, [sender, props]);
 
@@ -1361,12 +1419,14 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`根据内容${content}筛选失败: ${data.info}`);
                     }
                 })
-                .catch((err) => swal(`根据类型${content}筛选失败: ` + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: `根据类型${content}筛选失败: ` + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
         }
     }, [content, props]);
 
@@ -1387,11 +1447,11 @@ const DetailsPage = (props: detailProps) => {
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.code === 0) {
-                        swal("转让群主成功", {
-                            button: {
-                                className: "swal-button"
-                            },
-                            icon: "success"
+                        Swal.fire({
+                            title: "转让群主成功",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#39c5bb",
+                            icon: "success",
                         });
                         setNewOwner(undefined);
                         router.push(`/user/msg/chat?id=${props.chatID}&name=${props.chatName}&group=${props.group}&sticked=${top ? 1 : 0}&silent=${silent ? 1 : 0}&validation=${validation ? 1 : 0}`);
@@ -1400,22 +1460,24 @@ const DetailsPage = (props: detailProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("转让群主失败: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "转让群主失败: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
         }
     }, [newOwner, props]);
 
     const sendFriendRequest = (id: number | undefined) => {
         if (id === undefined) {
-            swal("发送好友请求: 非法id", {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
+            Swal.fire({
+                title: "发送好友请求: 非法id",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#39c5bb",
+                icon: "error",
             });
         }
         fetch(
@@ -1432,39 +1494,41 @@ const DetailsPage = (props: detailProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功发送好友请求", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "成功发送好友请求",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                 }
                 else if (data.code === 3) {
-                    swal("你们已经是好友了", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "info"
+                    Swal.fire({
+                        title: "你们已经是好友了",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "info",
                     });
                 }
                 else if (data.code === 4) {
-                    swal("已发送过好友请求，请耐心等候对方回复", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "info"
+                    Swal.fire({
+                        title: "已发送过好友请求，请耐心等候对方回复",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "info",
                     });
                 }
                 else {
                     throw new Error(`${data.infp}`);
                 }
             })
-            .catch((err) => swal("发送好友请求: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "发送好友请求: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     return refreshing ? (

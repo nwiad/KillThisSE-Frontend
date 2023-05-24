@@ -13,6 +13,7 @@ import Navbar from "../navbar";
 import DetailsPage from "./details";
 import MsgBar from "./msgbar";
 import swal from "@sweetalert/with-react";
+import Swal from "sweetalert2";
 
 
 // import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
@@ -213,11 +214,11 @@ const ChatScreen = () => {
     // 功能：发送图片
     const sendPic = async (pic: File | undefined) => {
         if (pic === undefined) {
-            swal("未检测到图片", {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "info"
+            Swal.fire({
+                title: "未检测到图片",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#39c5bb",
+                icon: "error",
             });
             return;
         }
@@ -232,11 +233,11 @@ const ChatScreen = () => {
     // 功能：发送视频
     const sendVideo = async (pic: File | undefined) => {
         if (pic === undefined) {
-            swal("未检测到视频文件", {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "info"
+            Swal.fire({
+                title: "未检测到视频文件",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#39c5bb",
+                icon: "error",
             });
             return;
         }
@@ -251,11 +252,11 @@ const ChatScreen = () => {
     // 功能：发送文件
     const sendFile = async (pic: File | undefined) => {
         if (pic === undefined) {
-            swal("未检测到文件", {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "info"
+            Swal.fire({
+                title: "未检测到文件",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#39c5bb",
+                icon: "error",
             });
             return;
         }
@@ -284,12 +285,14 @@ const ChatScreen = () => {
                 setMyName(data.name);
                 setSig(data.sig);
             })
-            .catch((err) => swal("获取个人信息: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取个人信息: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     }, []);
 
     const getAvatar = (name: string) => {
@@ -307,12 +310,14 @@ const ChatScreen = () => {
             .then((data) => {
                 return (data.avatar);
             })
-            .catch((err) => swal("获取头像: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取头像: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
     // 功能：创建链接
     function createLinkifiedMsgBody(msgBody: string) {
@@ -373,12 +378,14 @@ const ChatScreen = () => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取at成员: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "获取at成员: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
             // if (msgBody.includes(`@${all}`)) {
             //     console.log(`消息有@${all}`);
             // }
@@ -682,12 +689,14 @@ const ChatScreen = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch(((err) => swal("获取该用户在本会话中的身份: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            })));
+            .catch(((err) => 
+                Swal.fire({
+                    title: "获取该用户在本会话中的身份: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            ));
 
         fetch(
             "/api/user/get_member_status/",
@@ -712,12 +721,14 @@ const ChatScreen = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch(((err) => swal("获取该用户在本会话中的身份: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            })));
+            .catch(((err) => 
+                Swal.fire({
+                    title: "获取该用户在本会话中的身份: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            ));
 
 
         const withdrawInFive = () => {
@@ -740,10 +751,12 @@ const ChatScreen = () => {
             // 计算时间差，单位为分钟
             let time_diff = now_time_use.diff(msg_time_use, "minutes");
             if (time_diff > 5) {
-                swal("该消息发送超过5分钟，不能撤回", {button: {
-                    className: "swal-button"
-                },
-                icon: "error"});
+                Swal.fire({
+                    title: "该消息发送超过5分钟，不能撤回",
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                });
                 return;
             }
 
@@ -912,12 +925,14 @@ const ChatScreen = () => {
                             throw new Error(`${data.info}`);
                         }
                     })
-                    .catch(((err) => swal("获取已读成员列表失败: " + err.message, {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "error"
-                    })));
+                    .catch(((err) => 
+                        Swal.fire({
+                            title: "获取已读成员列表失败: " + err.message,
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#39c5bb",
+                            icon: "error",
+                        })
+                    ));
             };
             readItem.addEventListener("click", readEventListeners);
             contextMenu.appendChild(readItem);
@@ -1003,12 +1018,14 @@ const ChatScreen = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch(((err) => swal("获取转发的聊天记录: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            })));
+            .catch(((err) => 
+                Swal.fire({
+                    title: "获取转发的聊天记录: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            ));
     };
 
     // 计算转发消息的数量
@@ -1111,12 +1128,14 @@ const ChatScreen = () => {
                             throw new Error(`${data.info}`);
                         }
                     })
-                    .catch((err) => swal("设置已读消息失败: " + err, {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "error"
-                    }));
+                    .catch((err) => 
+                        Swal.fire({
+                            title: "设置已读消息失败: " + err.message,
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#39c5bb",
+                            icon: "error",
+                        })
+                    );
             }, // 消息的回调
             errorCb: () => { } // 错误的回调
         };
@@ -1144,12 +1163,14 @@ const ChatScreen = () => {
             .then((data) => {
                 setID(data.user_id);
             })
-            .catch((err) => swal("获取个人信息失败: " + err, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取个人信息失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     }, []);
 
     useEffect(() => {
@@ -1348,11 +1369,11 @@ const ChatScreen = () => {
                                 )) :
                                 (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
                                     (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
-                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
+                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/shipin.png" alt="📹"
                                             style={{ width: "100%", height: "auto" }} />
                                     </a> :
                                         (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                            <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                                            <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/wenjian.png" alt="📁"
                                                 style={{ width: "100%", height: "auto" }} />
                                         </a> :
                                             (msg.is_audio === true ? <a>
@@ -1456,11 +1477,11 @@ const ChatScreen = () => {
                                         ) :
                                             (msg.is_image === true ? <img src={msg.msg_body} alt="🏞️" style={{ maxWidth: "100%", height: "auto" }} /> :
                                                 (msg.is_video === true ? <a id="videoLink" href={msg.msg_body} title="下载视频" >
-                                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E8%A7%86%E9%A2%91_%E7%BC%A9%E5%B0%8F.png" alt="📹"
+                                                    <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/shipin.png" alt="📹"
                                                         style={{ width: "100%", height: "auto" }} />
                                                 </a> :
                                                     (msg.is_file === true ? <a id="fileLink" href={msg.msg_body} title="下载文件" >
-                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/%E6%96%87%E4%BB%B6%E5%A4%B9-%E7%BC%A9%E5%B0%8F.png" alt="📁"
+                                                        <img src="https://killthisse-avatar.oss-cn-beijing.aliyuncs.com/wenjian.png" alt="📁"
                                                             style={{ width: "100%", height: "auto" }} />
                                                     </a> :
                                                         (msg.is_audio === true ? <a>

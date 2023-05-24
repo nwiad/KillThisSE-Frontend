@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { faMessage, faUserXmark, faUserTag , faXmark} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import swal from "@sweetalert/with-react";
+import Swal from "sweetalert2";
 
 interface Group {
     group_id: number;
@@ -55,12 +56,14 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取群组: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取群组: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     }, []);
 
     const sendDelete = async () => {
@@ -78,22 +81,24 @@ const InitPage = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "删除好友成功",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("从群组中删除好友: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "删除好友: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         router.push("/user/friend/friendindex");
     };
 
@@ -113,22 +118,24 @@ const InitPage = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "将好友加入分组成功",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("在群组中添加好友:" + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "将好友加入分组: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         router.push("/user/friend/friendindex");
     };
     const startChat = async () => {
@@ -156,7 +163,14 @@ const InitPage = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("创建私聊:" + err.message));
+            .catch((err) => 
+                Swal.fire({
+                    title: "创建私聊:" + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         router.push("/user/friend/friendindex");
     };
 

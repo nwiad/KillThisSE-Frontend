@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { faCircleInfo} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import swal from "@sweetalert/with-react";
+import Swal from "sweetalert2";
 
 interface chatBarProps {
     name: string,
@@ -51,12 +52,14 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群聊成员: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "获取群聊成员: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
             // 获取管理员（不含群主）
             fetch(
                 "/api/user/get_group_administrators/",
@@ -78,12 +81,14 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取管理员: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "获取管理员: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
             // 获取群主
             fetch(
                 "/api/user/get_group_owner/",
@@ -107,12 +112,14 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群主: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "获取群主: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
             // 获取群公告
             fetch(
                 "/api/user/get_group_announcement/",
@@ -134,12 +141,14 @@ const ChatBar = (props: chatBarProps) => {
                         throw new Error(`${data.info}`);
                     }
                 })
-                .catch((err) => swal("获取群公告: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
-                }));
+                .catch((err) => 
+                    Swal.fire({
+                        title: "获取群公告: " + err.message,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "error",
+                    })
+                );
         }
 
     }, [props]);
@@ -161,23 +170,25 @@ const ChatBar = (props: chatBarProps) => {
             .then((res) => res.json())
             .then((data) => {
                 if (data.code === 0) {
-                    swal("设置群公告成功", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "设置群公告成功",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                 }
                 else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("设置群公告: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "设置群公告: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const closeNoticeBoard = () => {

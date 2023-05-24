@@ -6,6 +6,7 @@ import { ChatMetaData, GroupChatMetaData, Options } from "../../../utils/type";
 import { Socket, suffix } from "../../../utils/websocket";
 import Navbar from "../navbar";
 import swal from "@sweetalert/with-react";
+import Swal from "sweetalert2";
 
 interface MsgBarProps {
     currentChatID?: number
@@ -52,12 +53,14 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取个人信息: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取个人信息: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         fetchList();
     }, [router, query]);
 
@@ -89,12 +92,14 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("检查二级密码: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "检查二级密码: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     const checkPwdGroup = (password: string) => {
@@ -118,12 +123,14 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("检查二级密码: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "检查二级密码: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     useEffect(() => {
@@ -361,12 +368,14 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取置顶私聊: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取置顶私聊: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         await fetch(
             "/api/user/get_sticky_group_conversations/",
             {
@@ -388,12 +397,14 @@ const MsgBar = (props: MsgBarProps) => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取置顶群聊: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取置顶群聊: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
         await fetch(
             "/api/user/get_private_conversations/",
             {
@@ -416,11 +427,11 @@ const MsgBar = (props: MsgBarProps) => {
                 }
             })
             .catch((err) => {
-                swal("获取私聊列表: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
+                Swal.fire({
+                    title: "获取私聊列表: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
                 });
                 setRefreshing(false);
             });
@@ -448,11 +459,11 @@ const MsgBar = (props: MsgBarProps) => {
                 }
             })
             .catch((err) => {
-                swal("获取群聊消息列表: " + err.message, {
-                    button: {
-                        className: "swal-button"
-                    },
-                    icon: "error"
+                Swal.fire({
+                    title: "获取群聊消息列表: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
                 });
                 setRefreshing(false);
             });

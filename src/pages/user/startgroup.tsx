@@ -3,6 +3,7 @@ import Navbar from "./navbar";
 import { useRouter } from "next/router";
 import { assert } from "console";
 import swal from "@sweetalert/with-react";
+import Swal from "sweetalert2";
 
 interface Friend {
     user_id: number;
@@ -46,12 +47,14 @@ const GroupStarter = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("获取好友列表失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "获取好友列表失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     useEffect(() => {
@@ -86,22 +89,24 @@ const GroupStarter = () => {
             .then((res) => { return res.json(); })
             .then((data) => {
                 if (data.code === 0) {
-                    swal("成功创建群聊", {
-                        button: {
-                            className: "swal-button"
-                        },
-                        icon: "success"
+                    Swal.fire({
+                        title: "成功创建群聊",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#39c5bb",
+                        icon: "success",
                     });
                 } else {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => swal("创建群聊失败: " + err.message, {
-                button: {
-                    className: "swal-button"
-                },
-                icon: "error"
-            }));
+            .catch((err) => 
+                Swal.fire({
+                    title: "创建群聊失败: " + err.message,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#39c5bb",
+                    icon: "error",
+                })
+            );
     };
 
     return (
