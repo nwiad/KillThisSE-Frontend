@@ -79,13 +79,7 @@ const Navbar = (props: infoProps) => {
 
     return (
         <div>
-            {globalValue && (
-                < button className="hangon" >
-                    <FontAwesomeIcon className="hangonicon" icon={faPhone} />
-                    <p className="hangoninfo">正在通话</p>
-                </button>
-            )}
-            <nav style={{ padding: 12, zIndex: 6666, position: "fixed" }}>
+            <nav style={{ padding: 12, zIndex: 0, position: "fixed" }}>
                 <ul className="navbar">
                     <li className="navbar_ele_r" onClick={() => { router.push("/user/"); }}>
                         <FontAwesomeIcon className="Icon" icon={faComment} />
