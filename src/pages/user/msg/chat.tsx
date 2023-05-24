@@ -1298,7 +1298,13 @@ const ChatScreen = () => {
         </div>
     ) : ((
         <div style={{ padding: 12 }}>
-            {calling && (
+            {globalValue && (
+                < button className="hangon" style={{ zIndex: 9999}} onClick={() => {handleFinishVocalCall();}}>
+                    <FontAwesomeIcon className="hangonicon" icon={faPhone} />
+                    <p className="hangoninfo">点击中断通话</p>
+                </button>
+            )}
+            {(calling || globalValue) && (
                 <div className="overlay"></div>
             )}
             {calling && (
@@ -1323,10 +1329,10 @@ const ChatScreen = () => {
             )}
 
             {globalValue && (
-                <div id="localVocalStreamContainer"></div>
+                <div id="localVocalStreamContainer" style={{ opacity: 0 }}></div>
             )}
             {globalValue && (
-                <div id="remoteVocalStreamContainer"></div>
+                <div id="remoteVocalStreamContainer" style={{ opacity: 0 }}></div>
             )}
             <div ref={chatBoxRef} id="msgdisplay" className="msgdpbox" style={{ display: "flex", flexDirection: "column" }}>
 
