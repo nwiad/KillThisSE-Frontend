@@ -106,6 +106,7 @@
 .infobuttons{
   display: flex;
   margin: 30px auto;
+  margin-left: 65px;
   flex-wrap: wrap;
   width: 400px;
   justify-content: center;
@@ -116,4 +117,5 @@
   font-size: 40px;
   margin: 30px auto;
   font-weight: 400;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }

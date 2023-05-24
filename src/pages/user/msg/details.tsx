@@ -2122,6 +2122,7 @@ const DetailsPage = (props: detailProps) => {
                 <div className="popup">
                     <input
                         placeholder="输入本账号的登录密码"
+                        type="password"
                         onChange={(e) => { setPwd(e.target.value); }}
                     />
                     <button onClick={() => { setShowPwdInput(false); setPwd(""); }}>

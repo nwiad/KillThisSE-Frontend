@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhone, faComment, faUsers, faUser, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import GroupStarter from "./startgroup"; 
-import {GlobalContext} from "../../constants/GlobalContext";
+import GroupStarter from "./startgroup";
+import { GlobalContext } from "../../constants/GlobalContext";
 import swal from "@sweetalert/with-react";
 
 
@@ -77,7 +77,7 @@ const Navbar = (props: infoProps) => {
             {globalValue && (
                 < button className="hangon" >
                     <FontAwesomeIcon className="hangonicon" icon={faPhone} />
-                    <p className="hangoninfo">正在通话</p> 
+                    <p className="hangoninfo">正在通话</p>
                 </button>
             )}
             <nav style={{ padding: 12, zIndex: 6666, position: "fixed" }}>
@@ -95,7 +95,11 @@ const Navbar = (props: infoProps) => {
                         创建群聊
                     </li>
                     <li className="navbar_ele_info" onClick={() => { router.push("/user/info"); }}>
-                        <p style={{ display: "inline-block", verticalAlign: "middle" }}>{props.name ? props.name : name}</p>
+                        <p style={{
+                            display: "inline-block", verticalAlign: "middle",
+                            fontFamily: "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif"
+
+                        }}>{props.name ? props.name : name}</p>
                         <img className="navbarAvatar" src={`${props.avatar ? props.avatar : avatar}`} style={{ display: "inline-block", verticalAlign: "middle" }} alt="oops" />
                     </li>
                     <li className="navbar_ele_l" onClick={() => { userLogout(); router.push("/"); }}>
@@ -104,10 +108,12 @@ const Navbar = (props: infoProps) => {
                     </li>
                 </ul>
             </nav>
-            {showPopupStartGroup&&(
-                <GroupStarter />
-            )}
-        </div>
+            {
+                showPopupStartGroup && (
+                    <GroupStarter />
+                )
+            }
+        </div >
     );
 };
 

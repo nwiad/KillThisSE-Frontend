@@ -366,7 +366,7 @@ const InitPage = () => {
                             backgroundImage: `url(${avatar})`,
                             backgroundSize: "cover",
                             backgroundPosition: "center",
-                            border: "2px solid #ccc",
+                            border: "2px solid #39c5bb",
                             margin: "30px auto",
                         }}
                     />
@@ -412,7 +412,7 @@ const InitPage = () => {
                 {showPopupAvatar && (
                     <div className="popupAvatar" style={{ padding: "15px" }}>
                         <div>修改头像</div>
-                        <form onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false); setShowPopupAvatar(false); }}>
+                        <form className="uploadform" onSubmit={() => { resetAvatar(newavatar); setIsAvatarUploaded(false); setShowPopupAvatar(false); }}>
                             <input placeholder="uploaded image" className="fileupload" type="file" name="avatar" accept="image/*"
                                 onChange={(event) => { setNewAvatar(event.target.files?.[0]); setIsAvatarUploaded(!!event.target.files?.[0]); }} />
                             <button type="submit" disabled={!isAvatarUploaded}>上传头像</button>
