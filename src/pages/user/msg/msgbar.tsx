@@ -607,7 +607,7 @@ const MsgBar = (props: MsgBarProps) => {
                     <p>已开启二级验证，请输入密码</p>
                     <input
                         placeholder="输入本账号的登录密码"
-                        type="password"
+                        type="password" //
                         onChange={(e) => { setPwd(e.target.value); }}
                     />
                     <button onClick={() => { setShowPopupValidGroup(false); setPwd(""); }}>
