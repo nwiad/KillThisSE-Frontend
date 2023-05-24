@@ -58,7 +58,7 @@
     border-radius: 15px;
     text-align: center;
     padding: 10px;
-    z-index: 9999;
+    z-index: 100;
     overflow-y: auto;
 }
 
@@ -135,7 +135,7 @@
 
 .owner {
     margin: auto 20px;
-    color: #39c5bb;
+    color: #0660e9;
     background-color: #2374ed77;
     padding: 2px 5px;
     font-size: 12px;
@@ -180,7 +180,7 @@
     border-radius: 15px;
     text-align: center;
     overflow-y: auto;
-    z-index: 9999;
+    z-index: 100;
 }
 
 #localStreamContainer {
@@ -195,7 +195,7 @@
     background-size: cover;
     background-position: center;
     float: right;
-    z-index: 9999;
+    z-index: 400;
     overflow-y: auto;
     border-radius: 30px;
     border: 5px solid #ccc;
@@ -214,7 +214,7 @@
     background-size: cover;
     background-position: center;
     float: right;
-    z-index: 8888;
+    z-index: 300;
     overflow-y: auto;
     border-radius: 15px;
     background-color: #f0f0f0;
@@ -235,7 +235,7 @@
     background-size: cover;
     background-position: center;
     float: right;
-    z-index: 9999;
+    z-index: 400;
     overflow-y: auto;
     border-radius: 0px;
     background-color: #f0f0f000;
@@ -271,14 +271,14 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 7777;
+    z-index: 200;
 }
 
 .hangup{
     position: fixed;
     top:75%;
     left: 50%;
-    z-index: 9999;
+    z-index: 400;
     width: 70px;
     height: 70px;
     border-radius: 50%;
@@ -304,7 +304,7 @@
     text-align: center;
     bottom:15%;
     right: 10%;
-    z-index: 9999;
+    z-index: 400;
     width: 70px;
     height: 70px;
     border-radius: 50%;
