@@ -54,7 +54,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => 
+            .catch((err) =>
                 Swal.fire({
                     title: "获取好友: " + err.message,
                     confirmButtonText: "OK",
@@ -86,7 +86,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => 
+            .catch((err) =>
                 Swal.fire({
                     title: "获取群组: " + err.message,
                     confirmButtonText: "OK",
@@ -122,7 +122,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => 
+            .catch((err) =>
                 Swal.fire({
                     title: "创建分组失败",
                     confirmButtonText: "OK",
@@ -161,7 +161,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => 
+            .catch((err) =>
                 Swal.fire({
                     title: "获取分组好友: " + err.message,
                     confirmButtonText: "OK",
@@ -198,7 +198,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => 
+            .catch((err) =>
                 Swal.fire({
                     title: "删除分组失败",
                     confirmButtonText: "OK",
@@ -236,7 +236,7 @@ const FriendBar = () => {
                     throw new Error(`${data.info}`);
                 }
             })
-            .catch((err) => 
+            .catch((err) =>
                 Swal.fire({
                     title: "从分组中移除好友失败",
                     confirmButtonText: "OK",
@@ -315,20 +315,23 @@ const FriendBar = () => {
                 </div>
             )}
             <div>
-                <div className="friendbarbuttons">
+                <div className="friendbarbuttons" style={{flexDirection:"row", flexWrap:"nowrap", padding:"auto", overflowY:"hidden", height:"15%"}}>
                     <div className="adminbutton"
+                        style={{ width: "20%", marginTop:"10px"}}
                         onClick={() => { router.push("/user/friend/searchfriend"); }}>
-                        <FontAwesomeIcon className="adminicon" icon={faUserPlus} />
+                        <FontAwesomeIcon style={{ width: "80%" }} className="adminicon" icon={faUserPlus} />
                         <p className="admininfo">添加新好友</p>
                     </div>
                     <div className="adminbutton"
+                        style={{ width: "20%", marginTop:"10px" }}
                         onClick={() => { router.push("/user/friend/friendrequest"); }}>
-                        <FontAwesomeIcon className="adminicon" icon={faEnvelope} />
+                        <FontAwesomeIcon style={{ width: "80%" }} className="adminicon" icon={faEnvelope} />
                         <p className="admininfo">收到的好友邀请</p>
                     </div>
                     <div className="adminbutton"
+                        style={{ width: "20%", marginTop:"10px" }}
                         onClick={() => { setShowPopupNewGroup(true); }}>
-                        <FontAwesomeIcon className="adminicon" icon={faUsers} />
+                        <FontAwesomeIcon style={{ width: "80%" }} className="adminicon" icon={faUsers} />
                         <p className="admininfo">新建分组</p>
                     </div>
 
@@ -336,7 +339,7 @@ const FriendBar = () => {
                 <ul className="friendlist">
                     <li className="friend"
                         onClick={() => { setAllCollapsed(!allCollapsed); }}
-                        style={{ padding: 20 , border: 0}}>
+                        style={{ padding: 20, border: 0 }}>
                         全部好友
                     </li>
                     {friendsList?.map((item: Friend) => (
@@ -351,7 +354,7 @@ const FriendBar = () => {
                     {groupsList?.map((item: Group) => (
                         <div key={item.group_id}>
                             <li key={item.group_id} className="friend"
-                                style={{borderRadius:"15px"}}
+                                style={{ borderRadius: "15px" }}
                                 onClick={() => {
                                     getGroupInfo(item.group_id);
                                     const foundGroup = groupsList.find(group => group.group_id === item.group_id);

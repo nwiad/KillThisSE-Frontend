@@ -1,6 +1,7 @@
 .friendlist {
     position: fixed;
     top: 27%;
+    margin-top: 20px;
     left: 20px;
     bottom: 0px;
     width: 20%;
