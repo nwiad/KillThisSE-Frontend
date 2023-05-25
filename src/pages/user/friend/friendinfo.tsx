@@ -171,7 +171,7 @@ const InitPage = () => {
                     icon: "error",
                 })
             );
-        router.push("/user/friend/friendindex");
+        // router.push("/user/friend/friendindex");
     };
 
     useEffect(() => {
