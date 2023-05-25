@@ -29,13 +29,10 @@ describe("InitLoginPage", () => {
         
         fireEvent.change(usernameInput, { target: { value: "testuser" } });
         fireEvent.change(passwordInput, { target: { value: "testpassword" } });
-        // fireEvent.click(loginButton);
+
         
         await waitFor(() => {
-            // expect(document.cookie).toMatch(/session=\d+/);
             expect(loginButton).toBeEnabled();
-
-            // expect(window.location.pathname).toBe("/user");
         });
     });
 });
